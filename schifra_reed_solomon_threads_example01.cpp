@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -69,6 +69,7 @@ public:
    {
       process_id_ = proc.process_id_;
       total_time_ = proc.total_time_;
+      return *this;
    }
 
    double time() { return total_time_; }
@@ -169,7 +170,7 @@ int main()
 
    generate_messages(data_length,message_list);
 
-   const unsigned int max_thread_count = 2; // number of functional cores.
+   const unsigned int max_thread_count = 4; // number of functional cores.
    std::vector<process_ptr_type> process_list;
 
    boost::thread_group threads;

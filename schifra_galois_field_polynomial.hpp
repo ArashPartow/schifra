@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -88,6 +88,7 @@ namespace schifra
          friend std::ostream& operator << (std::ostream& os, const field_polynomial& polynomial);
 
       private:
+
          typedef std::vector< field_element >::iterator       poly_iter;
          typedef std::vector< field_element >::const_iterator const_poly_iter;
 
@@ -155,10 +156,9 @@ namespace schifra
       }
 
       inline field_polynomial::field_polynomial(const field_polynomial& polynomial)
-      : field_(const_cast<field&>(polynomial.field_))
-      {
-         poly_ = polynomial.poly_;
-      }
+      : field_(const_cast<field&>(polynomial.field_)),
+        poly_(polynomial.poly_)
+      {}
 
       inline field_polynomial::field_polynomial(const field_element& element)
       : field_(const_cast<field&>(element.galois_field()))
@@ -264,9 +264,9 @@ namespace schifra
                for (const_poly_iter it1 = polynomial.poly_.begin(); it1 != polynomial.poly_.end(); ++it1)
                {
                   (*current_result_it) += (*it0) * (*it1);
-                  current_result_it++;
+                  ++current_result_it;
                }
-               result_it++;
+               ++result_it;
             }
 
             simplify(product);
@@ -571,21 +571,21 @@ namespace schifra
 
       inline void field_polynomial::simplify(field_polynomial& polynomial) const
       {
-         std::size_t poly_size;
-         if (((poly_size = polynomial.poly_.size()) > 0) && (polynomial.poly_.back() == 0))
+         std::size_t poly_size = polynomial.poly_.size();
+         if ((poly_size > 0) && (polynomial.poly_.back() == 0))
          {
             poly_iter it = polynomial.poly_.end();
-            std::size_t cnt = 0;
-            while (it != polynomial.poly_.begin())
+            std::size_t count = 0;
+            while (polynomial.poly_.begin() != it)
             {
                if ((*(--it)) == 0)
-                  cnt++;
+                  ++count;
                else
                   break;
             }
-            if (cnt != 0)
+            if (0 != count)
             {
-               polynomial.poly_.resize(poly_size - cnt, field_element(field_,0));
+               polynomial.poly_.resize(poly_size - count, field_element(field_,0));
             }
          }
       }

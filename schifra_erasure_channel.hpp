@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -54,7 +54,7 @@ namespace schifra
 
       template<std::size_t code_length, std::size_t fec_length>
       inline bool erasure_channel_stack_encode(const encoder<code_length,fec_length>& encoder,
-                                                     block<code_length,fec_length> output[code_length])
+                                                     block<code_length,fec_length> (&output)[code_length])
       {
          for (std::size_t i = 0; i < code_length; ++i)
          {
@@ -179,7 +179,7 @@ namespace schifra
       template<std::size_t code_length, std::size_t fec_length>
       inline bool erasure_channel_stack_decode(const decoder<code_length,fec_length>& general_decoder,
                                                const erasure_locations_t& missing_row_index,
-                                                     block<code_length,fec_length> (output)[code_length])
+                                                     block<code_length,fec_length> (&output)[code_length])
       {
          if (missing_row_index.empty())
          {
@@ -200,7 +200,7 @@ namespace schifra
       template<std::size_t code_length, std::size_t fec_length>
       inline bool erasure_channel_stack_decode(const erasure_code_decoder<code_length,fec_length>& erasure_decoder,
                                                const erasure_locations_t& missing_row_index,
-                                                     block<code_length,fec_length> (output)[code_length])
+                                                     block<code_length,fec_length> (&output)[code_length])
       {
          /*
            Note: 1. Missing row indicies must be unique.
@@ -222,7 +222,7 @@ namespace schifra
          }
          else
          {
-            return erasure_channel_stack_decode<code_length,fec_length>(static_cast< const decoder<code_length,fec_length>& >(erasure_decoder),
+            return erasure_channel_stack_decode<code_length,fec_length>(static_cast<const decoder<code_length,fec_length>&>(erasure_decoder),
                                                                         missing_row_index,output);
          }
       }

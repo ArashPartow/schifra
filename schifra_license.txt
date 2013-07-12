@@ -1,35 +1,35 @@
 Schifra
 Reed-Solomon Error Correcting Code Library
 http://www.schifra.com
-Copyright (c) 2000-2010 Arash Partow,  All Rights Reserved.
+Copyright (c) 2000-2013 Arash Partow,  All Rights Reserved.
 
-The Schifra Reed-Solomon Error Correcting Code Library and all
-its components are supplied under the terms of the General Schifra
-License agreement. The contents of the Schifra Reed-Solomon Error
-Correcting Code Library and its components may not be copied or
-disclosed except in accordance with the terms of that agreement.
+The Schifra  Reed-Solomon Error  Correcting Code  Library and  all its
+components are supplied under the terms of the General Schifra License
+agreement. The contents of  the Schifra Reed-Solomon Error  Correcting
+Code Library and its components may not be copied or disclosed  except
+in accordance with the terms of that agreement.
 
 URL: http://www.schifra.com/license.html
 
 
-Parties wanting to use the Schifra Reed-Solomon Error Correcting Code
-Library and its components within an open source, academic or other
-noncommercial or not-for-profit environment may do so under the
-guidelines and in complete accordance with the below attached
-General Public License (version 2). Under the described terms of
-"free" use for open source and noncommercial purposes of the Schifra
-Reed-Solomon Error Correcting Code Library and its components, this
-license file must accompany ALL Schifra related files including but
-not limited to source code, examples and documentation in its original
-unaltered form.
+Parties wanting to use the Schifra Reed-Solomon Error Correcting  Code
+Library and its  components within an  open source, academic  or other
+noncommercial  or  not-for-profit  environment  may  do  so  under the
+guidelines and in complete accordance with the below attached  General
+Public License (version  2). Under the  described terms of  "free" use
+for open source and noncommercial purposes of the Schifra Reed-Solomon
+Error Correcting Code  Library and its  components, this license  file
+must accompany ALL Schifra related files including but not limited  to
+source  code, examples  and documentation  in its  original unaltered
+form.
 
 
-
-Persons wanting to use the Schifra Reed-Solomon Error Correcting Code
-Library and its components, in environments other than the ones described
-above, which include but not limited to any form of commercial environment,
-should consult and comply (aka purchase a commercial Schifra license)
-with the General Schifra License agreement before proceeding.
+Persons wanting to use the Schifra Reed-Solomon Error Correcting  Code
+Library  and  its  components, in  environments  other  than the  ones
+described  above,  which  include  but  not  limited  to  any  form of
+commercial  environment, should  consult and  comply (aka  purchase a
+commercial Schifra license) with the General Schifra License agreement
+before proceeding.
 
 
 

@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -60,7 +60,7 @@ namespace schifra
          std::string output = std::string(field_descriptor, ' ');
          for (unsigned int i = 0; i < field_descriptor; ++i)
          {
-          output[i] = ((((value >> (field_descriptor - 1 - i)) & 1) == 1) ? '1' : '0');
+            output[i] = ((((value >> (field_descriptor - 1 - i)) & 1) == 1) ? '1' : '0');
          }
          return output;
       }

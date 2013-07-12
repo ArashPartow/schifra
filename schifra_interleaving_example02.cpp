@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -35,14 +35,12 @@ int main()
    const std::size_t max_iterations = 10000;
 
    schifra::reed_solomon::data_block<std::size_t,block_length> block_stack[stack_size];
-   schifra::reed_solomon::data_block<std::size_t,block_length> or_block_stack[stack_size];
 
    for (std::size_t i = 0; i < stack_size; ++i)
    {
       for (std::size_t j = 0; j < block_length; ++j)
       {
          block_stack[i][j] = i;
-         or_block_stack[i][j] = i;
       }
    }
 
@@ -51,7 +49,7 @@ int main()
 
    for (std::size_t i = 0; i < max_iterations; ++i)
    {
-      schifra::reed_solomon::interleave<std::size_t,block_length,stack_size>(block_stack);
+      schifra::reed_solomon::interleave  <std::size_t,block_length,stack_size>(block_stack);
       schifra::reed_solomon::deinterleave<std::size_t,block_length,stack_size>(block_stack);
    }
 

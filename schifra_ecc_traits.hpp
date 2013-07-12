@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -51,6 +51,7 @@ namespace schifra
       template<bool> class __static_assert__
       {
       public:
+
           __static_assert__(...) {}
       };
 
@@ -61,6 +62,7 @@ namespace schifra
       struct validate_reed_solomon_code_parameters
       {
       private:
+
          __static_assert__<(code_length > 0)> assertion1;
          __static_assert__<(code_length > fec_length)> assertion2;
          __static_assert__<(code_length > data_length)> assertion3;
@@ -71,6 +73,7 @@ namespace schifra
       struct validate_reed_solomon_block_parameters
       {
       private:
+
          __static_assert__<(code_length > 0)> assertion1;
          __static_assert__<(code_length > fec_length)> assertion2;
          __static_assert__<(code_length > data_length)> assertion3;
@@ -81,6 +84,7 @@ namespace schifra
       struct equivalent_encoder_decoder
       {
       private:
+
          __static_assert__<(Encoder::trait::code_length == Decoder::trait::code_length)> assertion1;
          __static_assert__<(Encoder::trait::fec_length  == Decoder::trait::fec_length) > assertion2;
          __static_assert__<(Encoder::trait::data_length == Decoder::trait::data_length)> assertion3;
@@ -90,7 +94,9 @@ namespace schifra
       class reed_solomon_triat
       {
       public:
+
          typedef validate_reed_solomon_code_parameters<code_length_,fec_length_,data_length_> vrscp;
+
          enum { code_length = code_length_ };
          enum { fec_length  = fec_length_  };
          enum { data_length = data_length_ };

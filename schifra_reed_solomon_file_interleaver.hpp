@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -116,7 +116,7 @@ namespace schifra
             }
 
             if (remainder == 0)
-               interleave<char,block_length>(block_stack_,complete_row_count);
+               interleave<char,block_length,stack_size>(block_stack_,complete_row_count);
             else
                interleave<char,block_length>(block_stack_,complete_row_count + 1,remainder);
 

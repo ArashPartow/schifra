@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -42,6 +42,7 @@ namespace schifra
          class convert_data_to_symbol<2>
          {
          public:
+
             template<typename BitBlock>
             convert_data_to_symbol(const BitBlock data[], const std::size_t data_length, int symbol[])
             {
@@ -61,6 +62,7 @@ namespace schifra
          class convert_data_to_symbol<4>
          {
          public:
+
             template<typename BitBlock>
             convert_data_to_symbol(const BitBlock data[], const std::size_t data_length, int symbol[])
             {
@@ -78,6 +80,7 @@ namespace schifra
          class convert_data_to_symbol<8>
          {
          public:
+
             template<typename BitBlock>
             convert_data_to_symbol(const BitBlock data[], const std::size_t data_length, int symbol[])
             {
@@ -94,6 +97,7 @@ namespace schifra
          class convert_data_to_symbol<16>
          {
          public:
+
             template<typename BitBlock>
             convert_data_to_symbol(const BitBlock data[], const std::size_t data_length, int symbol[])
             {
@@ -111,6 +115,7 @@ namespace schifra
          class convert_data_to_symbol<24>
          {
          public:
+
             template<typename BitBlock>
             convert_data_to_symbol(const BitBlock data[], const std::size_t data_length, int symbol[])
             {
@@ -132,6 +137,7 @@ namespace schifra
          class convert_symbol_to_data<4>
          {
          public:
+
             template<typename BitBlock>
             convert_symbol_to_data(const int symbol[], BitBlock data[], const std::size_t data_length)
             {
@@ -165,6 +171,7 @@ namespace schifra
          class convert_symbol_to_data<16>
          {
          public:
+
             template<typename BitBlock>
             convert_symbol_to_data(const int symbol[], BitBlock data[], const std::size_t data_length)
             {

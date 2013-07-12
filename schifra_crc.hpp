@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -73,12 +73,12 @@ namespace schifra
       crc32_t crc() const { return state; }
 
    private:
+
       void initialize_crc32_table()
       {
-         crc32_t reg;
          for (std::size_t i = 0; i < 0xFF; ++i)
          {
-            reg = i;
+            crc32_t reg = i;
             for (int j = 0; j < 0x08; ++j)
             {
                reg = ((reg & 1) ? (reg >> 1) ^ key : reg >> 1);
@@ -88,6 +88,7 @@ namespace schifra
       }
 
    protected:
+
       crc32_t key;
       crc32_t state;
       crc32_t table[256];

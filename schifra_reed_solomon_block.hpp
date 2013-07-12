@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -45,18 +45,20 @@ namespace schifra
          typedef traits::reed_solomon_triat<code_length,fec_length,data_length> trait;
          typedef traits::symbol<code_length> symbol;
 
-         block() : errors_detected (0),
-                   errors_corrected(0),
-                   unrecoverable   (false)
+         block()
+         : errors_detected (0),
+           errors_corrected(0),
+           zero_numerators (0),
+           unrecoverable(false)
          {
             traits::validate_reed_solomon_block_parameters<code_length,fec_length,data_length>();
          }
 
-
-         block(const std::string& _data,
-               const std::string& _fec) : errors_detected (0),
-                                          errors_corrected(0),
-                                          unrecoverable   (false)
+         block(const std::string& _data, const std::string& _fec)
+         : errors_detected (0),
+           errors_corrected(0),
+           zero_numerators (0),
+           unrecoverable(false)
          {
             traits::validate_reed_solomon_block_parameters<code_length,fec_length,data_length>();
             for (std::size_t i = 0; i < data_length; ++i)
@@ -92,7 +94,11 @@ namespace schifra
 
          bool data_to_string(std::string& data_str)
          {
-            if (data_str.length() != data_length) return false;
+            if (data_str.length() != data_length)
+            {
+               return false;
+            }
+
             for (std::size_t i = 0; i < data_length; ++i)
             {
                data_str[i] = static_cast<char>(data[i]);
@@ -100,9 +106,13 @@ namespace schifra
             return true;
          }
 
-         void fec_to_string(std::string& fec_str)
+         bool fec_to_string(std::string& fec_str)
          {
-            if (fec_str.length() != fec_length) return false;
+            if (fec_str.length() != fec_length)
+            {
+               return false;
+            }
+
             for (std::size_t i = 0; i < fec_length; ++i)
             {
                fec_str[i] = static_cast<char>(data[data_length + i]);
@@ -120,6 +130,7 @@ namespace schifra
 
          std::size_t errors_detected;
          std::size_t errors_corrected;
+         std::size_t zero_numerators;
          bool        unrecoverable;
          galois::field_symbol data[code_length];
 
@@ -221,6 +232,7 @@ namespace schifra
       struct data_block
       {
       public:
+
          typedef T value_type;
 
                T& operator[](const std::size_t index)        { return data[index]; }
@@ -241,6 +253,7 @@ namespace schifra
          }
 
       private:
+
          T data[block_length];
       };
 
@@ -264,8 +277,7 @@ namespace schifra
       }
 
       template<typename T, std::size_t block_length>
-      inline void full_copy(const data_block<T,block_length> src_block,
-                            T dest_data[])
+      inline void full_copy(const data_block<T,block_length> src_block, T dest_data[])
       {
          for (std::size_t i = 0; i < block_length; ++i, ++dest_data)
          {

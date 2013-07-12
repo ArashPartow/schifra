@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -154,7 +154,6 @@ namespace schifra
 
             out_stream.write(&buffer_[0],static_cast<std::streamsize>(read_amount - fec_length));
          }
-
 
          block_type block_;
          std::size_t current_block_index_;

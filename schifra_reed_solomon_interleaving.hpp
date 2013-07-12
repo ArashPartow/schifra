@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -37,7 +37,7 @@ namespace schifra
    {
 
       template<std::size_t code_length, std::size_t fec_length>
-      inline void interleave(block<code_length,fec_length> block_stack[code_length])
+      inline void interleave(block<code_length,fec_length> (&block_stack)[code_length])
       {
          for (std::size_t i = 0; i < code_length; ++i)
          {
@@ -51,7 +51,7 @@ namespace schifra
       }
 
       template<std::size_t code_length, std::size_t fec_length, std::size_t row_count>
-      inline void interleave(block<code_length,fec_length> block_stack[row_count])
+      inline void interleave(block<code_length,fec_length> (&block_stack)[row_count])
       {
          block<code_length,fec_length> auxiliary_stack[row_count];
 
@@ -70,10 +70,12 @@ namespace schifra
                }
             }
          }
+         copy<code_length,fec_length,row_count>(auxiliary_stack,block_stack);
       }
 
       template<std::size_t code_length, std::size_t fec_length, std::size_t row_count>
-      inline void interleave(block<code_length,fec_length,row_count> block_stack[row_count],const std::size_t& partial_code_length)
+      inline void interleave(block<code_length,fec_length,row_count> (&block_stack)[row_count],
+                             const std::size_t partial_code_length)
       {
          if (partial_code_length == code_length)
          {
@@ -132,7 +134,7 @@ namespace schifra
       }
 
       template<typename T, std::size_t block_length>
-      inline void interleave(data_block<T,block_length> block_stack[block_length])
+      inline void interleave(data_block<T,block_length> (&block_stack)[block_length])
       {
          for (std::size_t i = 0; i < block_length; ++i)
          {
@@ -146,7 +148,7 @@ namespace schifra
       }
 
       template<typename T, std::size_t block_length, std::size_t row_count>
-      inline void interleave(data_block<T,block_length> block_stack[row_count])
+      inline void interleave(data_block<T,block_length> (&block_stack)[row_count])
       {
          data_block<T,block_length> auxiliary_stack[row_count];
 
@@ -169,7 +171,8 @@ namespace schifra
       }
 
       template<typename T, std::size_t block_length, std::size_t row_count>
-      inline void interleave(data_block<T,block_length> block_stack[row_count],const std::size_t& partial_block_length)
+      inline void interleave(data_block<T,block_length> (&block_stack)[row_count],
+                             const std::size_t partial_block_length)
       {
          if (partial_block_length == block_length)
          {
@@ -224,7 +227,8 @@ namespace schifra
       }
 
       template<typename T, std::size_t block_length>
-      inline void interleave(data_block<T,block_length> block_stack[], const std::size_t& row_count)
+      inline void interleave(data_block<T,block_length> block_stack[],
+                             const std::size_t row_count)
       {
          data_block<T,block_length>* auxiliary_stack = new data_block<T,block_length>[row_count];
 
@@ -257,8 +261,8 @@ namespace schifra
 
       template<typename T, std::size_t block_length>
       inline void interleave(data_block<T,block_length> block_stack[],
-                             const std::size_t& row_count,
-                             const std::size_t& partial_block_length)
+                             const std::size_t row_count,
+                             const std::size_t partial_block_length)
       {
          data_block<T,block_length>* auxiliary_stack = new data_block<T,block_length>[row_count];
 
@@ -309,7 +313,7 @@ namespace schifra
       }
 
       template<std::size_t code_length, std::size_t fec_length, std::size_t row_count>
-      inline void deinterleave(block<code_length,fec_length> block_stack[row_count])
+      inline void deinterleave(block<code_length,fec_length> (&block_stack)[row_count])
       {
          block<code_length,fec_length> auxiliary_stack[row_count];
 
@@ -333,7 +337,8 @@ namespace schifra
 
 
       template<std::size_t code_length, std::size_t fec_length, std::size_t row_count>
-      inline void deinterleave(block<code_length,fec_length> block_stack[row_count], const std::size_t& partial_code_length)
+      inline void deinterleave(block<code_length,fec_length> (&block_stack)[row_count],
+                               const std::size_t partial_code_length)
       {
          if (partial_code_length == code_length)
          {
@@ -397,7 +402,7 @@ namespace schifra
       }
 
       template<typename T, std::size_t block_length>
-      inline void deinterleave(data_block<T,block_length> block_stack[block_length])
+      inline void deinterleave(data_block<T,block_length> (&block_stack)[block_length])
       {
          data_block<T,block_length> auxiliary_stack[block_length];
 
@@ -412,7 +417,7 @@ namespace schifra
       }
 
       template<typename T, std::size_t block_length, std::size_t row_count>
-      inline void deinterleave(data_block<T,block_length> block_stack[row_count])
+      inline void deinterleave(data_block<T,block_length> (&block_stack)[row_count])
       {
          data_block<T,block_length> auxiliary_stack[row_count];
 
@@ -435,7 +440,8 @@ namespace schifra
       }
 
       template<typename T, std::size_t block_length>
-      inline void deinterleave(data_block<T,block_length> block_stack[], const std::size_t& row_count)
+      inline void deinterleave(data_block<T,block_length> block_stack[],
+                               const std::size_t row_count)
       {
          data_block<T,block_length>* auxiliary_stack = new data_block<T,block_length>[row_count];
 
@@ -468,8 +474,8 @@ namespace schifra
 
       template<typename T, std::size_t block_length>
       inline void deinterleave(data_block<T,block_length> block_stack[],
-                               const std::size_t& row_count,
-                               const std::size_t& partial_block_length)
+                               const std::size_t row_count,
+                               const std::size_t partial_block_length)
       {
          if (row_count == 1) return;
 

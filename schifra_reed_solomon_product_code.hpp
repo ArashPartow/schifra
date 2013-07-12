@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -44,6 +44,7 @@ namespace schifra
       class square_product_code_encoder
       {
       public:
+
          typedef encoder<code_length,fec_length> encoder_type;
          typedef block<code_length,fec_length> block_type;
          typedef traits::reed_solomon_triat<code_length,fec_length,data_length> trait;
@@ -60,7 +61,7 @@ namespace schifra
          bool encode(data_ptr_type data)
          {
             data_ptr_type curr_data_ptr = data;
-            for (std::size_t row = 0; row < data_length; ++row, curr_data_ptr+=data_length)
+            for (std::size_t row = 0; row < data_length; ++row, curr_data_ptr += data_length)
             {
                copy(curr_data_ptr,data_length,block_stack_[row]);
                if (!encoder_.encode(block_stack_[row]))
@@ -99,7 +100,7 @@ namespace schifra
 
          void output(data_ptr_type output_data)
          {
-            for (std::size_t row = 0; row < code_length; ++row, output_data +=code_length)
+            for (std::size_t row = 0; row < code_length; ++row, output_data += code_length)
             {
                bitio::convert_symbol_to_data<traits::symbol<code_length>::size>(block_stack_[row].data,output_data,code_length);
             }
@@ -107,10 +108,14 @@ namespace schifra
 
          void clear()
          {
-            for (std::size_t i = 0; i < code_length; ++i) block_stack_[i].clear();
+            for (std::size_t i = 0; i < code_length; ++i)
+            {
+               block_stack_[i].clear();
+            }
          }
 
       private:
+
          square_product_code_encoder(const square_product_code_encoder& spce);
          square_product_code_encoder& operator=(const square_product_code_encoder& spce);
 
@@ -123,6 +128,7 @@ namespace schifra
       class square_product_code_decoder
       {
       public:
+
          typedef decoder<code_length,fec_length> decoder_type;
          typedef block<code_length,fec_length> block_type;
          typedef traits::reed_solomon_triat<code_length,fec_length,data_length> trait;
@@ -151,7 +157,7 @@ namespace schifra
 
          void output(data_ptr_type output_data)
          {
-            for (std::size_t row = 0; row < data_length; ++row, output_data +=data_length)
+            for (std::size_t row = 0; row < data_length; ++row, output_data += data_length)
             {
                bitio::convert_symbol_to_data<traits::symbol<code_length>::size>(block_stack_[row].data,output_data,data_length);
             }
@@ -159,7 +165,10 @@ namespace schifra
 
          void clear()
          {
-            for (std::size_t i = 0; i < code_length; ++i) block_stack_[i].clear();
+            for (std::size_t i = 0; i < code_length; ++i)
+            {
+               block_stack_[i].clear();
+            }
          }
 
       private:
@@ -169,7 +178,7 @@ namespace schifra
 
          void copy_proxy(data_ptr_type data)
          {
-            for (std::size_t row = 0; row < code_length; ++row, data+=code_length)
+            for (std::size_t row = 0; row < code_length; ++row, data += code_length)
             {
                bitio::convert_data_to_symbol<traits::symbol<code_length>::size>(data,code_length,block_stack_[row].data);
             }

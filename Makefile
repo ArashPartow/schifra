@@ -6,7 +6,7 @@
 # *                                                                        *
 # * Release Version 0.0.1                                                  *
 # * http://www.schifra.com                                                 *
-# * Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *
+# * Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *
 # *                                                                        *
 # * The Schifra Reed-Solomon error correcting code library and all its     *
 # * components are supplied under the terms of the General Schifra License *
@@ -22,7 +22,7 @@
 
 COMPILER         = -c++
 OPTIMIZATION_OPT = -O3
-OPTIONS          = -pedantic-errors -ansi -Wall -Werror -lstdc++ $(OPTIMIZATION_OPT) -o
+OPTIONS          = -ansi -pedantic-errors -Wall -Wextra -Werror -Wno-long-long -lstdc++ $(OPTIMIZATION_OPT) -o
 
 HPP_SRC+=schifra_galois_field_polynomial.hpp
 HPP_SRC+=schifra_galois_field.hpp
@@ -140,11 +140,6 @@ schifra_reed_solomon_threads_example01: schifra_reed_solomon_threads_example01.c
 
 schifra_reed_solomon_threads_example02: schifra_reed_solomon_threads_example02.cpp $(HPP_SRC)
 	$(COMPILER) $(OPTIONS) schifra_reed_solomon_threads_example02 schifra_reed_solomon_threads_example02.cpp -pthread -lboost_thread
-
-pgo : strtk_parse_test.cpp strtk_tokenizer_cmp.cpp
-	$(COMPILER) -pedantic-errors -ansi -Wall -Werror -lstdc++ -O3 -march=native -pg -fprofile-generate -o schifra_reed_solomon_speed_evaluation schifra_reed_solomon_speed_evaluation.cpp
-	./schifra_reed_solomon_speed_evaluation
-	$(COMPILER) -pedantic-errors -ansi -Wall -Werror -lstdc++ -O3 -march=native -fprofile-use -o schifra_reed_solomon_speed_evaluation schifra_reed_solomon_speed_evaluation.cpp
 
 clean:
 	rm -f core.* *.o *.bak *stackdump *~

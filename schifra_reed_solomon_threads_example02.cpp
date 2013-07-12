@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -67,6 +67,7 @@ public:
    {
       process_id_ = ep.process_id_;
       total_time_ = ep.total_time_;
+      return *this;
    }
 
    double time() { return total_time_; }
@@ -174,7 +175,7 @@ int main()
    encoder_type encoder(field,generator_polynomial);
    decoder_type decoder(field,generator_polynommial_index);
 
-   const unsigned int max_thread_count = 2; // number of functional cores.
+   const unsigned int max_thread_count = 4; // number of functional cores.
 
    std::vector<erasure_process_ptr_type> erasure_process_list;
 

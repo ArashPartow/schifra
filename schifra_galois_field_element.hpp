@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -38,10 +38,9 @@ namespace schifra
 
       class field_element
       {
-
       public:
 
-         field_element(field& gfield)
+         field_element(const field& gfield)
          : field_(gfield),
            poly_value_(-1)
          {}
@@ -56,12 +55,13 @@ namespace schifra
            poly_value_(gfe.poly_value_)
          {}
 
-        ~field_element(){}
+        ~field_element()
+         {}
 
          inline field_element& operator=(const field_element& gfe)
          {
             if (this == &gfe) return *this;
-            field_ = gfe.field_;
+            const_cast<field&>(field_) = gfe.field_;
             poly_value_  = gfe.poly_value_;
             return *this;
          }
@@ -195,7 +195,7 @@ namespace schifra
 
       private:
 
-         field& field_;
+         const field& field_;
          field_symbol poly_value_;
 
       };

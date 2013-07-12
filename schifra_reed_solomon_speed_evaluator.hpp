@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -80,30 +80,64 @@ namespace schifra
 
          std::string tmp_str = std::string(data_length,static_cast<unsigned char>(0x00));
 
-         for (std::size_t i = 0; i < data_length; ++i) tmp_str[i] = static_cast<unsigned char>(i);
+         for (std::size_t i = 0; i < data_length; ++i)
+         {
+            tmp_str[i] = static_cast<unsigned char>(i);
+         }
+
          message_list.push_back(tmp_str);
 
-         for (int i = data_length - 1; i >= 0; --i) tmp_str[i] = static_cast<unsigned char>(i);
+         for (int i = data_length - 1; i >= 0; --i)
+         {
+            tmp_str[i] = static_cast<unsigned char>(i);
+         }
+
          message_list.push_back(tmp_str);
 
-         for (std::size_t i = 0; i < data_length; ++i) tmp_str[i] = (((i & 0x01) == 1) ? static_cast<unsigned char>(i) : 0x00);
+         for (std::size_t i = 0; i < data_length; ++i)
+         {
+            tmp_str[i] = (((i & 0x01) == 1) ? static_cast<unsigned char>(i) : 0x00);
+         }
+
          message_list.push_back(tmp_str);
 
-         for (std::size_t i = 0; i < data_length; ++i) tmp_str[i] = (((i & 0x01) == 0) ? static_cast<unsigned char>(i) : 0x00);
+         for (std::size_t i = 0; i < data_length; ++i)
+         {
+            tmp_str[i] = (((i & 0x01) == 0) ? static_cast<unsigned char>(i) : 0x00);
+         }
+
          message_list.push_back(tmp_str);
 
-         for (int i = data_length - 1; i >= 0; --i) tmp_str[i] = (((i & 0x01) == 1) ? static_cast<unsigned char>(i) : 0x00);
+         for (int i = data_length - 1; i >= 0; --i)
+         {
+            tmp_str[i] = (((i & 0x01) == 1) ? static_cast<unsigned char>(i) : 0x00);
+         }
+
          message_list.push_back(tmp_str);
 
-         for (int i = data_length - 1; i >= 0; --i) tmp_str[i] = (((i & 0x01) == 0) ? static_cast<unsigned char>(i) : 0x00);
+         for (int i = data_length - 1; i >= 0; --i)
+         {
+            tmp_str[i] = (((i & 0x01) == 0) ? static_cast<unsigned char>(i) : 0x00);
+         }
+
          message_list.push_back(tmp_str);
 
          tmp_str = std::string(data_length,static_cast<unsigned char>(0x00));
-         for (std::size_t i = 0; i < (data_length >> 1); ++i) tmp_str[i] = static_cast<unsigned char>(0xFF);
+
+         for (std::size_t i = 0; i < (data_length >> 1); ++i)
+         {
+            tmp_str[i] = static_cast<unsigned char>(0xFF);
+         }
+
          message_list.push_back(tmp_str);
 
          tmp_str = std::string(data_length,static_cast<unsigned char>(0xFF)) ;
-         for (std::size_t i = 0; i < (data_length >> 1); ++i) tmp_str[i] = static_cast<unsigned char>(0x00);
+
+         for (std::size_t i = 0; i < (data_length >> 1); ++i)
+         {
+            tmp_str[i] = static_cast<unsigned char>(0x00);
+         }
+
          message_list.push_back(tmp_str);
 
          for (std::size_t i = 0; i < message_list.size(); ++i)
@@ -124,6 +158,7 @@ namespace schifra
       struct all_errors_decoder_speed_test
       {
       public:
+
          all_errors_decoder_speed_test(const std::size_t prim_poly_size, const unsigned int prim_poly[])
          {
             galois::field field(field_descriptor,prim_poly_size,prim_poly);

@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -70,6 +70,7 @@ namespace schifra
             {
                rsblock.errors_detected  = 0;
                rsblock.errors_corrected = 0;
+               rsblock.zero_numerators  = 0;
                rsblock.unrecoverable    = true;
                return false;
             }
@@ -83,6 +84,7 @@ namespace schifra
             {
                rsblock.errors_detected  = 0;
                rsblock.errors_corrected = 0;
+               rsblock.zero_numerators  = 0;
                rsblock.unrecoverable    = false;
                return true;
             }
@@ -114,6 +116,7 @@ namespace schifra
                */
                rsblock.errors_detected  = 0;
                rsblock.errors_corrected = 0;
+               rsblock.zero_numerators  = 0;
                rsblock.unrecoverable    = true;
                return false;
             }
@@ -134,6 +137,7 @@ namespace schifra
                */
                rsblock.errors_detected  = error_locations.size();
                rsblock.errors_corrected = 0;
+               rsblock.zero_numerators  = 0;
                rsblock.unrecoverable    = true;
                return false;
             }
@@ -187,7 +191,7 @@ namespace schifra
          {
             /*
               Note: 1. Erasure positions must be unique.
-                    2. Erasure position must exist within the code block.
+                    2. Erasure positions must exist within the code block.
                     There are NO exceptions to these rules!
             */
             erasure_locations.resize(erasure_list.size());
@@ -222,7 +226,7 @@ namespace schifra
          void find_roots(const galois::field_polynomial& poly, std::vector<int>& root_list) const
          {
             /*
-               Chien Search, Find the roots of the error locator polynomial
+               Chien Search: Find the roots of the error locator polynomial
                via an exhaustive search over all non-zero elements in the given
                finite field.
             */
@@ -267,8 +271,8 @@ namespace schifra
          {
             /*
                Modified Berlekamp-Massey Algorithm
-               Identify the linear feed-back shift register (LFSR) of "minimal" length,
-               which will generate the sequence equivalent to the syndrome.
+               Identify the shortest length linear feed-back shift register (LFSR)
+               that will generate the sequence equivalent to the syndrome.
             */
 
             int i = -1;
@@ -310,23 +314,32 @@ namespace schifra
             galois::field_polynomial lambda_derivative = lambda.derivative();
 
             rsblock.errors_corrected = 0;
+            rsblock.zero_numerators  = 0;
+
+            galois::field_element numerator(field_);
+            galois::field_element denominator(field_);
 
             for (std::size_t i = 0; i < error_locations.size(); ++i)
             {
                int error_location                  = error_locations[i];
                galois::field_symbol  alpha_inverse = field_.alpha(error_location);
-               galois::field_element numerator     = (omega(alpha_inverse) * root_exponent_table_[error_location]);
-               galois::field_element denominator   = lambda_derivative(alpha_inverse);
+               numerator                           = (omega(alpha_inverse) * root_exponent_table_[error_location]);
+               denominator                         = lambda_derivative(alpha_inverse);
                if (numerator != 0)
                {
-                  if (denominator == 0)
+                  if (denominator != 0)
+                  {
+                     rsblock[error_location - 1] ^= field_.div(numerator.poly(),denominator.poly());
+                     rsblock.errors_corrected++;
+                  }
+                  else
                   {
                      rsblock.unrecoverable = true;
                      return false;
                   }
-                  rsblock[error_location - 1] ^= field_.div(numerator.poly(),denominator.poly());
-                  rsblock.errors_corrected++;
                }
+               else
+                  ++rsblock.zero_numerators;
             }
             return true;
          }
@@ -381,6 +394,7 @@ namespace schifra
                }
                rsblock.errors_detected  = block_.errors_detected;
                rsblock.errors_corrected = block_.errors_corrected;
+               rsblock.zero_numerators  = block_.zero_numerators;
                rsblock.unrecoverable    = block_.unrecoverable;
                return true;
             }
@@ -388,6 +402,7 @@ namespace schifra
             {
                rsblock.errors_detected  = block_.errors_detected;
                rsblock.errors_corrected = block_.errors_corrected;
+               rsblock.zero_numerators  = block_.zero_numerators;
                rsblock.unrecoverable    = block_.unrecoverable;
                return false;
             }
@@ -407,6 +422,7 @@ namespace schifra
                }
                rsblock.errors_detected  = block_.errors_detected;
                rsblock.errors_corrected = block_.errors_corrected;
+               rsblock.zero_numerators  = block_.zero_numerators;
                rsblock.unrecoverable    = block_.unrecoverable;
                return true;
             }
@@ -414,6 +430,7 @@ namespace schifra
             {
                rsblock.errors_detected  = block_.errors_detected;
                rsblock.errors_corrected = block_.errors_corrected;
+               rsblock.zero_numerators  = block_.zero_numerators;
                rsblock.unrecoverable    = block_.unrecoverable;
                return false;
             }

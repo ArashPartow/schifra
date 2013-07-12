@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -24,7 +24,10 @@
 #define INCLUDE_SCHIFRA_ERROR_PROCESSES_HPP
 
 
+#include <cstddef>
+#include <cstdlib>
 #include <iostream>
+#include <deque>
 #include <vector>
 
 #include "schifra_reed_solomon_block.hpp"
@@ -226,14 +229,13 @@ namespace schifra
       std::size_t erasures[code_length];
       for (std::size_t i = 0; i < code_length; ++i) erasures[i] = 0;
 
-      std::size_t error_position = 0;
       std::size_t e = 0;
       std::size_t s = 0;
       std::size_t i = 0;
 
       while ((e < error_count) || (s < erasure_count) || (i < (error_count + erasure_count)))
       {
-        error_position = (start_position + i) % code_length;
+        std::size_t error_position = (start_position + i) % code_length;
         if (((i & 0x01) == 0) && (s < erasure_count))
         {
            add_erasure_error(error_position,rsblock);
@@ -413,15 +415,15 @@ namespace schifra
 
    static const std::size_t random_error_index[] =
                          {
-                            13,   47,  148,   66,  228,  208,  182,   92,
+                            13,  170,  148,   66,  228,  208,  182,   92,
                              4,  137,   97,   99,  237,  151,   15,    0,
                            119,  243,   41,  222,   33,  211,  188,    5,
                             44,   30,  210,  111,   54,   79,   61,  223,
                            239,  149,   73,  115,  201,  234,  194,   62,
-                           147,   70,   19,   49,   11,   52,  164,   29,
+                           147,   70,   19,   49,   72,   52,  164,   29,
                            102,  225,  203,  153,   18,  205,   40,  217,
-                           165,  177,  166,  139,  236,   68,  231,  154,
-                           116,  136,  170,  240,   46,   89,  120,  183,
+                           165,  177,  166,  134,  236,   68,  231,  154,
+                           116,  136,   47,  240,   46,   89,  120,  183,
                            242,   28,  161,  226,  241,  230,   10,  131,
                            207,  132,   83,  171,  202,  195,  227,  206,
                            112,   88,   90,  146,  117,  180,   26,   78,
@@ -438,10 +440,10 @@ namespace schifra
                             48,  196,   94,   63,  244,  191,   93,  126,
                            138,  159,    9,   85,  249,   34,  185,  163,
                             17,   65,  184,   82,  109,  172,  108,   69,
-                           150,    3,   20,  221,  162,  212,  152,  199,
-                           198,   72,  229,   55,   87,  178,  141,   59,
+                           150,    3,   20,  221,  162,  212,  152,   59,
+                           198,   74,  229,   55,   87,  178,  141,  199,
                             57,  130,   80,  173,  101,  122,  144,   51,
-                           134,   74,    8,  125,  158,  124,  123,   37,
+                           139,   11,    8,  125,  158,  124,  123,   37,
                             14,   24,   22,   43,  197,   50,   98,    6,
                            176,  251,   86,  218,  193,   71,  145,    1,
                             45,   38,  189,  143,  245,  157,  181
@@ -455,13 +457,58 @@ namespace schifra
                                                    const std::size_t& error_index_start_position,
                                                    const bool display_positions = false)
    {
+      schifra::reed_solomon::block<code_length,fec_length> tmp_rsblock = rsblock;
       for (std::size_t i = 0; i < error_count; ++i)
       {
-         add_error(random_error_index[(error_index_start_position + i) % error_index_size],rsblock);
+         std::size_t error_position = (random_error_index[(error_index_start_position + i) % error_index_size]) % code_length;
+         add_error(error_position,rsblock);
          if (display_positions)
          {
-            std::cout << "Error index: " << random_error_index[(error_index_start_position + i) % error_index_size] << std::endl;
+            std::cout << "Error index: " << error_position << std::endl;
          }
+      }
+   }
+
+   template<std::size_t code_length, std::size_t fec_length>
+   inline void corrupt_message_all_errors_at_index(schifra::reed_solomon::block<code_length,fec_length>& rsblock,
+                                                   const std::size_t error_count,
+                                                   const std::size_t& error_index_start_position,
+                                                   const std::vector<std::size_t>& random_error_index,
+                                                   const bool display_positions = false)
+   {
+      for (std::size_t i = 0; i < error_count; ++i)
+      {
+         std::size_t error_position = (random_error_index[(error_index_start_position + i) % random_error_index.size()]) % code_length;
+         add_error(error_position,rsblock);
+         if (display_positions)
+         {
+            std::cout << "Error index: " << error_position << std::endl;
+         }
+      }
+   }
+
+   inline void generate_error_index(const std::size_t index_size,
+                                    std::vector<std::size_t>& random_error_index,
+                                    std::size_t seed)
+   {
+      if (0 == seed) seed = 0xA5A5A5A5;
+      ::srand(static_cast<unsigned int>(seed));
+      std::deque<std::size_t> index_list;
+      for (std::size_t i = 0; i < index_size; ++i)
+      {
+         index_list.push_back(i);
+      }
+
+      random_error_index.reserve(index_size);
+      random_error_index.resize(0);
+
+      while (!index_list.empty())
+      {
+         // possibly the worst way of doing this.
+         std::size_t index = ::rand() % index_list.size();
+
+         random_error_index.push_back(index_list[index]);
+         index_list.erase(index_list.begin() + index);
       }
    }
 

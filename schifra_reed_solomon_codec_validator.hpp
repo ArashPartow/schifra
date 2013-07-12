@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -24,6 +24,7 @@
 #define INCLUDE_SCHIFRA_REED_SOLOMON_CODEC_VALIDATOR_HPP
 
 
+#include <cstddef>
 #include <iostream>
 #include <string>
 
@@ -497,7 +498,7 @@ namespace schifra
                         std::cout << "stage8() - Error Correcting Failure! start position: " << start_position << "\t scale: " << scale <<std::endl;
                         ++block_failures_;
                      }
-                     else if (rs_block.errors_detected != rs_block.errors_corrected)
+                     else if (rs_block.errors_detected != (rs_block.errors_corrected + rs_block.zero_numerators))
                      {
                         print_codec_properties();
                         std::cout << "stage8() - Discrepancy between the number of errors detected and corrected. [" << rs_block.errors_detected << "," << rs_block.errors_corrected << "]" << std::endl;
@@ -653,6 +654,9 @@ namespace schifra
 
             std::size_t initial_failure_count = block_failures_;
 
+            std::vector<std::size_t> random_error_index;
+            generate_error_index((fec_length >> 1),random_error_index,0xA5A5A5A5);
+
             for (std::size_t error_count = 1; error_count <= (fec_length >> 1); ++error_count)
             {
                for (std::size_t error_index = 0; error_index < error_index_size; ++error_index)
@@ -660,7 +664,8 @@ namespace schifra
                   block_type rs_block = rs_block_original;
                   corrupt_message_all_errors_at_index(rs_block,
                                                       error_count,
-                                                      error_index);
+                                                      error_index,
+                                                      random_error_index);
 
                   if (!rs_decoder_->decode(rs_block))
                   {
@@ -701,9 +706,11 @@ namespace schifra
 
 
       protected:
+
          codec_validator() {}
 
       private:
+
          codec_validator(const codec_validator&);
          const codec_validator& operator=(const codec_validator&);
 

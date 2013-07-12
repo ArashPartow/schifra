@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -155,6 +155,21 @@ namespace schifra
             #endif
          }
 
+         #ifdef LINEAR_EXP_LUT
+         inline field_symbol* const linear_exp(const field_symbol& a) const
+         {
+            #if !defined(NO_GFLUT)
+               static const field_symbol upper_bound = 2 * field_size_;
+               if ((a >= 0) && (a <= upper_bound))
+                  return linear_exp_table_[a];
+               else
+                  return reinterpret_cast<field_symbol*>(0);
+            #else
+               return reinterpret_cast<field_symbol*>(0);
+            #endif
+         }
+         #endif
+
          inline field_symbol inverse(const field_symbol& val) const
          {
             #if !defined(NO_GFLUT)
@@ -205,6 +220,7 @@ namespace schifra
          field_symbol** mul_table_;
          field_symbol** div_table_;
          field_symbol** exp_table_;
+         field_symbol** linear_exp_table_;
          char*          buffer_;
       };
 
@@ -218,19 +234,31 @@ namespace schifra
 
          #if !defined(NO_GFLUT)
 
-           const std::size_t buffer__size = ((4 * (field_size_ + 1) * (field_size_ + 1)) + ((field_size_ + 1) * 2)) * sizeof(field_symbol);
-           buffer_ = new char[buffer__size];
+           #ifdef LINEAR_EXP_LUT
+              static const std::size_t buffer_size = ((6 * (field_size_ + 1) * (field_size_ + 1)) + ((field_size_ + 1) * 2)) * sizeof(field_symbol);
+           #else
+              static const std::size_t buffer_size = ((4 * (field_size_ + 1) * (field_size_ + 1)) + ((field_size_ + 1) * 2)) * sizeof(field_symbol);
+           #endif
+
+           buffer_ = new char[buffer_size];
            std::size_t offset = 0;
            offset = create_2d_array(buffer_,(field_size_ + 1),(field_size_ + 1),offset,&mul_table_);
            offset = create_2d_array(buffer_,(field_size_ + 1),(field_size_ + 1),offset,&div_table_);
            offset = create_2d_array(buffer_,(field_size_ + 1),(field_size_ + 1),offset,&exp_table_);
+           #ifdef LINEAR_EXP_LUT
+              offset = create_2d_array(buffer_,(field_size_ + 1),(field_size_ + 1) * 2,offset,&linear_exp_table_);
+           #else
+              linear_exp_table_ = 0;
+           #endif
            offset = create_array(buffer_,(field_size_ + 1) * 2,offset,&mul_inverse_);
 
          #else
+
            buffer_      = 0;
            mul_table_   = 0;
            div_table_   = 0;
            exp_table_   = 0;
+           linear_exp_table_ = 0;
            mul_inverse_ = 0;
 
          #endif
@@ -245,8 +273,8 @@ namespace schifra
 
          for (std::size_t i = 0; i < (prim_poly_deg_ + 1); ++i)
          {
-            prim_poly_hash_ += ((i & 1) == 0) ? (  (prim_poly_hash_ <<  7) ^ primitive_poly[i] ^ (prim_poly_hash_ >> 3)) :
-                                               (~((prim_poly_hash_ << 11) ^ primitive_poly[i] ^ (prim_poly_hash_ >> 5)));
+            prim_poly_hash_ += ((i & 1) == 0) ? (  (prim_poly_hash_ <<  7) ^  primitive_poly[i] * (prim_poly_hash_ >> 3)) :
+                                                (~((prim_poly_hash_ << 11) + (primitive_poly[i] ^ (prim_poly_hash_ >> 5))));
          }
 
          generate_field(primitive_poly);
@@ -263,6 +291,9 @@ namespace schifra
            if (0 != mul_table_) { delete [] mul_table_; mul_table_ = 0; }
            if (0 != div_table_) { delete [] div_table_; div_table_ = 0; }
            if (0 != exp_table_) { delete [] exp_table_; exp_table_ = 0; }
+           #ifdef LINEAR_EXP_LUT
+           if (0 != linear_exp_table_) { delete [] linear_exp_table_; linear_exp_table_ = 0; }
+           #endif
            if (0 !=    buffer_) { delete [] buffer_;    buffer_    = 0; }
 
          #endif
@@ -332,6 +363,16 @@ namespace schifra
                  exp_table_[i][j] = gen_exp(i,j);
               }
            }
+
+           #ifdef LINEAR_EXP_LUT
+           for (field_symbol i = 0; i < static_cast<field_symbol>(field_size_ + 1); ++i)
+           {
+              for (int j = 0; j < static_cast<field_symbol>(2 * field_size_); ++j)
+              {
+                 linear_exp_table_[i][j] = gen_exp(i,j);
+              }
+           }
+           #endif
 
            for (field_symbol i = 0; i < static_cast<field_symbol>(field_size_ + 1); ++i)
            {

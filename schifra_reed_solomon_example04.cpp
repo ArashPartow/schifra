@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2010 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2013 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -27,8 +27,6 @@
                 pieces of relevant information.
 */
 
-
-#include <cstddef>
 #include <iostream>
 #include <string>
 
@@ -41,11 +39,12 @@
 #include "schifra_error_processes.hpp"
 #include "schifra_reed_solomon_bitio.hpp"
 
-int main()
+
+int main(void)
 {
    /* Finite Field Parameters */
    const std::size_t field_descriptor                 = 4;
-   const std::size_t generator_polynommial_index      = 0;
+   const std::size_t generator_polynommial_index      = 0; 
    const std::size_t generator_polynommial_root_count = 7;
 
    /* Reed Solomon Code Parameters */
@@ -53,7 +52,7 @@ int main()
    const std::size_t fec_length  =  7;
    const std::size_t data_length = code_length - fec_length;
 
-   /* 4-bit Symbol Parameter */
+   /* 10-bit Symbol Parameter */
    const int mask = 0x0000000F;
 
    /*
@@ -93,7 +92,7 @@ int main()
    schifra::reed_solomon::block<code_length,fec_length> block;
    schifra::reed_solomon::block<code_length,fec_length> original_block;
 
-   /* Copy data from 1 Byte per element message block into 4-bit RS Block */
+   /* Copy data from 1 Byte per element message block into 5-bit RS Block */
    schifra::reed_solomon::bitio::convert_data_to_symbol<field_descriptor>(message.c_str(),message.size(),block.data);
    schifra::reed_solomon::bitio::convert_data_to_symbol<field_descriptor>(message.c_str(),message.size(),original_block.data);
 
