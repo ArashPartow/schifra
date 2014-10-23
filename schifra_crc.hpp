@@ -37,7 +37,9 @@ namespace schifra
 
       typedef std::size_t crc32_t;
 
-      crc32(const crc32_t& _key, const crc32_t& _state = 0x00) : key(_key), state(_state)
+      crc32(const crc32_t& _key, const crc32_t& _state = 0x00)
+      : key(_key),
+        state(_state)
       {
          initialize_crc32_table();
       }
@@ -79,10 +81,12 @@ namespace schifra
          for (std::size_t i = 0; i < 0xFF; ++i)
          {
             crc32_t reg = i;
+
             for (int j = 0; j < 0x08; ++j)
             {
                reg = ((reg & 1) ? (reg >> 1) ^ key : reg >> 1);
-           }
+            }
+
             table[i] = reg;
          }
       }
@@ -98,7 +102,9 @@ namespace schifra
    {
    public:
 
-      schifra_crc(const crc32_t _key) :  crc32(_key,0xAAAAAAAA) {}
+      schifra_crc(const crc32_t _key)
+      : crc32(_key,0xAAAAAAAA)
+      {}
 
       void update(const unsigned char& data)
       {

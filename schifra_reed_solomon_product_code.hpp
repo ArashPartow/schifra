@@ -35,12 +35,13 @@
 #include "schifra_reed_solomon_bitio.hpp"
 #include "schifra_ecc_traits.hpp"
 
+
 namespace schifra
 {
 
    namespace reed_solomon
    {
-      template<std::size_t code_length, std::size_t fec_length, std::size_t data_length = code_length - fec_length>
+      template <std::size_t code_length, std::size_t fec_length, std::size_t data_length = code_length - fec_length>
       class square_product_code_encoder
       {
       public:
@@ -64,27 +65,33 @@ namespace schifra
             for (std::size_t row = 0; row < data_length; ++row, curr_data_ptr += data_length)
             {
                copy(curr_data_ptr,data_length,block_stack_[row]);
+
                if (!encoder_.encode(block_stack_[row]))
                {
                   return false;
                }
             }
+
             block_type vertical_block;
+
             for (std::size_t col = 0; col < code_length; ++col)
             {
                for (std::size_t row = 0; row < data_length; ++row)
                {
                   vertical_block[row] = block_stack_[row][col];
                }
+
                if (!encoder_.encode(vertical_block))
                {
                   return false;
                }
+
                for (std::size_t fec_index = 0; fec_index < fec_length; ++fec_index)
                {
                   block_stack_[data_length + fec_index].fec(fec_index) = vertical_block.fec(fec_index);
                }
             }
+
             return true;
          }
 
@@ -94,7 +101,9 @@ namespace schifra
             {
                return false;
             }
+
             interleave<code_length,fec_length>(block_stack_);
+
             return true;
          }
 
@@ -123,8 +132,7 @@ namespace schifra
          const encoder_type& encoder_;
       };
 
-
-      template<std::size_t code_length, std::size_t fec_length, std::size_t data_length = code_length - fec_length>
+      template <std::size_t code_length, std::size_t fec_length, std::size_t data_length = code_length - fec_length>
       class square_product_code_decoder
       {
       public:
@@ -187,6 +195,7 @@ namespace schifra
          void decode_proxy()
          {
             bool first_iteration_failure = false;
+
             for (std::size_t row = 0; row < data_length; ++row)
             {
                if (!decoder_.decode(block_stack_[row]))
@@ -211,6 +220,7 @@ namespace schifra
                {
                   vertical_block[row] = block_stack_[row][col];
                }
+
                decoder_.decode(vertical_block);
             }
          }
@@ -218,7 +228,6 @@ namespace schifra
          block_type block_stack_[code_length];
          const decoder_type& decoder_;
       };
-
 
    } // namespace reed_solomon
 

@@ -49,12 +49,14 @@
 #include "schifra_ecc_traits.hpp"
 #include "schifra_utilities.hpp"
 
+
 const std::size_t round_count = 1000;
 
-template<typename Encoder, typename Decoder>
+template <typename Encoder, typename Decoder>
 class process
 {
 public:
+
    process(const unsigned int& process_id,
            const Encoder& encoder,
            const Decoder& decoder,
@@ -63,7 +65,8 @@ public:
      total_time_(0.0),
      encoder_(encoder),
      decoder_(decoder),
-     message_list_(message_list){}
+     message_list_(message_list)
+   {}
 
    process& operator=(const process& proc)
    {
@@ -123,7 +126,6 @@ private:
    const std::vector<std::string>& message_list_;
 };
 
-
 void generate_messages(const std::size_t data_length, std::vector<std::string>& message_list)
 {
    for (unsigned int c = 0; c < 256; ++c)
@@ -158,7 +160,6 @@ int main()
 
    typedef schifra::reed_solomon::encoder<code_length,fec_length> encoder_type;
    typedef schifra::reed_solomon::decoder<code_length,fec_length> decoder_type;
-   typedef schifra::reed_solomon::block<code_length,fec_length>   block_type;
    typedef process<encoder_type,decoder_type>                     process_type;
    typedef boost::shared_ptr<process_type>                        process_ptr_type;
 

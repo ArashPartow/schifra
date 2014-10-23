@@ -39,7 +39,7 @@ namespace schifra
    namespace reed_solomon
    {
 
-      template<std::size_t code_length, std::size_t fec_length>
+      template <std::size_t code_length, std::size_t fec_length>
       void* create_encoder(galois::field& field,
                            const std::size_t& gen_poly_index)
       {
@@ -50,7 +50,7 @@ namespace schifra
          return new encoder<code_length,fec_length>(field,gen_polynomial);
       }
 
-      template<std::size_t code_length, std::size_t fec_length>
+      template <std::size_t code_length, std::size_t fec_length>
       void* create_decoder(galois::field& field,
                            const std::size_t& gen_poly_index)
       {
@@ -59,7 +59,7 @@ namespace schifra
          return new decoder<code_length,fec_length>(field,static_cast<unsigned int>(gen_poly_index));
       }
 
-      template<std::size_t code_length, std::size_t max_fec_length = 128>
+      template <std::size_t code_length, std::size_t max_fec_length = 128>
       class general_codec
       {
       public:
@@ -161,7 +161,7 @@ namespace schifra
             delete static_cast<reed_solomon::decoder<code_length,128>*>(decoder_[128]);
          }
 
-         template<typename Block>
+         template <typename Block>
          bool encode(Block& block) const
          {
             /*
@@ -176,7 +176,7 @@ namespace schifra
                return static_cast<encoder_type*>(encoder_[Block::trait::fec_length])->encode(block);
          }
 
-         template<typename Block>
+         template <typename Block>
          bool decode(Block& block) const
          {
             typedef reed_solomon::decoder<Block::trait::code_length,Block::trait::fec_length> decoder_type;

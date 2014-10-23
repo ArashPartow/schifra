@@ -28,6 +28,7 @@
 #include "schifra_reed_solomon_decoder.hpp"
 #include "schifra_reed_solomon_file_decoder.hpp"
 
+
 int main()
 {
    const std::size_t field_descriptor    =   8;

@@ -33,6 +33,7 @@
 #include "schifra_reed_solomon_block.hpp"
 #include "schifra_reed_solomon_bitio.hpp"
 
+
 int main()
 {
    /* Finite Field Parameter */

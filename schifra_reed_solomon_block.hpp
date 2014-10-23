@@ -30,13 +30,14 @@
 #include "schifra_galois_field.hpp"
 #include "schifra_ecc_traits.hpp"
 
+
 namespace schifra
 {
 
    namespace reed_solomon
    {
 
-      template<std::size_t code_length, std::size_t fec_length, std::size_t data_length = code_length - fec_length>
+      template <std::size_t code_length, std::size_t fec_length, std::size_t data_length = code_length - fec_length>
       struct block
       {
       public:
@@ -136,7 +137,7 @@ namespace schifra
 
       };
 
-      template<std::size_t code_length, std::size_t fec_length>
+      template <std::size_t code_length, std::size_t fec_length>
       inline void copy(const block<code_length,fec_length>& src_block, block<code_length,fec_length>& dest_block)
       {
          for (std::size_t index = 0; index < code_length; ++index)
@@ -145,7 +146,7 @@ namespace schifra
          }
       }
 
-      template<typename T, std::size_t code_length, std::size_t fec_length>
+      template <typename T, std::size_t code_length, std::size_t fec_length>
       inline void copy(const T src_data[], block<code_length,fec_length>& dest_block)
       {
          for (std::size_t index = 0; index < (code_length - fec_length); ++index, ++src_data)
@@ -154,7 +155,7 @@ namespace schifra
          }
       }
 
-      template<typename T, std::size_t code_length, std::size_t fec_length>
+      template <typename T, std::size_t code_length, std::size_t fec_length>
       inline void copy(const T src_data[],
                        const std::size_t& src_length,
                        block<code_length,fec_length>& dest_block)
@@ -165,7 +166,7 @@ namespace schifra
          }
       }
 
-      template<std::size_t code_length, std::size_t fec_length, std::size_t stack_size>
+      template <std::size_t code_length, std::size_t fec_length, std::size_t stack_size>
       inline void copy(const block<code_length,fec_length>  src_block_stack[stack_size],
                              block<code_length,fec_length> dest_block_stack[stack_size])
       {
@@ -175,7 +176,7 @@ namespace schifra
          }
       }
 
-      template<typename T, std::size_t code_length, std::size_t fec_length, std::size_t stack_size>
+      template <typename T, std::size_t code_length, std::size_t fec_length, std::size_t stack_size>
       inline bool copy(const T src_data[],
                        const std::size_t src_length,
                        block<code_length,fec_length> dest_block_stack[stack_size])
@@ -197,7 +198,7 @@ namespace schifra
          return true;
       }
 
-      template<typename T, std::size_t code_length, std::size_t fec_length>
+      template <typename T, std::size_t code_length, std::size_t fec_length>
       inline void full_copy(const block<code_length,fec_length> src_block,
                             T dest_data[])
       {
@@ -207,7 +208,7 @@ namespace schifra
          }
       }
 
-      template<typename T, std::size_t code_length, std::size_t fec_length, std::size_t stack_size>
+      template <typename T, std::size_t code_length, std::size_t fec_length, std::size_t stack_size>
       inline void copy(const block<code_length,fec_length> src_block_stack[stack_size],
                        T dest_data[])
       {
@@ -221,14 +222,14 @@ namespace schifra
          }
       }
 
-      template<std::size_t code_length, std::size_t fec_length>
+      template <std::size_t code_length, std::size_t fec_length>
       inline std::ostream& operator<<(std::ostream& os, const block<code_length,fec_length>& rs_block)
       {
          for (std::size_t i = 0; i < code_length; ++i) os << static_cast<char>(rs_block[i]);
          return os;
       }
 
-      template<typename T, std::size_t block_length>
+      template <typename T, std::size_t block_length>
       struct data_block
       {
       public:
@@ -257,7 +258,7 @@ namespace schifra
          T data[block_length];
       };
 
-      template<typename T, std::size_t block_length>
+      template <typename T, std::size_t block_length>
       inline void copy(const data_block<T,block_length>& src_block, data_block<T,block_length>& dest_block)
       {
          for (std::size_t index = 0; index < block_length; ++index)
@@ -266,7 +267,7 @@ namespace schifra
          }
       }
 
-      template<typename T, std::size_t block_length, std::size_t stack_size>
+      template <typename T, std::size_t block_length, std::size_t stack_size>
       inline void copy(const data_block<T,block_length>  src_block_stack[stack_size],
                              data_block<T,block_length> dest_block_stack[stack_size])
       {
@@ -276,7 +277,7 @@ namespace schifra
          }
       }
 
-      template<typename T, std::size_t block_length>
+      template <typename T, std::size_t block_length>
       inline void full_copy(const data_block<T,block_length> src_block, T dest_data[])
       {
          for (std::size_t i = 0; i < block_length; ++i, ++dest_data)

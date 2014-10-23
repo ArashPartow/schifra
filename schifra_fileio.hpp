@@ -32,6 +32,7 @@
 
 #include "schifra_crc.hpp"
 
+
 namespace schifra
 {
 

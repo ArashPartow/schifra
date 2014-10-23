@@ -35,6 +35,7 @@
 #include "schifra_galois_field.hpp"
 #include "schifra_galois_field_polynomial.hpp"
 
+
 namespace schifra
 {
 

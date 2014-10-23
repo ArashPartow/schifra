@@ -37,12 +37,17 @@ namespace schifra
    namespace reed_solomon
    {
 
-      template<std::size_t block_length, std::size_t fec_length>
+      template <std::size_t block_length, std::size_t fec_length>
       inline void interleaved_stack_erasure_mapper(const std::vector<std::size_t>& missing_row_index,
                                                          std::vector<erasure_locations_t>& erasure_row_list)
       {
          erasure_row_list.resize(block_length);
-         for (std::size_t i = 0; i < block_length; ++i) erasure_row_list[i].reserve(fec_length);
+
+         for (std::size_t i = 0; i < block_length; ++i)
+         {
+            erasure_row_list[i].reserve(fec_length);
+         }
+
          for (std::size_t i = 0; i < missing_row_index.size(); ++i)
          {
             for (std::size_t j = 0; j < block_length; ++j)
@@ -52,7 +57,7 @@ namespace schifra
          }
       }
 
-      template<std::size_t code_length, std::size_t fec_length>
+      template <std::size_t code_length, std::size_t fec_length>
       inline bool erasure_channel_stack_encode(const encoder<code_length,fec_length>& encoder,
                                                      block<code_length,fec_length> (&output)[code_length])
       {
@@ -68,7 +73,7 @@ namespace schifra
          return true;
       }
 
-      template<std::size_t code_length, std::size_t fec_length, std::size_t data_length = code_length - fec_length>
+      template <std::size_t code_length, std::size_t fec_length, std::size_t data_length = code_length - fec_length>
       class erasure_code_decoder : public decoder<code_length,fec_length,data_length>
       {
       public:
@@ -90,7 +95,10 @@ namespace schifra
 
          bool decode(block_type rsblock[code_length], const erasure_locations_t& erasure_list) const
          {
-            if ((!decoder_type::decoder_valid_) || (erasure_list.size() != fec_length))
+            if (
+                 (!decoder_type::decoder_valid_) ||
+                 (erasure_list.size() != fec_length)
+               )
             {
                return false;
             }
@@ -120,7 +128,7 @@ namespace schifra
 
             galois::field_polynomial gamma_derivative = gamma.derivative();
 
-            for (std::size_t i = 0; i < gamma_roots.size(); i++)
+            for (std::size_t i = 0; i < gamma_roots.size(); ++i)
             {
                int error_location                  = static_cast<int>(gamma_roots[i]);
                galois::field_symbol  alpha_inverse = decoder_type::field_.alpha(error_location);
@@ -176,7 +184,7 @@ namespace schifra
 
       };
 
-      template<std::size_t code_length, std::size_t fec_length>
+      template <std::size_t code_length, std::size_t fec_length>
       inline bool erasure_channel_stack_decode(const decoder<code_length,fec_length>& general_decoder,
                                                const erasure_locations_t& missing_row_index,
                                                      block<code_length,fec_length> (&output)[code_length])
@@ -185,7 +193,9 @@ namespace schifra
          {
             return true;
          }
+
          interleave<code_length,fec_length>(output);
+
          for (std::size_t i = 0; i < code_length; ++i)
          {
             if (!general_decoder.decode(output[i],missing_row_index))
@@ -194,10 +204,11 @@ namespace schifra
                return false;
             }
          }
+
          return true;
       }
 
-      template<std::size_t code_length, std::size_t fec_length>
+      template <std::size_t code_length, std::size_t fec_length>
       inline bool erasure_channel_stack_decode(const erasure_code_decoder<code_length,fec_length>& erasure_decoder,
                                                const erasure_locations_t& missing_row_index,
                                                      block<code_length,fec_length> (&output)[code_length])
@@ -215,16 +226,16 @@ namespace schifra
          {
             return true;
          }
-         if (missing_row_index.size() == fec_length)
+         else if (missing_row_index.size() == fec_length)
          {
             interleave<code_length,fec_length>(output);
             return erasure_decoder.decode(output,missing_row_index);
          }
          else
-         {
-            return erasure_channel_stack_decode<code_length,fec_length>(static_cast<const decoder<code_length,fec_length>&>(erasure_decoder),
-                                                                        missing_row_index,output);
-         }
+            return erasure_channel_stack_decode<code_length,fec_length>(
+                      static_cast<const decoder<code_length,fec_length>&>(erasure_decoder),
+                      missing_row_index,
+                      output);
       }
 
    } // namespace reed_solomon

@@ -44,6 +44,7 @@
 #include "schifra_erasure_channel.hpp"
 #include "schifra_utilities.hpp"
 
+
 int main()
 {
    /* Reed Solomon Code Parameters */
@@ -72,7 +73,6 @@ int main()
 
    /* Instantiate Encoder and Decoder (Codec) */
    schifra::reed_solomon::encoder<code_length,fec_length> rs_encoder(field,generator_polynomial);
-   schifra::reed_solomon::decoder<code_length,fec_length> rs_decoder(field,generator_polynommial_index);
    schifra::reed_solomon::erasure_code_decoder<code_length,fec_length> rs_erasure_decoder(field,generator_polynommial_index);
 
    schifra::reed_solomon::block<code_length,fec_length> block_stack[stack_size];

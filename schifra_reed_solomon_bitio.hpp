@@ -36,14 +36,14 @@ namespace schifra
       namespace bitio
       {
 
-         template<std::size_t symbol_bit_count> class convert_data_to_symbol;
+         template <std::size_t symbol_bit_count> class convert_data_to_symbol;
 
-         template<>
+         template <>
          class convert_data_to_symbol<2>
          {
          public:
 
-            template<typename BitBlock>
+            template <typename BitBlock>
             convert_data_to_symbol(const BitBlock data[], const std::size_t data_length, int symbol[])
             {
                const BitBlock* d_it = &data[0];
@@ -58,12 +58,12 @@ namespace schifra
             }
          };
 
-         template<>
+         template <>
          class convert_data_to_symbol<4>
          {
          public:
 
-            template<typename BitBlock>
+            template <typename BitBlock>
             convert_data_to_symbol(const BitBlock data[], const std::size_t data_length, int symbol[])
             {
                const BitBlock* d_it = &data[0];
@@ -76,12 +76,12 @@ namespace schifra
             }
          };
 
-         template<>
+         template <>
          class convert_data_to_symbol<8>
          {
          public:
 
-            template<typename BitBlock>
+            template <typename BitBlock>
             convert_data_to_symbol(const BitBlock data[], const std::size_t data_length, int symbol[])
             {
                const BitBlock* d_it = &data[0];
@@ -93,12 +93,12 @@ namespace schifra
             }
          };
 
-         template<>
+         template <>
          class convert_data_to_symbol<16>
          {
          public:
 
-            template<typename BitBlock>
+            template <typename BitBlock>
             convert_data_to_symbol(const BitBlock data[], const std::size_t data_length, int symbol[])
             {
                const BitBlock* d_it = &data[0];
@@ -111,12 +111,12 @@ namespace schifra
             }
          };
 
-         template<>
+         template <>
          class convert_data_to_symbol<24>
          {
          public:
 
-            template<typename BitBlock>
+            template <typename BitBlock>
             convert_data_to_symbol(const BitBlock data[], const std::size_t data_length, int symbol[])
             {
                BitBlock* d_it = &data[0];
@@ -130,15 +130,14 @@ namespace schifra
             }
          };
 
+         template <std::size_t symbol_bit_count> class convert_symbol_to_data;
 
-         template<std::size_t symbol_bit_count> class convert_symbol_to_data;
-
-         template<>
+         template <>
          class convert_symbol_to_data<4>
          {
          public:
 
-            template<typename BitBlock>
+            template <typename BitBlock>
             convert_symbol_to_data(const int symbol[], BitBlock data[], const std::size_t data_length)
             {
                BitBlock*  d_it = &data[0];
@@ -151,11 +150,11 @@ namespace schifra
             }
          };
 
-         template<>
+         template <>
          class convert_symbol_to_data<8>
          {
          public:
-            template<typename BitBlock>
+            template <typename BitBlock>
             convert_symbol_to_data(const int symbol[], BitBlock data[], const std::size_t data_length)
             {
                BitBlock*  d_it = &data[0];
@@ -167,12 +166,12 @@ namespace schifra
             }
          };
 
-         template<>
+         template <>
          class convert_symbol_to_data<16>
          {
          public:
 
-            template<typename BitBlock>
+            template <typename BitBlock>
             convert_symbol_to_data(const int symbol[], BitBlock data[], const std::size_t data_length)
             {
                BitBlock*  d_it = &data[0];

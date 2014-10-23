@@ -39,7 +39,8 @@
 #include "schifra_error_processes.hpp"
 #include "schifra_utilities.hpp"
 
-template<std::size_t code_length, std::size_t fec_length>
+
+template <std::size_t code_length, std::size_t fec_length>
 bool do_encode_decode(const schifra::reed_solomon::general_codec<code_length>& codec,
                             schifra::reed_solomon::block<code_length,fec_length>& block)
 {
@@ -69,7 +70,6 @@ bool do_encode_decode(const schifra::reed_solomon::general_codec<code_length>& c
 
    return true;
 }
-
 
 int main()
 {

@@ -24,6 +24,7 @@
 
 #include "schifra_reed_solomon_codec_validator.hpp"
 
+
 int main()
 {
    bool codec_validation_result = schifra::reed_solomon::codec_validation_test00() &&

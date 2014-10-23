@@ -31,13 +31,14 @@
 #include "schifra_reed_solomon_block.hpp"
 #include "schifra_ecc_traits.hpp"
 
+
 namespace schifra
 {
 
    namespace reed_solomon
    {
 
-      template<std::size_t code_length, std::size_t fec_length, std::size_t data_length = code_length - fec_length>
+      template <std::size_t code_length, std::size_t fec_length, std::size_t data_length = code_length - fec_length>
       class encoder
       {
       public:
@@ -57,7 +58,8 @@ namespace schifra
             encoder_valid_ = true;
          }
 
-        ~encoder(){}
+        ~encoder()
+         {}
 
          inline bool encode(block_type& rsblock) const
          {
@@ -122,12 +124,11 @@ namespace schifra
          const galois::field_polynomial generator_;
       };
 
-
-      template<std::size_t code_length,
-               std::size_t fec_length,
-               std::size_t data_length = code_length - fec_length,
-               std::size_t natural_length = 255, // Needs to be in-sync with field size
-               std::size_t padding_length = natural_length - data_length - fec_length>
+      template <std::size_t code_length,
+                std::size_t fec_length,
+                std::size_t data_length = code_length - fec_length,
+                std::size_t natural_length = 255, // Needs to be in-sync with field size
+                std::size_t padding_length = natural_length - data_length - fec_length>
       class shortened_encoder
       {
       public:

@@ -26,12 +26,13 @@
 
 #include <cstddef>
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
    #include <windows.h>
 #else
   #include <sys/time.h>
   #include <sys/types.h>
 #endif
+
 
 namespace schifra
 {
@@ -58,7 +59,7 @@ namespace schifra
                                                    4,5,5,6,5,6,6,7,5,6,6,7,6,7,7,8
                                                  };
 
-      template<typename T>
+      template <typename T>
       inline std::size_t hamming_distance_element(const T v1, const T v2)
       {
          std::size_t distance = 0;
@@ -83,7 +84,7 @@ namespace schifra
          return distance;
       }
 
-      template<typename ForwardIterator>
+      template <typename ForwardIterator>
       inline std::size_t hamming_distance(ForwardIterator it1_begin, ForwardIterator it2_begin, ForwardIterator it1_end)
       {
          std::size_t distance = 0;
@@ -100,7 +101,7 @@ namespace schifra
       {
       public:
 
-         #ifdef WIN32
+         #if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
             timer()
             : in_use_(false)
             {
@@ -179,7 +180,7 @@ namespace schifra
 
             bool in_use_;
 
-         #ifdef WIN32
+         #if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
             LARGE_INTEGER start_time_;
             LARGE_INTEGER stop_time_;
             LARGE_INTEGER clock_frequency_;

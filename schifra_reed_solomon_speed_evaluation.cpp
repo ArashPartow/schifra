@@ -22,6 +22,7 @@
 
 #include "schifra_reed_solomon_speed_evaluator.hpp"
 
+
 int main()
 {
    schifra::reed_solomon::speed_test_00();

@@ -45,6 +45,7 @@
 #include "schifra_error_processes.hpp"
 #include "schifra_reed_solomon_bitio.hpp"
 
+
 int main()
 {
    /* Finite Field Parameters */

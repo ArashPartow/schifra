@@ -31,13 +31,14 @@
 #include "schifra_reed_solomon_decoder.hpp"
 #include "schifra_fileio.hpp"
 
+
 namespace schifra
 {
 
    namespace reed_solomon
    {
 
-      template<std::size_t code_length, std::size_t fec_length, std::size_t data_length = code_length - fec_length>
+      template <std::size_t code_length, std::size_t fec_length, std::size_t data_length = code_length - fec_length>
       class file_decoder
       {
       public:
@@ -50,6 +51,7 @@ namespace schifra
                       const std::string& output_file_name)
          {
             std::size_t remaining_bytes = schifra::fileio::file_size(input_file_name);
+
             if (remaining_bytes == 0)
             {
                std::cout << "reed_solomon::file_decoder() - Error: input file has ZERO size." << std::endl;
@@ -107,6 +109,7 @@ namespace schifra
             {
                buffer_[i] = static_cast<char>(block_[i]);
             }
+
             out_stream.write(&buffer_[0],static_cast<std::streamsize>(data_length));
          }
 

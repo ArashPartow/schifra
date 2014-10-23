@@ -49,19 +49,22 @@
 #include "schifra_ecc_traits.hpp"
 #include "schifra_utilities.hpp"
 
+
 const std::size_t round_count = 100;
 
-template<typename Encoder, typename Decoder>
+template <typename Encoder, typename Decoder>
 class erasure_process
 {
 public:
+
    erasure_process(const unsigned int& process_id,
                    const Encoder& encoder,
                    const Decoder& decoder)
    : process_id_(process_id),
      total_time_(0.0),
      encoder_(encoder),
-     decoder_(decoder){}
+     decoder_(decoder)
+   {}
 
    erasure_process& operator=(const erasure_process& ep)
    {
@@ -106,7 +109,7 @@ public:
          schifra::reed_solomon::erasure_channel_stack_encode<code_length,fec_length>(encoder_,block_stack);
 
          /* Add Erasures - Simulate network packet loss (e.g: UDP) */
-         std::vector<unsigned int> missing_row_index;
+         schifra::reed_solomon::erasure_locations_t missing_row_index;
          missing_row_index.clear();
          for (std::size_t i = 0; i < fec_length; ++i)
          {
@@ -141,7 +144,6 @@ private:
    const Decoder& decoder_;
 };
 
-
 int main()
 {
    /* Finite Field Parameters */
@@ -166,10 +168,11 @@ int main()
                                                          generator_polynommial_root_count,
                                                          generator_polynomial);
 
-   typedef schifra::reed_solomon::encoder<code_length,fec_length> encoder_type;
-   typedef schifra::reed_solomon::decoder<code_length,fec_length> decoder_type;
-   typedef erasure_process<encoder_type,decoder_type>             erasure_process_type;
-   typedef boost::shared_ptr<erasure_process_type>                erasure_process_ptr_type;
+   typedef schifra::reed_solomon::encoder<code_length,fec_length>              encoder_type;
+   typedef schifra::reed_solomon::erasure_code_decoder<code_length,fec_length> decoder_type;
+
+   typedef erasure_process<encoder_type,decoder_type> erasure_process_type;
+   typedef boost::shared_ptr<erasure_process_type>    erasure_process_ptr_type;
 
    /* Instantiate Encoder and Decoder (Codec) */
    encoder_type encoder(field,generator_polynomial);

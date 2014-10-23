@@ -27,6 +27,7 @@
 #include "schifra_reed_solomon_interleaving.hpp"
 #include "schifra_utilities.hpp"
 
+
 int main()
 {
    const std::size_t code_length    = 255;

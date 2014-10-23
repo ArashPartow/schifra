@@ -38,17 +38,18 @@
 #include "schifra_error_processes.hpp"
 #include "schifra_utilities.hpp"
 
+
 namespace schifra
 {
 
    namespace reed_solomon
    {
 
-      template<std::size_t code_length,
-               std::size_t fec_length,
-               typename encoder_type = encoder<code_length,fec_length>,
-               typename decoder_type = decoder<code_length,fec_length>,
-               std::size_t data_length = code_length - fec_length>
+      template <std::size_t code_length,
+                std::size_t fec_length,
+                typename encoder_type = encoder<code_length,fec_length>,
+                typename decoder_type = decoder<code_length,fec_length>,
+                std::size_t data_length = code_length - fec_length>
       class codec_validator
       {
       public:
@@ -704,7 +705,6 @@ namespace schifra
             return (block_failures_ == initial_failure_count);
          }
 
-
       protected:
 
          codec_validator() {}
@@ -725,7 +725,7 @@ namespace schifra
          unsigned int block_failures_;
       };
 
-      template<std::size_t data_length>
+      template <std::size_t data_length>
       void create_messages(std::vector<std::string>& message_list, const bool full_test_set = false)
       {
          /* Various message bit patterns */
@@ -788,7 +788,7 @@ namespace schifra
          message_list.push_back(tmp_str);
       }
 
-      template<std::size_t field_descriptor, std::size_t gen_poly_index, std::size_t code_length, std::size_t fec_length>
+      template <std::size_t field_descriptor, std::size_t gen_poly_index, std::size_t code_length, std::size_t fec_length>
       inline bool codec_validation_test(const std::size_t prim_poly_size,const unsigned int prim_poly[])
       {
          const unsigned int data_length = code_length - fec_length;
@@ -806,10 +806,10 @@ namespace schifra
          return true;
       }
 
-      template<std::size_t field_descriptor,
-               std::size_t gen_poly_index,
-               std::size_t code_length,
-               std::size_t fec_length>
+      template <std::size_t field_descriptor,
+                std::size_t gen_poly_index,
+                std::size_t code_length,
+                std::size_t fec_length>
       inline bool shortened_codec_validation_test(const std::size_t prim_poly_size,const unsigned int prim_poly[])
       {
          typedef shortened_encoder<code_length,fec_length> encoder_type;

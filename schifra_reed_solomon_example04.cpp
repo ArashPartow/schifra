@@ -44,7 +44,7 @@ int main(void)
 {
    /* Finite Field Parameters */
    const std::size_t field_descriptor                 = 4;
-   const std::size_t generator_polynommial_index      = 0; 
+   const std::size_t generator_polynommial_index      = 0;
    const std::size_t generator_polynommial_root_count = 7;
 
    /* Reed Solomon Code Parameters */

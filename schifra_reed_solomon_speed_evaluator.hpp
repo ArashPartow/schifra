@@ -24,6 +24,7 @@
 #define INCLUDE_SCHIFRA_REED_SOLOMON_SPPED_EVALUATOR_HPP
 
 #include <cstddef>
+#include <cstdio>
 #include <iostream>
 #include <string>
 
@@ -37,13 +38,14 @@
 #include "schifra_error_processes.hpp"
 #include "schifra_utilities.hpp"
 
+
 namespace schifra
 {
 
    namespace reed_solomon
    {
 
-      template<std::size_t code_length, std::size_t fec_length>
+      template <std::size_t code_length, std::size_t fec_length>
       void create_messages(const encoder<code_length,fec_length>& rs_encoder,
                            std::vector< block<code_length,fec_length> >& original_block_list,
                            const bool full_test_set = false)
@@ -148,13 +150,13 @@ namespace schifra
          }
       }
 
-      template<std::size_t field_descriptor,
-               std::size_t gen_poly_index,
-               std::size_t code_length,
-               std::size_t fec_length,
-               typename RSEncoder = encoder<code_length,fec_length>,
-               typename RSDecoder = decoder<code_length,fec_length>,
-               std::size_t data_length = code_length - fec_length>
+      template <std::size_t field_descriptor,
+                std::size_t gen_poly_index,
+                std::size_t code_length,
+                std::size_t fec_length,
+                typename RSEncoder = encoder<code_length,fec_length>,
+                typename RSDecoder = decoder<code_length,fec_length>,
+                std::size_t data_length = code_length - fec_length>
       struct all_errors_decoder_speed_test
       {
       public:
@@ -220,26 +222,30 @@ namespace schifra
 
             print_codec_properties();
             if (block_failures == 0)
-               std::cout << "Blocks decoded: " << blocks_decoded << "\tTime: " << time <<"sec\tRate: " << mbps << "Mbps" << std::endl;
+               printf("Blocks decoded: %8d  Time:%8.3fsec  Rate:%8.3fMbps\n",
+                      static_cast<int>(blocks_decoded),
+                      time,
+                      mbps);
             else
                std::cout << "Blocks decoded: " << blocks_decoded << "\tDecode Failures: " << block_failures <<"\tTime: " << time <<"sec\tRate: " << mbps << "Mbps" << std::endl;
          }
 
          void print_codec_properties()
          {
-            std::cout << "[All Errors Test] Codec: RS(" << code_length << "," << data_length << "," << fec_length <<") ";
+            printf("[All Errors Test] Codec: RS(%03d,%03d,%03d) ",
+                   static_cast<int>(code_length),
+                   static_cast<int>(data_length),
+                   static_cast<int>(fec_length));
          }
-
       };
 
-
-      template<std::size_t field_descriptor,
-               std::size_t gen_poly_index,
-               std::size_t code_length,
-               std::size_t fec_length,
-               typename RSEncoder = encoder<code_length,fec_length>,
-               typename RSDecoder = decoder<code_length,fec_length>,
-               std::size_t data_length = code_length - fec_length>
+      template <std::size_t field_descriptor,
+                std::size_t gen_poly_index,
+                std::size_t code_length,
+                std::size_t fec_length,
+                typename RSEncoder = encoder<code_length,fec_length>,
+                typename RSDecoder = decoder<code_length,fec_length>,
+                std::size_t data_length = code_length - fec_length>
       struct all_erasures_decoder_speed_test
       {
       public:
@@ -313,14 +319,20 @@ namespace schifra
 
             print_codec_properties();
             if (block_failures == 0)
-               std::cout << "Blocks decoded: " << blocks_decoded << "\tTime: " << time <<"sec\tRate: " << mbps << "Mbps" << std::endl;
+               printf("Blocks decoded: %8d  Time:%8.3fsec  Rate:%8.3fMbps\n",
+                      static_cast<int>(blocks_decoded),
+                      time,
+                      mbps);
             else
                std::cout << "Blocks decoded: " << blocks_decoded << "\tDecode Failures: " << block_failures <<"\tTime: " << time <<"sec\tRate: " << mbps << "Mbps" << std::endl;
          }
 
          void print_codec_properties()
          {
-            std::cout << "[All Erasures Test] Codec: RS(" << code_length << "," << data_length << "," << fec_length <<") ";
+            printf("[All Erasures Test] Codec: RS(%03d,%03d,%03d) ",
+                   static_cast<int>(code_length),
+                   static_cast<int>(data_length),
+                   static_cast<int>(fec_length));
          }
 
       };

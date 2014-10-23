@@ -33,28 +33,29 @@
 #include "schifra_reed_solomon_block.hpp"
 #include "schifra_fileio.hpp"
 
+
 namespace schifra
 {
 
-   template<std::size_t code_length, std::size_t fec_length>
+   template <std::size_t code_length, std::size_t fec_length>
    inline void add_erasure_error(const std::size_t& position, reed_solomon::block<code_length,fec_length>& block)
    {
       block[position] = (~block[position]) & 0xFF; // Or one can simply equate to zero
    }
 
-   template<std::size_t code_length, std::size_t fec_length>
+   template <std::size_t code_length, std::size_t fec_length>
    inline void add_error(const std::size_t& position, reed_solomon::block<code_length,fec_length>& block)
    {
       block[position] = (~block[position]) & 0xFF;
    }
 
-   template<std::size_t code_length, std::size_t fec_length>
+   template <std::size_t code_length, std::size_t fec_length>
    inline void add_error_4bit_symbol(const std::size_t& position, reed_solomon::block<code_length,fec_length>& block)
    {
       block[position] = (~block[position]) & 0x0F;
    }
 
-   template<std::size_t code_length, std::size_t fec_length>
+   template <std::size_t code_length, std::size_t fec_length>
    inline void corrupt_message_all_errors00(reed_solomon::block<code_length,fec_length>& rsblock,
                                            const std::size_t& start_position,
                                            const std::size_t& scale = 1)
@@ -65,7 +66,7 @@ namespace schifra
       }
    }
 
-   template<std::size_t code_length, std::size_t fec_length>
+   template <std::size_t code_length, std::size_t fec_length>
    inline void corrupt_message_all_errors_wth_mask(reed_solomon::block<code_length,fec_length>& rsblock,
                                                    const std::size_t& start_position,
                                                    const int& mask,
@@ -79,7 +80,7 @@ namespace schifra
       }
    }
 
-   template<std::size_t code_length, std::size_t fec_length>
+   template <std::size_t code_length, std::size_t fec_length>
    inline void corrupt_message_all_errors(schifra::reed_solomon::block<code_length,fec_length>& rsblock,
                                           const std::size_t error_count,
                                           const std::size_t& start_position,
@@ -91,7 +92,7 @@ namespace schifra
       }
    }
 
-   template<std::size_t code_length, std::size_t fec_length>
+   template <std::size_t code_length, std::size_t fec_length>
    inline void corrupt_message_all_erasures00(reed_solomon::block<code_length,fec_length>& rsblock,
                                               reed_solomon::erasure_locations_t& erasure_list,
                                               const std::size_t& start_position,
@@ -113,7 +114,7 @@ namespace schifra
       }
    }
 
-   template<std::size_t code_length, std::size_t fec_length>
+   template <std::size_t code_length, std::size_t fec_length>
    inline void corrupt_message_all_erasures(reed_solomon::block<code_length,fec_length>& rsblock,
                                             reed_solomon::erasure_locations_t& erasure_list,
                                             const std::size_t erasure_count,
@@ -146,7 +147,7 @@ namespace schifra
       };
    }
 
-   template<std::size_t code_length, std::size_t fec_length>
+   template <std::size_t code_length, std::size_t fec_length>
    inline void corrupt_message_errors_erasures(reed_solomon::block<code_length,fec_length>& rsblock,
                                                const error_mode::type& mode,
                                                const std::size_t& start_position,
@@ -210,7 +211,7 @@ namespace schifra
 
    }
 
-   template<std::size_t code_length, std::size_t fec_length>
+   template <std::size_t code_length, std::size_t fec_length>
    inline void corrupt_message_interleaved_errors_erasures(reed_solomon::block<code_length,fec_length>& rsblock,
                                                            const std::size_t& start_position,
                                                            const std::size_t& erasure_count,
@@ -262,10 +263,9 @@ namespace schifra
          std::cout << "Erasure Count: " << error_count << std::endl;
          return;
       }
-
    }
 
-   template<std::size_t code_length, std::size_t fec_length>
+   template <std::size_t code_length, std::size_t fec_length>
    inline void corrupt_message_all_errors_segmented(reed_solomon::block<code_length,fec_length>& rsblock,
                                                     const std::size_t& start_position,
                                                     const std::size_t& distance_between_blocks = 1)
@@ -310,7 +310,7 @@ namespace schifra
       std::cout << std::endl;
    }
 
-   template<std::size_t code_length, std::size_t fec_length>
+   template <std::size_t code_length, std::size_t fec_length>
    inline bool is_block_equivelent(const reed_solomon::block<code_length,fec_length>& rsblock,
                                    const std::string& data,
                                    const bool display = false)
@@ -322,9 +322,9 @@ namespace schifra
          {
             if (display)
             {
-               std::cout << "is_block_equivelent() - Error at loc : " << i <<
-                            " d1: " << rsblock.data[i] <<
-                           "\td2: " << static_cast<unsigned char>(*it) << std::endl;
+               std::cout << "is_block_equivelent() - Error at loc : " << i << " " <<
+                            "d1: " << rsblock.data[i] << "\t" <<
+                            "d2: " << static_cast<unsigned char>(*it) << std::endl;
             }
             return false;
          }
@@ -332,7 +332,7 @@ namespace schifra
       return true;
    }
 
-   template<std::size_t code_length, std::size_t fec_length>
+   template <std::size_t code_length, std::size_t fec_length>
    inline bool are_blocks_equivelent(const reed_solomon::block<code_length,fec_length>& block1,
                                      const reed_solomon::block<code_length,fec_length>& block2,
                                      const std::size_t span = code_length)
@@ -344,10 +344,11 @@ namespace schifra
             return false;
          }
       }
+
       return true;
    }
 
-   template<std::size_t code_length, std::size_t fec_length, std::size_t stack_size>
+   template <std::size_t code_length, std::size_t fec_length, std::size_t stack_size>
    inline bool block_stacks_equivelent(const reed_solomon::block<code_length,fec_length> block_stack1[stack_size],
                                        const reed_solomon::block<code_length,fec_length> block_stack2[stack_size])
    {
@@ -358,10 +359,11 @@ namespace schifra
             return false;
          }
       }
+
       return true;
    }
 
-   template<std::size_t block_length, std::size_t stack_size>
+   template <std::size_t block_length, std::size_t stack_size>
    inline bool block_stacks_equivelent(const reed_solomon::data_block<std::size_t,block_length> block_stack1[stack_size],
                                        const reed_solomon::data_block<std::size_t,block_length> block_stack2[stack_size])
    {
@@ -375,6 +377,7 @@ namespace schifra
             }
          }
       }
+
       return true;
    }
 
@@ -451,7 +454,7 @@ namespace schifra
 
    static const std::size_t error_index_size = sizeof(random_error_index) / sizeof(std::size_t);
 
-   template<std::size_t code_length, std::size_t fec_length>
+   template <std::size_t code_length, std::size_t fec_length>
    inline void corrupt_message_all_errors_at_index(schifra::reed_solomon::block<code_length,fec_length>& rsblock,
                                                    const std::size_t error_count,
                                                    const std::size_t& error_index_start_position,
@@ -469,7 +472,7 @@ namespace schifra
       }
    }
 
-   template<std::size_t code_length, std::size_t fec_length>
+   template <std::size_t code_length, std::size_t fec_length>
    inline void corrupt_message_all_errors_at_index(schifra::reed_solomon::block<code_length,fec_length>& rsblock,
                                                    const std::size_t error_count,
                                                    const std::size_t& error_index_start_position,
@@ -491,9 +494,15 @@ namespace schifra
                                     std::vector<std::size_t>& random_error_index,
                                     std::size_t seed)
    {
-      if (0 == seed) seed = 0xA5A5A5A5;
+      if (0 == seed)
+      {
+         seed = 0xA5A5A5A5;
+      }
+
       ::srand(static_cast<unsigned int>(seed));
+
       std::deque<std::size_t> index_list;
+
       for (std::size_t i = 0; i < index_size; ++i)
       {
          index_list.push_back(i);

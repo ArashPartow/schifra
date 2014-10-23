@@ -191,9 +191,6 @@ namespace schifra
          field();
          field(const field& gfield);
 
-
-      private:
-
          void         generate_field(const unsigned int* prim_poly_);
          field_symbol gen_mul       (const field_symbol& a, const field_symbol& b) const;
          field_symbol gen_div       (const field_symbol& a, const field_symbol& b) const;
@@ -291,10 +288,12 @@ namespace schifra
            if (0 != mul_table_) { delete [] mul_table_; mul_table_ = 0; }
            if (0 != div_table_) { delete [] div_table_; div_table_ = 0; }
            if (0 != exp_table_) { delete [] exp_table_; exp_table_ = 0; }
+
            #ifdef LINEAR_EXP_LUT
            if (0 != linear_exp_table_) { delete [] linear_exp_table_; linear_exp_table_ = 0; }
            #endif
-           if (0 !=    buffer_) { delete [] buffer_;    buffer_    = 0; }
+
+           if (0 != buffer_) { delete [] buffer_; buffer_ = 0; }
 
          #endif
       }
@@ -324,7 +323,7 @@ namespace schifra
 
          for (field_symbol i = 0; i < static_cast<field_symbol>(power_); ++i)
          {
-            alpha_to_[i]           = mask;
+            alpha_to_[i]            = mask;
             index_of_[alpha_to_[i]] = i;
 
             if (prim_poly_[i] != 0)

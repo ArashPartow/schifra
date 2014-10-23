@@ -40,6 +40,7 @@
 #include "schifra_reed_solomon_block.hpp"
 #include "schifra_error_processes.hpp"
 
+
 int main()
 {
    /* Finite Field Parameters */

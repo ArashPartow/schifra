@@ -28,6 +28,7 @@
 #include "schifra_reed_solomon_block.hpp"
 #include "schifra_utilities.hpp"
 
+
 int main()
 {
    const std::size_t block_length   = 255;

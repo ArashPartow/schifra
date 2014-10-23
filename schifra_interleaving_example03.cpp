@@ -28,7 +28,8 @@
 #include "schifra_reed_solomon_block.hpp"
 #include "schifra_utilities.hpp"
 
-template<std::size_t block_length, std::size_t stack_size>
+
+template <std::size_t block_length, std::size_t stack_size>
 bool block_stacks_equivelent(const schifra::reed_solomon::data_block<std::size_t,block_length> block_stack1[stack_size],
                              const schifra::reed_solomon::data_block<std::size_t,block_length> block_stack2[stack_size])
 {
@@ -51,7 +52,7 @@ int main()
    const std::size_t stack_size     =  255;
    const std::size_t max_iterations = 1000;
 
-   schifra::reed_solomon::data_block<std::size_t,block_length> block_stack[stack_size];
+   schifra::reed_solomon::data_block<std::size_t,block_length> block_stack   [stack_size];
    schifra::reed_solomon::data_block<std::size_t,block_length> or_block_stack[stack_size];
 
    for (std::size_t i = 0; i < stack_size; ++i)

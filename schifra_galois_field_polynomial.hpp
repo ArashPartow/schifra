@@ -31,6 +31,7 @@
 #include "schifra_galois_field.hpp"
 #include "schifra_galois_field_element.hpp"
 
+
 namespace schifra
 {
 
@@ -46,7 +47,7 @@ namespace schifra
          field_polynomial(const field& gfield, const unsigned int& degree, field_element element[]);
          field_polynomial(const field_polynomial& polynomial);
          field_polynomial(const field_element& gfe);
-        ~field_polynomial(){};
+        ~field_polynomial() {}
 
          bool valid() const;
          int deg() const;
@@ -89,8 +90,8 @@ namespace schifra
 
       private:
 
-         typedef std::vector< field_element >::iterator       poly_iter;
-         typedef std::vector< field_element >::const_iterator const_poly_iter;
+         typedef std::vector<field_element>::iterator       poly_iter;
+         typedef std::vector<field_element>::const_iterator const_poly_iter;
 
          void simplify(field_polynomial& polynomial) const;
 
@@ -120,7 +121,6 @@ namespace schifra
       field_polynomial operator >>(const field_polynomial& a, const unsigned int&     n);
       field_polynomial         gcd(const field_polynomial& a, const field_polynomial& b);
 
-
       inline field_polynomial::field_polynomial(const field& gfield)
       : field_(const_cast<field&>(gfield))
       {
@@ -134,7 +134,6 @@ namespace schifra
          poly_.reserve(256);
          poly_.resize(degree + 1,field_element(field_,0));
       }
-
 
       inline field_polynomial::field_polynomial(const field& gfield, const unsigned int& degree, field_element element[])
       : field_(const_cast<field&>(gfield))
@@ -209,6 +208,7 @@ namespace schifra
             if (poly_.size() < polynomial.poly_.size())
             {
                const_poly_iter it0 = polynomial.poly_.begin();
+
                for (poly_iter it1 = poly_.begin(); it1 != poly_.end(); ++it0, ++it1)
                {
                   (*it1) += (*it0);
@@ -223,11 +223,13 @@ namespace schifra
             else
             {
                poly_iter it0 = poly_.begin();
+
                for (const_poly_iter it1 = polynomial.poly_.begin(); it1 != polynomial.poly_.end(); ++it0, ++it1)
                {
                   (*it0) += (*it1);
                }
             }
+
             simplify(*this);
          }
 
@@ -258,20 +260,24 @@ namespace schifra
             field_polynomial product(field_,deg() + polynomial.deg() + 1);
 
             poly_iter result_it = product.poly_.begin();
+
             for (poly_iter it0 = poly_.begin(); it0 != poly_.end(); ++it0)
             {
                poly_iter current_result_it = result_it;
+
                for (const_poly_iter it1 = polynomial.poly_.begin(); it1 != polynomial.poly_.end(); ++it1)
                {
                   (*current_result_it) += (*it0) * (*it1);
                   ++current_result_it;
                }
+
                ++result_it;
             }
 
             simplify(product);
             poly_ = product.poly_;
          }
+
          return *this;
       }
 
@@ -284,6 +290,7 @@ namespace schifra
                (*it) *= element;
             }
          }
+
          return *this;
       }
 
@@ -317,6 +324,7 @@ namespace schifra
                   {
                      remainder[j] = remainder[j - 1];
                   }
+
                   remainder[0] = poly_[i];
                }
             }
@@ -343,9 +351,9 @@ namespace schifra
       inline field_polynomial& field_polynomial::operator%=(const field_polynomial& divisor)
       {
          if (
-             (field_        == divisor.field_) &&
-             (deg()         >= divisor.deg())  &&
-             (divisor.deg() >=             0)
+              (field_        == divisor.field_) &&
+              (deg()         >= divisor.deg())  &&
+              (divisor.deg() >=             0)
             )
          {
             field_polynomial quotient (field_, deg() - divisor.deg() + 1);
@@ -361,6 +369,7 @@ namespace schifra
                   {
                      remainder[j] = remainder[j - 1] + (quotient[i] * divisor[j]);
                   }
+
                   remainder[0] = poly_[i] + (quotient[i] * divisor[0]);
                }
                else
@@ -369,11 +378,14 @@ namespace schifra
                   {
                      remainder[j] = remainder[j - 1];
                   }
+
                   remainder[0] = poly_[i];
                }
             }
+
             poly_ = remainder.poly_;
          }
+
          return *this;
       }
 
@@ -384,6 +396,7 @@ namespace schifra
             poly_.resize(power,field_element(field_,0));
             simplify(*this);
          }
+
          return *this;
       }
 
@@ -418,6 +431,7 @@ namespace schifra
                poly_[i] = 0;
             }
          }
+
          return *this;
       }
 
@@ -429,12 +443,14 @@ namespace schifra
             {
                poly_[i] = poly_[i + n];
             }
+
             poly_.resize(poly_.size() - n,field_element(field_,0));
          }
          else if (static_cast<int>(n) >= (deg() + 1))
          {
             poly_.resize(0,field_element(field_,0));
          }
+
          return *this;
       }
 
@@ -463,8 +479,10 @@ namespace schifra
             {
                total_sum ^= field_.mul(field_.exp(value_poly_form,i),(*it).poly());
             }
+
             result = total_sum;
          }
+
          return result;
       }
 
@@ -475,12 +493,15 @@ namespace schifra
             field_symbol total_sum = 0 ;
             field_symbol value_poly_form = value.poly();
             int i = 0;
+
             for (const_poly_iter it = poly_.begin(); it != poly_.end(); ++it, ++i)
             {
                total_sum ^= field_.mul(field_.exp(value_poly_form,i),(*it).poly());
             }
+
             return field_element(field_,total_sum);
          }
+
          return field_element(field_,0);
       }
 
@@ -490,12 +511,15 @@ namespace schifra
          {
             field_symbol total_sum = 0 ;
             int i = 0;
+
             for (const_poly_iter it = poly_.begin(); it != poly_.end(); ++it, ++i)
             {
                total_sum ^= field_.mul(field_.exp(value,i),(*it).poly());
             }
+
             return field_element(field_,total_sum);
          }
+
          return field_element(field_,0);
       }
 
@@ -505,12 +529,15 @@ namespace schifra
          {
             field_symbol total_sum = 0 ;
             int i = 0;
+
             for (const_poly_iter it = poly_.begin(); it != poly_.end(); ++it, ++i)
             {
                total_sum ^= field_.mul(field_.exp(value,i),(*it).poly());
             }
+
             return field_element(field_,total_sum);
          }
+
          return field_element(field_,0);
       }
 
@@ -529,6 +556,7 @@ namespace schifra
                   if ((*it0) != (*it1))
                     return false;
                }
+
                return true;
             }
          }
@@ -553,9 +581,11 @@ namespace schifra
                else
                  deriv.poly_[i] = 0;
             }
+
             simplify(deriv);
             return deriv;
          }
+
          return field_polynomial(field_,0);
       }
 
@@ -576,6 +606,7 @@ namespace schifra
          {
             poly_iter it = polynomial.poly_.end();
             std::size_t count = 0;
+
             while (polynomial.poly_.begin() != it)
             {
                if ((*(--it)) == 0)
@@ -583,6 +614,7 @@ namespace schifra
                else
                   break;
             }
+
             if (0 != count)
             {
                polynomial.poly_.resize(poly_size - count, field_element(field_,0));
@@ -755,7 +787,11 @@ namespace schifra
 
       inline field_polynomial generate_X(const field& gfield)
       {
-         field_element xgfe[2] = {galois::field_element(gfield, 0),field_element(gfield, 1)};
+         field_element xgfe[2] = {
+                                   galois::field_element(gfield, 0),
+                                   galois::field_element(gfield, 1)
+                                 };
+
          field_polynomial X_(gfield,1,xgfe);
          return X_;
       }

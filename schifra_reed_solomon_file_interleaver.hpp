@@ -30,13 +30,14 @@
 #include "schifra_reed_solomon_interleaving.hpp"
 #include "schifra_fileio.hpp"
 
+
 namespace schifra
 {
 
    namespace reed_solomon
    {
 
-      template<std::size_t block_length, std::size_t stack_size>
+      template <std::size_t block_length, std::size_t stack_size>
       class file_interleaver
       {
       public:
@@ -120,7 +121,6 @@ namespace schifra
             else
                interleave<char,block_length>(block_stack_,complete_row_count + 1,remainder);
 
-
             for (std::size_t i = 0; i < complete_row_count; ++i)
             {
                out_stream.write(&block_stack_[i][0],static_cast<std::streamsize>(block_length));
@@ -136,8 +136,7 @@ namespace schifra
 
       };
 
-
-      template<std::size_t block_length, std::size_t stack_size>
+      template <std::size_t block_length, std::size_t stack_size>
       class file_deinterleaver
       {
       public:
