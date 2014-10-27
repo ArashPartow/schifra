@@ -199,7 +199,7 @@ namespace schifra
       }
 
       template <typename T, std::size_t code_length, std::size_t fec_length>
-      inline void full_copy(const block<code_length,fec_length> src_block,
+      inline void full_copy(const block<code_length,fec_length>& src_block,
                             T dest_data[])
       {
          for (std::size_t i = 0; i < code_length; ++i, ++dest_data)
@@ -278,7 +278,7 @@ namespace schifra
       }
 
       template <typename T, std::size_t block_length>
-      inline void full_copy(const data_block<T,block_length> src_block, T dest_data[])
+      inline void full_copy(const data_block<T,block_length>& src_block, T dest_data[])
       {
          for (std::size_t i = 0; i < block_length; ++i, ++dest_data)
          {

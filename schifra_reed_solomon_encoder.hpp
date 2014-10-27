@@ -137,7 +137,7 @@ namespace schifra
          typedef block<code_length,fec_length> block_type;
 
          shortened_encoder(const galois::field& gfield,
-                           const galois::field_polynomial generator)
+                           const galois::field_polynomial& generator)
          : field_(gfield),
            encoder_(field_,generator)
          {

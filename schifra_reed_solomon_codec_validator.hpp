@@ -416,7 +416,6 @@ namespace schifra
          {
             /*  Intermittent Error Combinations */
 
-            erasure_locations_t erasure_list;
             std::size_t initial_failure_count = block_failures_;
 
             for (std::size_t error_count = 1; error_count < (fec_length >> 1); ++error_count)
@@ -720,7 +719,7 @@ namespace schifra
          decoder_type* rs_decoder_;
          block_type rs_block_original;
          const std::string&  message;
-         const unsigned int& genpoly_initial_index_;
+         const unsigned int genpoly_initial_index_;
          unsigned int blocks_processed_;
          unsigned int block_failures_;
       };
