@@ -49,6 +49,7 @@ namespace schifra
          file_decoder(const decoder_type& decoder,
                       const std::string& input_file_name,
                       const std::string& output_file_name)
+         : current_block_index_(0)
          {
             std::size_t remaining_bytes = schifra::fileio::file_size(input_file_name);
 
@@ -160,7 +161,7 @@ namespace schifra
 
          block_type block_;
          std::size_t current_block_index_;
-         char buffer_[data_length];
+         char buffer_[code_length];
       };
 
    } // namespace reed_solomon

@@ -180,6 +180,7 @@ namespace schifra
                   ++blocks_processed_;
                }
             }
+
             return (block_failures_ == initial_failure_count);
          }
 
@@ -235,6 +236,7 @@ namespace schifra
                   erasure_list.clear();
                }
             }
+
             return (block_failures_ == initial_failure_count);
          }
 
@@ -273,6 +275,7 @@ namespace schifra
                   erasure_list.clear();
                }
             }
+
             return (block_failures_ == initial_failure_count);
          }
 
@@ -316,6 +319,7 @@ namespace schifra
                   erasure_list.clear();
                }
             }
+
             return (block_failures_ == initial_failure_count);
          }
 
@@ -363,6 +367,7 @@ namespace schifra
                   }
                }
             }
+
             return (block_failures_ == initial_failure_count);
          }
 
@@ -409,13 +414,13 @@ namespace schifra
                   }
                }
             }
+
             return (block_failures_ == initial_failure_count);
          }
 
          bool stage7()
          {
             /*  Intermittent Error Combinations */
-
             std::size_t initial_failure_count = block_failures_;
 
             for (std::size_t error_count = 1; error_count < (fec_length >> 1); ++error_count)
@@ -464,6 +469,7 @@ namespace schifra
                   }
                }
             }
+
             return (block_failures_ == initial_failure_count);
          }
 
@@ -521,6 +527,7 @@ namespace schifra
                   }
                }
             }
+
             return (block_failures_ == initial_failure_count);
          }
 
@@ -563,6 +570,7 @@ namespace schifra
                   erasure_list.clear();
                }
             }
+
             return (block_failures_ == initial_failure_count);
          }
 
@@ -602,6 +610,7 @@ namespace schifra
                   ++blocks_processed_;
                }
             }
+
             return (block_failures_ == initial_failure_count);
          }
 
@@ -645,6 +654,7 @@ namespace schifra
             }
 
             ++blocks_processed_;
+
             return (block_failures_ == initial_failure_count);
          }
 
@@ -701,6 +711,7 @@ namespace schifra
                   ++blocks_processed_;
                }
             }
+
             return (block_failures_ == initial_failure_count);
          }
 
@@ -728,6 +739,7 @@ namespace schifra
       void create_messages(std::vector<std::string>& message_list, const bool full_test_set = false)
       {
          /* Various message bit patterns */
+
          message_list.clear();
 
          if (full_test_set)
@@ -791,9 +803,11 @@ namespace schifra
       inline bool codec_validation_test(const std::size_t prim_poly_size,const unsigned int prim_poly[])
       {
          const unsigned int data_length = code_length - fec_length;
+
          galois::field field(field_descriptor,prim_poly_size,prim_poly);
          std::vector<std::string> message_list;
          create_messages<data_length>(message_list);
+
          for (std::size_t i = 0; i < message_list.size(); ++i)
          {
             codec_validator<code_length,fec_length> validator(field,gen_poly_index,message_list[i]);
@@ -802,6 +816,7 @@ namespace schifra
                return false;
             }
          }
+
          return true;
       }
 
@@ -813,18 +828,24 @@ namespace schifra
       {
          typedef shortened_encoder<code_length,fec_length> encoder_type;
          typedef shortened_decoder<code_length,fec_length> decoder_type;
+
          const unsigned int data_length = code_length - fec_length;
+
          galois::field field(field_descriptor,prim_poly_size,prim_poly);
          std::vector<std::string> message_list;
          create_messages<data_length>(message_list);
+
          for (std::size_t i = 0; i < message_list.size(); ++i)
          {
             codec_validator<code_length,fec_length,encoder_type,decoder_type> validator(field,gen_poly_index,message_list[i]);
+
             if (!validator.execute())
             {
                return false;
             }
+
          }
+
          return true;
       }
 

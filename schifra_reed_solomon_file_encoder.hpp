@@ -24,6 +24,7 @@
 #define INCLUDE_SCHIFRA_REED_SOLOMON_FILE_ENCODER_HPP
 
 
+#include <cstring>
 #include <iostream>
 #include <fstream>
 
@@ -70,6 +71,9 @@ namespace schifra
                std::cout << "reed_solomon::file_encoder() - Error: output file could not be created." << std::endl;
                return;
             }
+
+            std::memset(data_buffer_,0,sizeof(data_buffer_));
+            std::memset(fec_buffer_ ,0,sizeof(fec_buffer_ ));
 
             while (remaining_bytes >= data_length)
             {

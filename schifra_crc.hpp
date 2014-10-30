@@ -51,17 +51,26 @@ namespace schifra
 
       void update(const unsigned char data[], const std::size_t& count) const
       {
-         for (std::size_t i = 0; i < count; ++i) update(data[i]);
+         for (std::size_t i = 0; i < count; ++i)
+         {
+            update(data[i]);
+         }
       }
 
       void update(char data[], const std::size_t& count) const
       {
-         for (std::size_t i = 0; i < count; ++i) update(static_cast<unsigned char>(data[i]));
+         for (std::size_t i = 0; i < count; ++i)
+         {
+            update(static_cast<unsigned char>(data[i]));
+         }
       }
 
       void update(const std::string& data) const
       {
-         for (std::size_t i = 0; i < data.size(); ++i) update(static_cast<unsigned char>(data[i]));
+         for (std::size_t i = 0; i < data.size(); ++i)
+         {
+            update(static_cast<unsigned char>(data[i]));
+         }
       }
 
       void update(const std::size_t& data) const
@@ -72,7 +81,10 @@ namespace schifra
          update(static_cast<unsigned char>((data >> 24) & 0xFF));
       }
 
-      crc32_t crc() const { return state; }
+      crc32_t crc() const
+      {
+         return state;
+      }
 
    private:
 

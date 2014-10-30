@@ -107,11 +107,11 @@ int main()
 
    std::cout << "Encoder Parameters [" << schifra::reed_solomon::encoder<code_length,fec_length>::trait::code_length << ","
                                        << schifra::reed_solomon::encoder<code_length,fec_length>::trait::data_length << ","
-                                       << schifra::reed_solomon::encoder<code_length,fec_length>::trait::fec_length << "]" << std::endl;
+                                       << schifra::reed_solomon::encoder<code_length,fec_length>::trait::fec_length  << "]" << std::endl;
 
    std::cout << "Decoder Parameters [" << schifra::reed_solomon::decoder<code_length,fec_length>::trait::code_length << ","
                                        << schifra::reed_solomon::decoder<code_length,fec_length>::trait::data_length << ","
-                                       << schifra::reed_solomon::decoder<code_length,fec_length>::trait::fec_length << "]" << std::endl;
+                                       << schifra::reed_solomon::decoder<code_length,fec_length>::trait::fec_length  << "]" << std::endl;
 
    return 0;
 }

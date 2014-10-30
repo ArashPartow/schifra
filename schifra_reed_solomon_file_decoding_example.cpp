@@ -38,9 +38,16 @@ int main()
    const std::string input_file_name     = "input.schifra";
    const std::string output_file_name    = "output.decoded";
 
-   schifra::galois::field field(field_descriptor,schifra::galois::primitive_polynomial_size06,schifra::galois::primitive_polynomial06);
-   schifra::reed_solomon::decoder<code_length,fec_length> rs_decoder(field,gen_poly_index);
-   schifra::reed_solomon::file_decoder<code_length,fec_length>(rs_decoder,input_file_name,output_file_name);
+   typedef schifra::reed_solomon::decoder<code_length,fec_length> decoder_t;
+   typedef schifra::reed_solomon::file_decoder<code_length,fec_length> file_decoder_t;
+
+   schifra::galois::field field(field_descriptor,
+                                schifra::galois::primitive_polynomial_size06,
+                                schifra::galois::primitive_polynomial06);
+
+   decoder_t rs_decoder(field,gen_poly_index);
+
+   file_decoder_t(rs_decoder,input_file_name,output_file_name);
 
    return 0;
 }

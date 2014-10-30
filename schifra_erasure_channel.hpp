@@ -69,7 +69,9 @@ namespace schifra
                return false;
             }
          }
+
          interleave<code_length,fec_length>(output);
+
          return true;
       }
 
@@ -121,6 +123,7 @@ namespace schifra
             find_roots_in_data(gamma,gamma_roots);
 
             polynomial_list_type omega;
+
             for (std::size_t i = 0; i < code_length; ++i)
             {
                omega.push_back((gamma * syndrome_[i]) % fec_length);
@@ -150,6 +153,7 @@ namespace schifra
                   rsblock[j][error_location - 1] ^= decoder_type::field_.div(numerator.poly(),denominator.poly());
                }
             }
+
             return true;
          }
 
@@ -163,14 +167,17 @@ namespace schifra
             */
             root_list.reserve(fec_length << 1);
             root_list.resize(0);
+
             std::size_t polynomial_degree = poly.deg();
             std::size_t root_list_size = 0;
+
             for (int i = 1; i <= static_cast<int>(data_length); ++i)
             {
                if (0 == poly(decoder_type::field_.alpha(i)).poly())
                {
                   root_list.push_back(i);
                   root_list_size++;
+
                   if (root_list_size == polynomial_degree)
                   {
                      break;

@@ -157,6 +157,7 @@ namespace schifra
          {
             file1.read(&buffer1[0],static_cast<std::streamsize>(block_size));
             file2.read(&buffer2[0],static_cast<std::streamsize>(block_size));
+
             for (std::size_t i = 0; i < block_size; ++i)
             {
                if (buffer1[i] != buffer2[i])
@@ -164,6 +165,7 @@ namespace schifra
                   return false;
                }
             }
+
             remaining_bytes -= block_size;
          }
 
@@ -171,6 +173,7 @@ namespace schifra
          {
             file1.read(&buffer1[0],static_cast<std::streamsize>(remaining_bytes));
             file2.read(&buffer2[0],static_cast<std::streamsize>(remaining_bytes));
+
             for (std::size_t i = 0; i < remaining_bytes; ++i)
             {
                if (buffer1[i] != buffer2[i])
@@ -178,6 +181,7 @@ namespace schifra
                   return false;
                }
             }
+
             remaining_bytes = 0;
          }
 

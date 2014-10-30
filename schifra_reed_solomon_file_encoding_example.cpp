@@ -19,6 +19,7 @@
 (**************************************************************************)
 */
 
+
 #include <cstddef>
 #include <string>
 
@@ -38,11 +39,20 @@ int main()
    const std::string input_file_name     = "input.dat";
    const std::string output_file_name    = "output.schifra";
 
-   schifra::galois::field field(field_descriptor,schifra::galois::primitive_polynomial_size06,schifra::galois::primitive_polynomial06);
+   typedef schifra::reed_solomon::encoder<code_length,fec_length> encoder_t;
+   typedef schifra::reed_solomon::file_encoder<code_length,fec_length> file_encoder_t;
+
+   schifra::galois::field field(field_descriptor,
+                                schifra::galois::primitive_polynomial_size06,
+                                schifra::galois::primitive_polynomial06);
+
    schifra::galois::field_polynomial generator_polynomial(field);
+
    schifra::sequential_root_generator_polynomial_creator(field,gen_poly_index,gen_poly_root_count,generator_polynomial);
-   schifra::reed_solomon::encoder<code_length,fec_length> rs_encoder(field,generator_polynomial);
-   schifra::reed_solomon::file_encoder<code_length,fec_length>(rs_encoder,input_file_name,output_file_name);
+
+   encoder_t rs_encoder(field,generator_polynomial);
+
+   file_encoder_t(rs_encoder,input_file_name,output_file_name);
 
    return 0;
 }

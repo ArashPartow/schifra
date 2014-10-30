@@ -104,6 +104,7 @@ namespace schifra
             {
                data_str[i] = static_cast<char>(data[i]);
             }
+
             return true;
          }
 
@@ -118,6 +119,7 @@ namespace schifra
             {
                fec_str[i] = static_cast<char>(data[data_length + i]);
             }
+
             return true;
          }
 
@@ -186,15 +188,19 @@ namespace schifra
          {
             return false;
          }
+
          std::size_t row_count =  src_length / data_length;
+
          for (std::size_t row = 0; row < row_count; ++row, src_data += data_length)
          {
             copy(src_data,dest_block_stack[row]);
          }
+
          if ((src_length % data_length) != 0)
          {
             copy(src_data,src_length % data_length,dest_block_stack[row_count]);
          }
+
          return true;
       }
 
@@ -213,6 +219,7 @@ namespace schifra
                        T dest_data[])
       {
          const std::size_t data_length = code_length - fec_length;
+
          for (std::size_t i = 0; i < stack_size; ++i)
          {
             for (std::size_t j = 0; j < data_length; ++j, ++dest_data)
@@ -225,7 +232,11 @@ namespace schifra
       template <std::size_t code_length, std::size_t fec_length>
       inline std::ostream& operator<<(std::ostream& os, const block<code_length,fec_length>& rs_block)
       {
-         for (std::size_t i = 0; i < code_length; ++i) os << static_cast<char>(rs_block[i]);
+         for (std::size_t i = 0; i < code_length; ++i)
+         {
+            os << static_cast<char>(rs_block[i]);
+         }
+
          return os;
       }
 

@@ -45,18 +45,18 @@ namespace schifra
          typedef block<code_length,fec_length> block_type;
 
          decoder(const galois::field& gfield, const unsigned int& gen_initial_index)
-         : field_(gfield),
-           X_(galois::generate_X(field_))
+         : decoder_valid_(false),
+           field_(gfield),
+           X_(galois::generate_X(field_)),
+           gen_initial_index_(0)
          {
-            if (field_.size() != code_length)
+            if (field_.size() == code_length)
             {
-               decoder_valid_ = false;
-               return;
+               //Note: code_length and field size can be used interchangeably
+               gen_initial_index_ = gen_initial_index;
+               create_lookup_tables();
+               decoder_valid_ = true;
             }
-            //Note: code_length and field size can be used interchangeably
-            gen_initial_index_ = gen_initial_index;
-            create_lookup_tables();
-            decoder_valid_ = true;
          };
 
          bool decode(block_type& rsblock) const
@@ -115,10 +115,12 @@ namespace schifra
                  message than can be detected and corrected for this
                  particular code.
                */
+
                rsblock.errors_detected  = 0;
                rsblock.errors_corrected = 0;
                rsblock.zero_numerators  = 0;
                rsblock.unrecoverable    = true;
+
                return false;
             }
             else if (((2 * error_locations.size()) - erasure_list.size()) > fec_length)
@@ -136,14 +138,17 @@ namespace schifra
                   S : Erasures
 
                */
+
                rsblock.errors_detected  = error_locations.size();
                rsblock.errors_corrected = 0;
                rsblock.zero_numerators  = 0;
                rsblock.unrecoverable    = true;
+
                return false;
             }
             else
                rsblock.errors_detected  = error_locations.size();
+
             return forney_algorithm(error_locations,lambda,syndrome,rsblock);
          }
 
@@ -158,9 +163,9 @@ namespace schifra
          void load_message(galois::field_polynomial& received, const block_type& rsblock) const
          {
             /*
-              Load message data into received polynomial in
-              reverse order.
+              Load message data into received polynomial in reverse order.
             */
+
             for (std::size_t i = 0; i < code_length; ++i)
             {
                received[code_length - 1 - i] = rsblock[i];
@@ -170,18 +175,21 @@ namespace schifra
          void create_lookup_tables()
          {
             root_exponent_table_.reserve(field_.size() + 1);
+
             for (int i = 0; i < static_cast<int>(field_.size() + 1); ++i)
             {
                root_exponent_table_.push_back(field_.exp(field_.alpha(code_length - i),(1 - gen_initial_index_)));
             }
 
             syndrome_exponent_table_.reserve(fec_length);
+
             for (int i = 0; i < static_cast<int>(fec_length); ++i)
             {
                syndrome_exponent_table_.push_back(field_.alpha(gen_initial_index_ + i));
             }
 
             gamma_table_.reserve(field_.size() + 1);
+
             for (int i = 0; i < static_cast<int>(field_.size() + 1); ++i)
             {
                gamma_table_.push_back((1 + (X_ * galois::field_element(field_,field_.alpha(i)))));
@@ -195,7 +203,9 @@ namespace schifra
                     2. Erasure positions must exist within the code block.
                     There are NO exceptions to these rules!
             */
+
             erasure_locations.resize(erasure_list.size());
+
             for (std::size_t i = 0; i < erasure_list.size(); ++i)
             {
                erasure_locations[i] = (code_length - 1 - erasure_list[i]);
@@ -207,17 +217,20 @@ namespace schifra
          {
             int error_flag = 0;
             syndrome = galois::field_polynomial(field_,fec_length - 1);
+
             for (std::size_t i = 0; i < fec_length; ++i)
             {
                syndrome[i]  = received(syndrome_exponent_table_[i]);
                error_flag  |= syndrome[i].poly();
             }
+
             return error_flag;
          }
 
          void compute_gamma(galois::field_polynomial& gamma, const erasure_locations_t& erasure_locations) const
          {
             gamma = galois::field_element(field_,1);
+
             for (std::size_t i = 0; i < erasure_locations.size(); ++i)
             {
                gamma *= gamma_table_[erasure_locations[i]];
@@ -231,6 +244,7 @@ namespace schifra
                via an exhaustive search over all non-zero elements in the given
                finite field.
             */
+
             root_list.reserve(fec_length << 1);
             root_list.resize(0);
             std::size_t polynomial_degree = poly.deg();
@@ -241,6 +255,7 @@ namespace schifra
                {
                   root_list.push_back(i);
                   root_list_size++;
+
                   if (root_list_size == polynomial_degree)
                   {
                      break;
@@ -258,8 +273,10 @@ namespace schifra
             /*
                Compute the lambda discrepancy at the current round of BMA
             */
+
             int upper_bound = std::min(static_cast<int>(l),lambda.deg());
             discrepancy = 0;
+
             for (int i = 0; i <= upper_bound; ++i)
             {
                discrepancy += lambda[i] * syndrome[round - i];
@@ -297,8 +314,10 @@ namespace schifra
                      l = tmp;
                      previous_lambda = lambda / discrepancy;
                   }
+
                   lambda = tau;
                }
+
                previous_lambda <<= 1;
             }
          }
@@ -342,6 +361,7 @@ namespace schifra
                else
                   ++rsblock.zero_numerators;
             }
+
             return true;
          }
 

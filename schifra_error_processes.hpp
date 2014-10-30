@@ -265,25 +265,48 @@ namespace schifra
       }
    }
 
+   namespace details
+   {
+      template <std::size_t code_length, std::size_t fec_length, bool t>
+      struct corrupt_message_all_errors_segmented_impl
+      {
+         static void process(reed_solomon::block<code_length,fec_length>& rsblock,
+                             const std::size_t& start_position,
+                             const std::size_t& distance_between_blocks = 1)
+         {
+            std::size_t block_1_error_count = (fec_length >> 2);
+            std::size_t block_2_error_count = (fec_length >> 1) - block_1_error_count;
+
+            for (std::size_t i = 0; i < block_1_error_count; ++i)
+            {
+               add_error((start_position + i) % code_length,rsblock);
+            }
+
+            std::size_t new_start_position = (start_position + (block_1_error_count)) + distance_between_blocks;
+
+            for (std::size_t i = 0; i < block_2_error_count; ++i)
+            {
+               add_error((new_start_position + i) % code_length,rsblock);
+            }
+         }
+      };
+
+      template <std::size_t code_length, std::size_t fec_length>
+      struct corrupt_message_all_errors_segmented_impl<code_length,fec_length,false>
+      {
+         static void process(reed_solomon::block<code_length,fec_length>&,
+                             const std::size_t&, const std::size_t&)
+         {}
+      };
+   }
+
    template <std::size_t code_length, std::size_t fec_length>
    inline void corrupt_message_all_errors_segmented(reed_solomon::block<code_length,fec_length>& rsblock,
                                                     const std::size_t& start_position,
                                                     const std::size_t& distance_between_blocks = 1)
    {
-      std::size_t block_1_error_count = (fec_length >> 2);
-      std::size_t block_2_error_count = (fec_length >> 1) - block_1_error_count;
-
-      for (std::size_t i = 0; i < block_1_error_count; ++i)
-      {
-         add_error((start_position + i) % code_length,rsblock);
-      }
-
-      std::size_t new_start_position = (start_position + (block_1_error_count)) + distance_between_blocks;
-
-      for (std::size_t i = 0; i < block_2_error_count; ++i)
-      {
-         add_error((new_start_position + i) % code_length,rsblock);
-      }
+      details::corrupt_message_all_errors_segmented_impl<code_length,fec_length,(fec_length > 2)>::
+                  process(rsblock,start_position,distance_between_blocks);
    }
 
    inline bool check_for_duplicate_erasures(const std::vector<int>& erasure_list)

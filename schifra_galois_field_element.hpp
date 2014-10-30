@@ -20,7 +20,6 @@
 */
 
 
-
 #ifndef INCLUDE_SCHIFRA_GALOIS_FIELD_ELEMENT_HPP
 #define INCLUDE_SCHIFRA_GALOIS_FIELD_ELEMENT_HPP
 
@@ -29,6 +28,7 @@
 #include <vector>
 
 #include "schifra_galois_field.hpp"
+
 
 namespace schifra
 {
@@ -207,7 +207,6 @@ namespace schifra
       inline field_element operator * (const field_symbol&  a, const field_element& b);
       inline field_element operator / (const field_element& a, const field_element& b);
       inline field_element operator ^ (const field_element& a, const int&           b);
-
 
       inline std::ostream& operator << (std::ostream& os, const field_element& gfe)
       {
