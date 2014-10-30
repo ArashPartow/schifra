@@ -23,6 +23,7 @@
 #ifndef INCLUDE_SCHIFRA_REED_SOLOMON_SPPED_EVALUATOR_HPP
 #define INCLUDE_SCHIFRA_REED_SOLOMON_SPPED_EVALUATOR_HPP
 
+
 #include <cstddef>
 #include <cstdio>
 #include <iostream>

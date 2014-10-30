@@ -345,6 +345,7 @@ namespace schifra
                (*it) /= element;
             }
          }
+
          return *this;
       }
 
@@ -475,6 +476,7 @@ namespace schifra
             field_symbol total_sum = 0 ;
             field_symbol value_poly_form = value.poly();
             int i = 0;
+
             for (poly_iter it = poly_.begin(); it != poly_.end(); ++it, ++i)
             {
                total_sum ^= field_.mul(field_.exp(value_poly_form,i),(*it).poly());
@@ -574,6 +576,7 @@ namespace schifra
          if ((*this).poly_.size() > 1)
          {
             field_polynomial deriv(field_,deg());
+
             for (unsigned int i = 0; i < poly_.size() - 1; ++i)
             {
                if ((i & 1) == 0)

@@ -23,6 +23,7 @@
 #ifndef INCLUDE_SCHIFRA_GALOIS_FIELD_HPP
 #define INCLUDE_SCHIFRA_GALOIS_FIELD_HPP
 
+
 #include <iostream>
 #include <vector>
 #include <limits>

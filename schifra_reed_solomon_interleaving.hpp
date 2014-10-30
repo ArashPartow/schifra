@@ -64,6 +64,7 @@ namespace schifra
             for (std::size_t row = 0; row < row_count; ++row)
             {
                auxiliary_stack[aux_row][aux_index] = block_stack[row][index];
+
                if (++aux_index == code_length)
                {
                   aux_index = 0;
@@ -95,6 +96,7 @@ namespace schifra
                for (std::size_t row = 0; row < row_count; ++row)
                {
                   auxiliary_stack[aux_row][aux_index] = block_stack[row][index];
+
                   if (++aux_index == code_length)
                   {
                      aux_index = 0;
@@ -108,6 +110,7 @@ namespace schifra
                for (std::size_t row = 0; row < row_count - 1; ++row)
                {
                   auxiliary_stack[aux_row][aux_index] = block_stack[row][index];
+
                   if (++aux_index == code_length)
                   {
                      aux_index = 0;
@@ -162,6 +165,7 @@ namespace schifra
             for (std::size_t row = 0; row < row_count; ++row)
             {
                auxiliary_stack[aux_row][aux_index] = block_stack[row][index];
+
                if (++aux_index == block_length)
                {
                   aux_index = 0;
@@ -193,6 +197,7 @@ namespace schifra
                for (std::size_t row = 0; row < row_count; ++row)
                {
                   auxiliary_stack[aux_row][aux_index] = block_stack[row][index];
+
                   if (++aux_index == block_length)
                   {
                      aux_index = 0;
@@ -243,6 +248,7 @@ namespace schifra
             for (std::size_t row = 0; row < row_count; ++row)
             {
                auxiliary_stack[aux_row][aux_index] = block_stack[row][index];
+
                if (++aux_index == block_length)
                {
                   aux_index = 0;
@@ -277,6 +283,7 @@ namespace schifra
             for (std::size_t row = 0; row < row_count; ++row)
             {
                auxiliary_stack[aux_row][aux_index] = block_stack[row][index];
+
                if (++aux_index == block_length)
                {
                   aux_index = 0;
@@ -290,6 +297,7 @@ namespace schifra
             for (std::size_t row = 0; row < row_count - 1; ++row)
             {
                auxiliary_stack[aux_row][aux_index] = block_stack[row][index];
+
                if (++aux_index == block_length)
                {
                   aux_index = 0;
@@ -327,6 +335,7 @@ namespace schifra
             for (std::size_t index = 0; index < code_length; ++index)
             {
                auxiliary_stack[aux_row][aux_index] = block_stack[row][index];
+
                if (++aux_row == row_count)
                {
                   aux_row = 0;
@@ -359,6 +368,7 @@ namespace schifra
             for (std::size_t i = 0; i < partial_code_length * row_count; ++i)
             {
                auxiliary_stack[aux_row1][aux_index1] = block_stack[aux_row2][aux_index2];
+
                if (++aux_row1 == row_count)
                {
                   aux_row1 = 0;
@@ -375,6 +385,7 @@ namespace schifra
             for (std::size_t i = 0; aux_index1 < code_length; ++i)
             {
                auxiliary_stack[aux_row1][aux_index1] = block_stack[aux_row2][aux_index2];
+
                if (++aux_row1 == (row_count - 1))
                {
                   aux_row1 = 0;
@@ -432,6 +443,7 @@ namespace schifra
             for (std::size_t index = 0; index < block_length; ++index)
             {
                auxiliary_stack[aux_row][aux_index] = block_stack[row][index];
+
                if (++aux_row == row_count)
                {
                   aux_row = 0;
@@ -457,6 +469,7 @@ namespace schifra
             for (std::size_t index = 0; index < block_length; ++index)
             {
                auxiliary_stack[aux_row][aux_index] = block_stack[row][index];
+
                if (++aux_row == row_count)
                {
                   aux_row = 0;
@@ -494,6 +507,7 @@ namespace schifra
          for (std::size_t i = 0; i < partial_block_length * row_count; ++i)
          {
             auxiliary_stack[aux_row1][aux_index1] = block_stack[aux_row2][aux_index2];
+
             if (++aux_row1 == row_count)
             {
                aux_row1 = 0;
@@ -510,6 +524,7 @@ namespace schifra
          for (std::size_t i = 0; aux_index1 < block_length; ++i)
          {
             auxiliary_stack[aux_row1][aux_index1] = block_stack[aux_row2][aux_index2];
+
             if (++aux_row1 == (row_count - 1))
             {
                aux_row1 = 0;
@@ -568,6 +583,7 @@ namespace schifra
             for (std::size_t row = 0; row < row_count; ++row)
             {
                auxiliary_stack[aux_row][aux_index] = block_stack[row][index];
+
                if (++aux_index == block_length)
                {
                   aux_index = skip_columns;
@@ -597,7 +613,7 @@ namespace schifra
                T tmp = block_stack[i][j];
                block_stack[i][j] = block_stack[j][i];
                block_stack[j][i] = tmp;
-           }
+            }
          }
       }
 
@@ -611,7 +627,7 @@ namespace schifra
                T tmp = block_stack[i][j];
                block_stack[i][j] = block_stack[j][i];
                block_stack[j][i] = tmp;
-           }
+            }
          }
       }
 

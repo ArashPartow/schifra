@@ -25,6 +25,7 @@
 
 
 #include <string>
+
 #include "schifra_galois_field.hpp"
 #include "schifra_galois_field_element.hpp"
 #include "schifra_galois_field_polynomial.hpp"
@@ -55,6 +56,7 @@ namespace schifra
                encoder_valid_ = false;
                return;
             }
+
             encoder_valid_ = true;
          }
 
@@ -92,16 +94,19 @@ namespace schifra
                */
                return false;
             }
+
             return true;
          }
 
          inline bool encode(const std::string& data, block_type& rsblock) const
          {
             std::string::const_iterator it = data.begin();
+
             for (std::size_t i = 0; i < data_length; ++i, ++it)
             {
                rsblock.data[i] = static_cast<typename block_type::symbol_type>(*it) & field_.mask();
             }
+
             return encode(rsblock);
          }
 
@@ -159,6 +164,7 @@ namespace schifra
                {
                   rsblock.fec(i) = block_.fec(i);
                }
+
                return true;
             }
             else
@@ -171,12 +177,14 @@ namespace schifra
             {
                block_.data[padding_length + i] = data[i];
             }
+
             if (encoder_.encode(block_))
             {
                for (std::size_t i = 0; i < code_length; ++i)
                {
                   rsblock.data[i] = block_.data[padding_length + i];
                }
+
                return true;
             }
             else

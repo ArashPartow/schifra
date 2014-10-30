@@ -73,6 +73,7 @@ namespace schifra
                rsblock.errors_corrected = 0;
                rsblock.zero_numerators  = 0;
                rsblock.unrecoverable    = true;
+
                return false;
             }
 
@@ -87,6 +88,7 @@ namespace schifra
                rsblock.errors_corrected = 0;
                rsblock.zero_numerators  = 0;
                rsblock.unrecoverable    = false;
+
                return true;
             }
 
@@ -110,7 +112,7 @@ namespace schifra
             {
                /*
                  Syndrome is non-zero yet no error locations have
-                 be obtained, conclusion:
+                 been obtained, conclusion:
                  It is possible that there are MORE errrors in the
                  message than can be detected and corrected for this
                  particular code.
@@ -241,14 +243,16 @@ namespace schifra
          {
             /*
                Chien Search: Find the roots of the error locator polynomial
-               via an exhaustive search over all non-zero elements in the given
-               finite field.
+               via an exhaustive search over all non-zero elements in the
+               given finite field.
             */
 
             root_list.reserve(fec_length << 1);
             root_list.resize(0);
+
             std::size_t polynomial_degree = poly.deg();
             std::size_t root_list_size = 0;
+
             for (int i = 1; i <= static_cast<int>(code_length); ++i)
             {
                if (0 == poly(field_.alpha(i)).poly())
@@ -345,6 +349,7 @@ namespace schifra
                galois::field_symbol  alpha_inverse = field_.alpha(error_location);
                numerator                           = (omega(alpha_inverse) * root_exponent_table_[error_location]);
                denominator                         = lambda_derivative(alpha_inverse);
+
                if (numerator != 0)
                {
                   if (denominator != 0)
@@ -366,6 +371,7 @@ namespace schifra
          }
 
       protected:
+
          bool                                  decoder_valid_;
          const galois::field&                  field_;
          std::vector<galois::field_symbol>     root_exponent_table_;
@@ -402,21 +408,26 @@ namespace schifra
             {
                block_.data[padding_length + i] = rsblock.data[i];
             }
+
             erasure_locations_t shifted_position_erasure_list(erasure_list.size(),0);
+
             for (std::size_t i = 0; i < erasure_list.size(); ++i)
             {
                shifted_position_erasure_list[i] = erasure_list[i] + padding_length;
             }
+
             if (decoder_.decode(block_,shifted_position_erasure_list))
             {
                for (std::size_t i = 0; i < code_length; ++i)
                {
                   rsblock.data[i] = block_.data[padding_length + i];
                }
+
                rsblock.errors_detected  = block_.errors_detected;
                rsblock.errors_corrected = block_.errors_corrected;
                rsblock.zero_numerators  = block_.zero_numerators;
                rsblock.unrecoverable    = block_.unrecoverable;
+
                return true;
             }
             else
@@ -425,6 +436,7 @@ namespace schifra
                rsblock.errors_corrected = block_.errors_corrected;
                rsblock.zero_numerators  = block_.zero_numerators;
                rsblock.unrecoverable    = block_.unrecoverable;
+
                return false;
             }
          }
@@ -435,16 +447,19 @@ namespace schifra
             {
                block_.data[padding_length + i] = rsblock.data[i];
             }
+
             if (decoder_.decode(block_))
             {
                for (std::size_t i = 0; i < code_length; ++i)
                {
                   rsblock.data[i] = block_.data[padding_length + i];
                }
+
                rsblock.errors_detected  = block_.errors_detected;
                rsblock.errors_corrected = block_.errors_corrected;
                rsblock.zero_numerators  = block_.zero_numerators;
                rsblock.unrecoverable    = block_.unrecoverable;
+
                return true;
             }
             else
@@ -453,6 +468,7 @@ namespace schifra
                rsblock.errors_corrected = block_.errors_corrected;
                rsblock.zero_numerators  = block_.zero_numerators;
                rsblock.unrecoverable    = block_.unrecoverable;
+
                return false;
             }
          }

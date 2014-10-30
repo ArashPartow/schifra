@@ -46,6 +46,7 @@ namespace schifra
                           const std::string& output_file_name)
          {
             std::size_t remaining_bytes = schifra::fileio::file_size(input_file_name);
+
             if (0 == remaining_bytes)
             {
                std::cout << "reed_solomon::file_interleaver() - Error: input file has ZERO size." << std::endl;
@@ -53,6 +54,7 @@ namespace schifra
             }
 
             std::ifstream in_stream(input_file_name.c_str(),std::ios::binary);
+
             if (!in_stream)
             {
                std::cout << "reed_solomon::file_interleaver() - Error: input file could not be opened." << std::endl;
@@ -60,6 +62,7 @@ namespace schifra
             }
 
             std::ofstream out_stream(output_file_name.c_str(),std::ios::binary);
+
             if (!out_stream)
             {
                std::cout << "reed_solomon::file_interleaver() - Error: output file could not be created." << std::endl;
@@ -145,6 +148,7 @@ namespace schifra
                             const std::string& output_file_name)
          {
             std::size_t input_file_size = schifra::fileio::file_size(input_file_name);
+
             if (input_file_size == 0)
             {
                std::cout << "reed_solomon::file_deinterleaver() - Error: input file has ZERO size." << std::endl;
@@ -152,6 +156,7 @@ namespace schifra
             }
 
             std::ifstream in_stream(input_file_name.c_str(),std::ios::binary);
+
             if (!in_stream)
             {
                std::cout << "reed_solomon::file_deinterleaver() - Error: input file could not be opened." << std::endl;
@@ -159,6 +164,7 @@ namespace schifra
             }
 
             std::ofstream out_stream(output_file_name.c_str(),std::ios::binary);
+
             if (!out_stream)
             {
                std::cout << "reed_solomon::file_deinterleaver() - Error: output file could not be created." << std::endl;
