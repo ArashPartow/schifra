@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2014 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -88,10 +88,10 @@ int main()
    /* Reed Solomon Code Parameters */
    schifra::reed_solomon::general_codec<code_length> codec(field,gen_poly_index);
 
-   schifra::reed_solomon::block<code_length,  2>   block_fec2;
-   schifra::reed_solomon::block<code_length,  4>   block_fec4;
-   schifra::reed_solomon::block<code_length,  6>   block_fec6;
-   schifra::reed_solomon::block<code_length,  8>   block_fec8;
+   schifra::reed_solomon::block<code_length,  2>  block_fec02;
+   schifra::reed_solomon::block<code_length,  4>  block_fec04;
+   schifra::reed_solomon::block<code_length,  6>  block_fec06;
+   schifra::reed_solomon::block<code_length,  8>  block_fec08;
    schifra::reed_solomon::block<code_length, 10>  block_fec10;
    schifra::reed_solomon::block<code_length, 12>  block_fec12;
    schifra::reed_solomon::block<code_length, 14>  block_fec14;
@@ -109,10 +109,10 @@ int main()
    schifra::reed_solomon::block<code_length, 96>  block_fec96;
    schifra::reed_solomon::block<code_length,128> block_fec128;
 
-   do_encode_decode(codec,  block_fec2);
-   do_encode_decode(codec,  block_fec4);
-   do_encode_decode(codec,  block_fec6);
-   do_encode_decode(codec,  block_fec8);
+   do_encode_decode(codec, block_fec02);
+   do_encode_decode(codec, block_fec04);
+   do_encode_decode(codec, block_fec06);
+   do_encode_decode(codec, block_fec08);
    do_encode_decode(codec, block_fec10);
    do_encode_decode(codec, block_fec12);
    do_encode_decode(codec, block_fec14);
