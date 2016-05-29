@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -82,10 +82,16 @@ int main()
 
    schifra::galois::field_polynomial generator_polynomial(field);
 
-   schifra::sequential_root_generator_polynomial_creator(field,
-                                                         gen_poly_index,
-                                                         gen_poly_root_count,
-                                                         generator_polynomial);
+   if (
+        !schifra::make_sequential_root_generator_polynomial(field,
+                                                            gen_poly_index,
+                                                            gen_poly_root_count,
+                                                            generator_polynomial)
+      )
+   {
+      std::cout << "Error - Failed to create sequential root generator!" << std::endl;
+      return 1;
+   }
 
    schifra::reed_solomon::encoder<code_length,fec_length> encoder(field,generator_polynomial);
    schifra::reed_solomon::decoder<code_length,fec_length> decoder(field,gen_poly_index);

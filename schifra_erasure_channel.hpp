@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -66,6 +66,7 @@ namespace schifra
             if (!encoder.encode(output[i]))
             {
                std::cout << "erasure_channel_stack_encode() - Error: Failed to encode block[" << i <<"]" << std::endl;
+
                return false;
             }
          }
@@ -208,6 +209,7 @@ namespace schifra
             if (!general_decoder.decode(output[i],missing_row_index))
             {
                std::cout << "[2] erasure_channel_stack_decode() - Error: Failed to decode block[" << i <<"]" << std::endl;
+
                return false;
             }
          }
@@ -236,6 +238,7 @@ namespace schifra
          else if (missing_row_index.size() == fec_length)
          {
             interleave<code_length,fec_length>(output);
+
             return erasure_decoder.decode(output,missing_row_index);
          }
          else

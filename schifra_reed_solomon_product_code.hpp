@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -62,6 +62,7 @@ namespace schifra
          bool encode(data_ptr_type data)
          {
             data_ptr_type curr_data_ptr = data;
+
             for (std::size_t row = 0; row < data_length; ++row, curr_data_ptr += data_length)
             {
                copy(curr_data_ptr,data_length,block_stack_[row]);
@@ -214,6 +215,7 @@ namespace schifra
             }
 
             block_type vertical_block;
+
             for (std::size_t col = 0; col < code_length; ++col)
             {
                for (std::size_t row = 0; row < data_length; ++row)

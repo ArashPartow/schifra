@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -65,9 +65,9 @@ int main()
    const std::size_t data_size   = stack_size * data_length;
 
    /* Finite Field Parameters */
-   const std::size_t field_descriptor                 =   8;
-   const std::size_t generator_polynommial_index      = 120;
-   const std::size_t generator_polynommial_root_count = fec_length;
+   const std::size_t field_descriptor                =   8;
+   const std::size_t generator_polynomial_index      = 120;
+   const std::size_t generator_polynomial_root_count = fec_length;
 
    /* Instantiate Finite Field and Generator Polynomials */
    schifra::galois::field field(field_descriptor,
@@ -76,15 +76,21 @@ int main()
 
    schifra::galois::field_polynomial generator_polynomial(field);
 
-   schifra::sequential_root_generator_polynomial_creator(field,
-                                                         generator_polynommial_index,
-                                                         generator_polynommial_root_count,
-                                                         generator_polynomial);
+   if (
+        !schifra::make_sequential_root_generator_polynomial(field,
+                                                            generator_polynomial_index,
+                                                            generator_polynomial_root_count,
+                                                            generator_polynomial)
+      )
+   {
+      std::cout << "Error - Failed to create sequential root generator!" << std::endl;
+      return 1;
+   }
 
    /* Instantiate Encoder and Decoder (Codec) */
    schifra::reed_solomon::encoder<code_length,fec_length> rs_encoder(field,generator_polynomial);
-   schifra::reed_solomon::decoder<code_length,fec_length> rs_decoder(field,generator_polynommial_index);
-   schifra::reed_solomon::erasure_code_decoder<code_length,fec_length> rs_erasure_decoder(field,generator_polynommial_index);
+   schifra::reed_solomon::decoder<code_length,fec_length> rs_decoder(field,generator_polynomial_index);
+   schifra::reed_solomon::erasure_code_decoder<code_length,fec_length> rs_erasure_decoder(field,generator_polynomial_index);
 
    schifra::reed_solomon::block<code_length,fec_length> block_stack[stack_size];
 

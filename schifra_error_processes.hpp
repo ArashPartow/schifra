@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -99,6 +99,7 @@ namespace schifra
                                               const std::size_t& scale = 1)
    {
       std::size_t erasures[code_length];
+
       for (std::size_t i = 0; i < code_length; ++i) erasures[i] = 0;
 
       for (std::size_t i = 0; i < fec_length; ++i)
@@ -122,6 +123,7 @@ namespace schifra
                                             const std::size_t& scale = 1)
    {
       std::size_t erasures[code_length];
+
       for (std::size_t i = 0; i < code_length; ++i) erasures[i] = 0;
 
       for (std::size_t i = 0; i < erasure_count; ++i)
@@ -162,13 +164,16 @@ namespace schifra
          std::cout << "corrupt_message_errors_erasures() - ERROR Too many erasures and errors!" << std::endl;
          std::cout << "Error Count:   " << error_count << std::endl;
          std::cout << "Erasure Count: " << error_count << std::endl;
+
          return;
       }
 
       std::size_t erasures[code_length];
+
       for (std::size_t i = 0; i < code_length; ++i) erasures[i] = 0;
 
       std::size_t error_position = 0;
+
       switch (mode)
       {
          case error_mode::erasures_errors : {
@@ -224,10 +229,12 @@ namespace schifra
          std::cout << "corrupt_message_interleaved_errors_erasures() - [1] ERROR Too many erasures and errors!" << std::endl;
          std::cout << "Error Count:   " << error_count << std::endl;
          std::cout << "Erasure Count: " << error_count << std::endl;
+
          return;
       }
 
       std::size_t erasures[code_length];
+
       for (std::size_t i = 0; i < code_length; ++i) erasures[i] = 0;
 
       std::size_t e = 0;
@@ -237,6 +244,7 @@ namespace schifra
       while ((e < error_count) || (s < erasure_count) || (i < (error_count + erasure_count)))
       {
         std::size_t error_position = (start_position + i) % code_length;
+
         if (((i & 0x01) == 0) && (s < erasure_count))
         {
            add_erasure_error(error_position,rsblock);
@@ -251,9 +259,9 @@ namespace schifra
         ++i;
       }
 
-      for (std::size_t i = 0; i < code_length; ++i)
+      for (std::size_t j = 0; j < code_length; ++j)
       {
-         if (erasures[i] == 1) erasure_list.push_back(i);
+         if (erasures[j] == 1) erasure_list.push_back(j);
       }
 
       if ((2 * e) + erasure_list.size() > fec_length)
@@ -261,6 +269,7 @@ namespace schifra
          std::cout << "corrupt_message_interleaved_errors_erasures() - [2] ERROR Too many erasures and errors!" << std::endl;
          std::cout << "Error Count:   " << error_count << std::endl;
          std::cout << "Erasure Count: " << error_count << std::endl;
+
          return;
       }
    }
@@ -321,6 +330,7 @@ namespace schifra
             }
          }
       }
+
       return true;
    }
 
@@ -330,6 +340,7 @@ namespace schifra
       {
          std::cout << "[" << i << "," << erasure_list[i] << "] ";
       }
+
       std::cout << std::endl;
    }
 
@@ -339,6 +350,7 @@ namespace schifra
                                    const bool display = false)
    {
       std::string::const_iterator it = data.begin();
+
       for (std::size_t i = 0; i < code_length - fec_length; ++i, ++it)
       {
          if (static_cast<char>(rsblock.data[i] & 0xFF) != (*it))
@@ -349,9 +361,11 @@ namespace schifra
                             "d1: " << rsblock.data[i] << "\t" <<
                             "d2: " << static_cast<unsigned char>(*it) << std::endl;
             }
+
             return false;
          }
       }
+
       return true;
    }
 
@@ -439,7 +453,7 @@ namespace schifra
       delete[] data;
    }
 
-   static const std::size_t random_error_index[] =
+   static const std::size_t global_random_error_index[] =
                          {
                             13,  170,  148,   66,  228,  208,  182,   92,
                              4,  137,   97,   99,  237,  151,   15,    0,
@@ -475,7 +489,7 @@ namespace schifra
                             45,   38,  189,  143,  245,  157,  181
                          };
 
-   static const std::size_t error_index_size = sizeof(random_error_index) / sizeof(std::size_t);
+   static const std::size_t error_index_size = sizeof(global_random_error_index) / sizeof(std::size_t);
 
    template <std::size_t code_length, std::size_t fec_length>
    inline void corrupt_message_all_errors_at_index(schifra::reed_solomon::block<code_length,fec_length>& rsblock,
@@ -484,10 +498,13 @@ namespace schifra
                                                    const bool display_positions = false)
    {
       schifra::reed_solomon::block<code_length,fec_length> tmp_rsblock = rsblock;
+
       for (std::size_t i = 0; i < error_count; ++i)
       {
-         std::size_t error_position = (random_error_index[(error_index_start_position + i) % error_index_size]) % code_length;
+         std::size_t error_position = (global_random_error_index[(error_index_start_position + i) % error_index_size]) % code_length;
+
          add_error(error_position,rsblock);
+
          if (display_positions)
          {
             std::cout << "Error index: " << error_position << std::endl;
@@ -505,7 +522,9 @@ namespace schifra
       for (std::size_t i = 0; i < error_count; ++i)
       {
          std::size_t error_position = (random_error_index[(error_index_start_position + i) % random_error_index.size()]) % code_length;
+
          add_error(error_position,rsblock);
+
          if (display_positions)
          {
             std::cout << "Error index: " << error_position << std::endl;

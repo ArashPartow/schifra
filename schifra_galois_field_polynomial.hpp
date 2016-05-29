@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -71,11 +71,11 @@ namespace schifra
          field_polynomial& operator<<=(const unsigned int&              n);
          field_polynomial& operator>>=(const unsigned int&              n);
 
-         field_element&    operator[] (const unsigned int&           term);
+         field_element&    operator[] (const std::size_t&            term);
          field_element     operator() (const field_element&         value);
          field_element     operator() (field_symbol                 value);
 
-         const field_element&  operator[](const unsigned int&   term) const;
+         const field_element&  operator[](const std::size_t&    term) const;
          const field_element   operator()(const field_element& value) const;
          const field_element   operator()(field_symbol         value) const;
 
@@ -353,8 +353,8 @@ namespace schifra
       {
          if (
               (field_        == divisor.field_) &&
-              (deg()         >= divisor.deg())  &&
-              (divisor.deg() >=             0)
+              (deg()         >= divisor.deg() ) &&
+              (divisor.deg() >=             0 )
             )
          {
             field_polynomial quotient (field_, deg() - divisor.deg() + 1);
@@ -420,6 +420,7 @@ namespace schifra
          if (poly_.size() > 0)
          {
             size_t initial_size = poly_.size();
+
             poly_.resize(poly_.size() + n, field_element(field_,0));
 
             for (size_t i = initial_size - 1; static_cast<int>(i) >= 0; --i)
@@ -455,13 +456,13 @@ namespace schifra
          return *this;
       }
 
-      inline const field_element& field_polynomial::operator[](const unsigned int& term) const
+      inline const field_element& field_polynomial::operator[](const std::size_t& term) const
       {
          assert(term < poly_.size());
          return poly_[term];
       }
 
-      inline field_element& field_polynomial::operator[](const unsigned int& term)
+      inline field_element& field_polynomial::operator[](const std::size_t& term)
       {
          assert(term < poly_.size());
          return poly_[term];
@@ -473,9 +474,9 @@ namespace schifra
 
          if (!poly_.empty())
          {
+            int i = 0;
             field_symbol total_sum = 0 ;
             field_symbol value_poly_form = value.poly();
-            int i = 0;
 
             for (poly_iter it = poly_.begin(); it != poly_.end(); ++it, ++i)
             {
@@ -492,9 +493,9 @@ namespace schifra
       {
          if (!poly_.empty())
          {
+            int i = 0;
             field_symbol total_sum = 0 ;
             field_symbol value_poly_form = value.poly();
-            int i = 0;
 
             for (const_poly_iter it = poly_.begin(); it != poly_.end(); ++it, ++i)
             {
@@ -511,8 +512,8 @@ namespace schifra
       {
          if (!poly_.empty())
          {
-            field_symbol total_sum = 0 ;
             int i = 0;
+            field_symbol total_sum = 0 ;
 
             for (const_poly_iter it = poly_.begin(); it != poly_.end(); ++it, ++i)
             {
@@ -529,8 +530,8 @@ namespace schifra
       {
          if (!poly_.empty())
          {
-            field_symbol total_sum = 0 ;
             int i = 0;
+            field_symbol total_sum = 0 ;
 
             for (const_poly_iter it = poly_.begin(); it != poly_.end(); ++it, ++i)
             {
@@ -605,10 +606,12 @@ namespace schifra
       inline void field_polynomial::simplify(field_polynomial& polynomial) const
       {
          std::size_t poly_size = polynomial.poly_.size();
+
          if ((poly_size > 0) && (polynomial.poly_.back() == 0))
          {
-            poly_iter it = polynomial.poly_.end();
             std::size_t count = 0;
+
+            poly_iter it = polynomial.poly_.end();
 
             while (polynomial.poly_.begin() != it)
             {
@@ -801,7 +804,6 @@ namespace schifra
 
       inline std::ostream& operator << (std::ostream& os, const field_polynomial& polynomial)
       {
-
          if (polynomial.deg() >= 0)
          {
             /*
@@ -823,6 +825,7 @@ namespace schifra
                   << ((static_cast<int>(i) != (polynomial.deg())) ? " + " : "");
             }
          }
+
          return os;
       }
 

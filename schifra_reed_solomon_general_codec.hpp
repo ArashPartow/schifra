@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -46,7 +46,17 @@ namespace schifra
          const std::size_t data_length = code_length - fec_length;
          traits::validate_reed_solomon_code_parameters<code_length,fec_length,data_length>();
          galois::field_polynomial gen_polynomial(field);
-         sequential_root_generator_polynomial_creator(field,gen_poly_index,fec_length,gen_polynomial);
+
+         if (
+              !make_sequential_root_generator_polynomial(field,
+                                                         gen_poly_index,
+                                                         fec_length,
+                                                         gen_polynomial)
+            )
+         {
+            return reinterpret_cast<void*>(0);
+         }
+
          return new encoder<code_length,fec_length>(field,gen_polynomial);
       }
 

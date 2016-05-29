@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -67,9 +67,17 @@ namespace schifra
            block_failures_(0)
          {
             traits::equivalent_encoder_decoder<encoder_type,decoder_type>();
-            sequential_root_generator_polynomial_creator(field_,
-                                                         genpoly_initial_index_,
-                                                         fec_length,generator_polynomial_);
+
+            if (
+                 !make_sequential_root_generator_polynomial(field_,
+                                                            genpoly_initial_index_,
+                                                            fec_length,
+                                                            generator_polynomial_)
+               )
+            {
+               return;
+            }
+
             rs_encoder_ = new encoder_type(field_,generator_polynomial_);
             rs_decoder_ = new decoder_type(field_,genpoly_initial_index_);
 

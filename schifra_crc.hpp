@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -39,49 +39,55 @@ namespace schifra
 
       crc32(const crc32_t& _key, const crc32_t& _state = 0x00)
       : key(_key),
-        state(_state)
+        state(_state),
+        initial_state(_state)
       {
          initialize_crc32_table();
       }
 
-      void update(const unsigned char& data)
+      void reset()
+      {
+         state = initial_state;
+      }
+
+      void update_1byte(const unsigned char data)
       {
          state = (state >> 8) ^ table[data];
       }
 
-      void update(const unsigned char data[], const std::size_t& count) const
+      void update(const unsigned char data[], const std::size_t& count)
       {
          for (std::size_t i = 0; i < count; ++i)
          {
-            update(data[i]);
+            update_1byte(data[i]);
          }
       }
 
-      void update(char data[], const std::size_t& count) const
+      void update(char data[], const std::size_t& count)
       {
          for (std::size_t i = 0; i < count; ++i)
          {
-            update(static_cast<unsigned char>(data[i]));
+            update_1byte(static_cast<unsigned char>(data[i]));
          }
       }
 
-      void update(const std::string& data) const
+      void update(const std::string& data)
       {
          for (std::size_t i = 0; i < data.size(); ++i)
          {
-            update(static_cast<unsigned char>(data[i]));
+            update_1byte(static_cast<unsigned char>(data[i]));
          }
       }
 
-      void update(const std::size_t& data) const
+      void update(const std::size_t& data)
       {
-         update(static_cast<unsigned char>((data      ) & 0xFF));
-         update(static_cast<unsigned char>((data >>  8) & 0xFF));
-         update(static_cast<unsigned char>((data >> 16) & 0xFF));
-         update(static_cast<unsigned char>((data >> 24) & 0xFF));
+         update_1byte(static_cast<unsigned char>((data      ) & 0xFF));
+         update_1byte(static_cast<unsigned char>((data >>  8) & 0xFF));
+         update_1byte(static_cast<unsigned char>((data >> 16) & 0xFF));
+         update_1byte(static_cast<unsigned char>((data >> 24) & 0xFF));
       }
 
-      crc32_t crc() const
+      crc32_t crc()
       {
          return state;
       }
@@ -107,6 +113,7 @@ namespace schifra
 
       crc32_t key;
       crc32_t state;
+      const crc32_t initial_state;
       crc32_t table[256];
    };
 
@@ -125,25 +132,34 @@ namespace schifra
 
       void update(const unsigned char data[], const std::size_t& count)
       {
-         for (std::size_t i = 0; i < count; ++i) update(data[i]);
+         for (std::size_t i = 0; i < count; ++i)
+         {
+            update_1byte(data[i]);
+         }
       }
 
       void update(const char data[], const std::size_t& count)
       {
-         for (std::size_t i = 0; i < count; ++i) update(static_cast<unsigned char>(data[i]));
+         for (std::size_t i = 0; i < count; ++i)
+         {
+            update_1byte(static_cast<unsigned char>(data[i]));
+         }
       }
 
       void update(const std::string& data)
       {
-         for (std::size_t i = 0; i < data.size(); ++i) update(static_cast<unsigned char>(data[i]));
+         for (std::size_t i = 0; i < data.size(); ++i)
+         {
+            update_1byte(static_cast<unsigned char>(data[i]));
+         }
       }
 
       void update(const std::size_t& data)
       {
-         update(static_cast<unsigned char>((data      ) & 0xFF));
-         update(static_cast<unsigned char>((data >>  8) & 0xFF));
-         update(static_cast<unsigned char>((data >> 16) & 0xFF));
-         update(static_cast<unsigned char>((data >> 24) & 0xFF));
+         update_1byte(static_cast<unsigned char>((data      ) & 0xFF));
+         update_1byte(static_cast<unsigned char>((data >>  8) & 0xFF));
+         update_1byte(static_cast<unsigned char>((data >> 16) & 0xFF));
+         update_1byte(static_cast<unsigned char>((data >> 24) & 0xFF));
       }
 
    };

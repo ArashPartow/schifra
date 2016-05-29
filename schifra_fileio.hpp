@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -191,7 +191,7 @@ namespace schifra
          return true;
       }
 
-      inline std::size_t file_crc(const crc32& crc_module, const std::string& file_name)
+      inline std::size_t file_crc(crc32& crc_module, const std::string& file_name)
       {
          std::ifstream file(file_name.c_str(),std::ios::binary);
          if (!file) return 0;
@@ -200,6 +200,8 @@ namespace schifra
          char buffer[block_size];
 
          std::size_t remaining_bytes = file_size(file_name);
+
+         crc_module.reset();
 
          while (remaining_bytes >= block_size)
          {

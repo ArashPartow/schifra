@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -166,7 +166,17 @@ namespace schifra
          {
             galois::field field(field_descriptor,prim_poly_size,prim_poly);
             galois::field_polynomial generator_polynomial(field);
-            sequential_root_generator_polynomial_creator(field,gen_poly_index,fec_length,generator_polynomial);
+
+            if (
+                 !make_sequential_root_generator_polynomial(field,
+                                                            gen_poly_index,
+                                                            fec_length,
+                                                            generator_polynomial)
+               )
+            {
+               return;
+            }
+
             RSEncoder rs_encoder(field,generator_polynomial);
             RSDecoder rs_decoder(field,gen_poly_index);
 
@@ -255,7 +265,17 @@ namespace schifra
          {
             galois::field field(field_descriptor,prim_poly_size,prim_poly);
             galois::field_polynomial generator_polynomial(field);
-            sequential_root_generator_polynomial_creator(field,gen_poly_index,fec_length,generator_polynomial);
+
+            if (
+                 !make_sequential_root_generator_polynomial(field,
+                                                            gen_poly_index,
+                                                            fec_length,
+                                                            generator_polynomial)
+               )
+            {
+               return;
+            }
+
             RSEncoder rs_encoder(field,generator_polynomial);
             RSDecoder rs_decoder(field,gen_poly_index);
 

@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -563,6 +563,7 @@ namespace schifra
             {
                std::size_t x1 = i + skip_columns;
                std::size_t x2 = j + skip_columns;
+
                T tmp = block_stack[i][x2];
                block_stack[i][x2] = block_stack[j][x1];
                block_stack[j][x1] = tmp;

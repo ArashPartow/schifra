@@ -6,7 +6,7 @@
 # *                                                                        *
 # * Release Version 0.0.1                                                  *
 # * http://www.schifra.com                                                 *
-# * Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *
+# * Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *
 # *                                                                        *
 # * The Schifra Reed-Solomon error correcting code library and all its     *
 # * components are supplied under the terms of the General Schifra License *

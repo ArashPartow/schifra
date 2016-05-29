@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -46,8 +46,9 @@ namespace schifra
             template <typename BitBlock>
             convert_data_to_symbol(const BitBlock data[], const std::size_t data_length, int symbol[])
             {
-               const BitBlock* d_it = &data[0];
+               const BitBlock* d_it = &  data[0];
                int*            s_it = &symbol[0];
+
                for (std::size_t i = 0; i < data_length; ++i, ++d_it, s_it+=4)
                {
                   (* s_it     ) =  (*d_it)       & 0x03;
@@ -66,8 +67,9 @@ namespace schifra
             template <typename BitBlock>
             convert_data_to_symbol(const BitBlock data[], const std::size_t data_length, int symbol[])
             {
-               const BitBlock* d_it = &data[0];
+               const BitBlock* d_it = &  data[0];
                int*            s_it = &symbol[0];
+
                for (std::size_t i = 0; i < data_length; ++i, ++d_it, s_it+=2)
                {
                   (* s_it     ) =  (*d_it)       & 0x0F;
@@ -84,8 +86,9 @@ namespace schifra
             template <typename BitBlock>
             convert_data_to_symbol(const BitBlock data[], const std::size_t data_length, int symbol[])
             {
-               const BitBlock* d_it = &data[0];
+               const BitBlock* d_it = &  data[0];
                int*            s_it = &symbol[0];
+
                for (std::size_t i = 0; i < data_length; ++i, ++d_it, ++s_it)
                {
                   (*s_it) =  (*d_it) & 0xFF;
@@ -101,8 +104,9 @@ namespace schifra
             template <typename BitBlock>
             convert_data_to_symbol(const BitBlock data[], const std::size_t data_length, int symbol[])
             {
-               const BitBlock* d_it = &data[0];
+               const BitBlock* d_it = &  data[0];
                int*            s_it = &symbol[0];
+
                for (std::size_t i = 0; i < data_length; i+=2, d_it+=2, ++s_it)
                {
                   (*s_it)  = (*d_it) & 0x000000FF;
@@ -119,8 +123,9 @@ namespace schifra
             template <typename BitBlock>
             convert_data_to_symbol(const BitBlock data[], const std::size_t data_length, int symbol[])
             {
-               BitBlock* d_it = &data[0];
+               BitBlock* d_it = &  data[0];
                int*      s_it = &symbol[0];
+
                for (std::size_t i = 0; i < data_length; i+=3, d_it+=3, ++s_it)
                {
                   (*s_it) |= (*d_it) & 0x000000FF;
@@ -140,8 +145,9 @@ namespace schifra
             template <typename BitBlock>
             convert_symbol_to_data(const int symbol[], BitBlock data[], const std::size_t data_length)
             {
-               BitBlock*  d_it = &data[0];
+               BitBlock*  d_it = &  data[0];
                const int* s_it = &symbol[0];
+
                for (std::size_t i = 0; i < data_length; ++i, ++d_it, ++s_it)
                {
                   (*d_it)  =        (*s_it) & 0x0000000F;
@@ -157,8 +163,9 @@ namespace schifra
             template <typename BitBlock>
             convert_symbol_to_data(const int symbol[], BitBlock data[], const std::size_t data_length)
             {
-               BitBlock*  d_it = &data[0];
+               BitBlock*  d_it = &  data[0];
                const int* s_it = &symbol[0];
+
                for (std::size_t i = 0; i < data_length; ++i, ++d_it, ++s_it)
                {
                   (*d_it) = static_cast<BitBlock>((*s_it) & 0xFF);
@@ -174,8 +181,9 @@ namespace schifra
             template <typename BitBlock>
             convert_symbol_to_data(const int symbol[], BitBlock data[], const std::size_t data_length)
             {
-               BitBlock*  d_it = &data[0];
+               BitBlock*  d_it = &  data[0];
                const int* s_it = &symbol[0];
+
                for (std::size_t i = 0; i < data_length; ++i, ++d_it, ++s_it)
                {
                   (*d_it) = (*s_it) & 0xFFFF;

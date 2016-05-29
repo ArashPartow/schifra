@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -24,6 +24,7 @@
 #define INCLUDE_SCHIFRA_GALOIS_FIELD_HPP
 
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
 #include <limits>
@@ -310,7 +311,7 @@ namespace schifra
          return !field::operator ==(gf);
       }
 
-      inline void field::generate_field(const unsigned int* prim_poly_)
+      inline void field::generate_field(const unsigned int* prim_poly)
       {
          /*
             Note: It is assumed that the degree of the primitive
@@ -327,7 +328,7 @@ namespace schifra
             alpha_to_[i]            = mask;
             index_of_[alpha_to_[i]] = i;
 
-            if (prim_poly_[i] != 0)
+            if (prim_poly[i] != 0)
             {
                alpha_to_[power_] ^= mask;
             }
@@ -412,23 +413,23 @@ namespace schifra
          return alpha_to_[normalize(field_size_ - index_of_[val])];
       }
 
-      std::size_t field::create_array(char buffer_[],
+      std::size_t field::create_array(char buffer[],
                                       const std::size_t& length,
                                       const std::size_t offset,
                                       field_symbol** array)
       {
          const std::size_t row_size = length * sizeof(field_symbol);
-         (*array) = new(buffer_ + offset)field_symbol[length];
+         (*array) = new(buffer + offset)field_symbol[length];
          return row_size + offset;
       }
 
-      std::size_t field::create_2d_array(char buffer_[],
+      std::size_t field::create_2d_array(char buffer[],
                                          std::size_t row_cnt, std::size_t col_cnt,
                                          const std::size_t offset,
                                          field_symbol*** array)
       {
          const std::size_t row_size = col_cnt * sizeof(field_symbol);
-         char* buffer__offset = buffer_ + offset;
+         char* buffer__offset = buffer + offset;
          (*array) = new field_symbol* [row_cnt];
          for (std::size_t i = 0; i < row_cnt; ++i)
          {

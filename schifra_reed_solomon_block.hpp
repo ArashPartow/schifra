@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -62,6 +62,7 @@ namespace schifra
            unrecoverable(false)
          {
             traits::validate_reed_solomon_block_parameters<code_length,fec_length,data_length>();
+
             for (std::size_t i = 0; i < data_length; ++i)
             {
                data[i] = static_cast<galois::field_symbol>(_data[i]);
@@ -184,6 +185,7 @@ namespace schifra
                        block<code_length,fec_length> dest_block_stack[stack_size])
       {
          const std::size_t data_length = code_length - fec_length;
+
          if (src_length > (stack_size * data_length))
          {
             return false;

@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2015 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -147,9 +147,9 @@ private:
 int main()
 {
    /* Finite Field Parameters */
-   const std::size_t field_descriptor                 =   8;
-   const std::size_t generator_polynommial_index      = 120;
-   const std::size_t generator_polynommial_root_count = 128;
+   const std::size_t field_descriptor                =   8;
+   const std::size_t generator_polynomial_index      = 120;
+   const std::size_t generator_polynomial_root_count = 128;
 
    /* Reed Solomon Code Parameters */
    const std::size_t code_length = 255;
@@ -163,10 +163,16 @@ int main()
 
    schifra::galois::field_polynomial generator_polynomial(field);
 
-   schifra::sequential_root_generator_polynomial_creator(field,
-                                                         generator_polynommial_index,
-                                                         generator_polynommial_root_count,
-                                                         generator_polynomial);
+   if (
+        !schifra::make_sequential_root_generator_polynomial(field,
+                                                            generator_polynomial_index,
+                                                            generator_polynomial_root_count,
+                                                            generator_polynomial)
+      )
+   {
+      std::cout << "Error - Failed to create sequential root generator!" << std::endl;
+      return 1;
+   }
 
    typedef schifra::reed_solomon::encoder<code_length,fec_length>              encoder_type;
    typedef schifra::reed_solomon::erasure_code_decoder<code_length,fec_length> decoder_type;
@@ -176,7 +182,7 @@ int main()
 
    /* Instantiate Encoder and Decoder (Codec) */
    encoder_type encoder(field,generator_polynomial);
-   decoder_type decoder(field,generator_polynommial_index);
+   decoder_type decoder(field,generator_polynomial_index);
 
    const unsigned int max_thread_count = 4; // number of functional cores.
 
