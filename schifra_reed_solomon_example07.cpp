@@ -86,8 +86,11 @@ int main()
    }
 
    /* Instantiate Encoder and Decoder (Codec) */
-   schifra::reed_solomon::encoder<code_length,fec_length> encoder(field,generator_polynomial);
-   schifra::reed_solomon::decoder<code_length,fec_length> decoder(field,generator_polynomial_index);
+   typedef schifra::reed_solomon::encoder<code_length,fec_length> encoder_t;
+   typedef schifra::reed_solomon::decoder<code_length,fec_length> decoder_t;
+
+   encoder_t encoder(field,generator_polynomial);
+   decoder_t decoder(field,generator_polynomial_index);
 
    /*
      Note: The data length represents the number of code symbols that will be used.

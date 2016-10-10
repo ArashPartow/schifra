@@ -88,8 +88,12 @@ int main()
    }
 
    /* Instantiate Encoder and Decoder (Codec) */
-   schifra::reed_solomon::encoder<code_length,fec_length> rs_encoder(field,generator_polynomial);
-   schifra::reed_solomon::decoder<code_length,fec_length> rs_decoder(field,generator_polynomial_index);
+   typedef schifra::reed_solomon::encoder<code_length,fec_length> encoder_t;
+   typedef schifra::reed_solomon::decoder<code_length,fec_length> decoder_t;
+
+   encoder_t rs_encoder(field,generator_polynomial);
+   decoder_t rs_decoder(field,generator_polynomial_index);
+
    schifra::reed_solomon::erasure_code_decoder<code_length,fec_length> rs_erasure_decoder(field,generator_polynomial_index);
 
    schifra::reed_solomon::block<code_length,fec_length> block_stack[stack_size];
@@ -120,6 +124,7 @@ int main()
       /* Add Erasures - Simulate network packet loss (e.g: UDP) */
       schifra::reed_solomon::erasure_locations_t missing_row_index;
       missing_row_index.clear();
+
       for (std::size_t i = 0; i < fec_length; ++i)
       {
          std::size_t missing_index = (iteration + (i * 3)) % stack_size;
@@ -141,6 +146,7 @@ int main()
          {
             std::cout << std::endl << std::endl;
             std::cout << "Error: Final block stack comparison failed! stack: " << i << std::endl;
+
             return 1;
          }
       }

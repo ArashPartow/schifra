@@ -73,11 +73,16 @@ int main()
    }
 
    /* Instantiate Encoder and Decoder (Codec) */
-   schifra::reed_solomon::shortened_encoder<code_length,fec_length> encoder(field,generator_polynomial);
-   schifra::reed_solomon::shortened_decoder<code_length,fec_length> decoder(field,generator_polynomial_index);
+   typedef schifra::reed_solomon::shortened_encoder<code_length,fec_length,data_length> encoder_t;
+   typedef schifra::reed_solomon::shortened_decoder<code_length,fec_length,data_length> decoder_t;
+
+   encoder_t encoder(field,generator_polynomial);
+   decoder_t decoder(field,generator_polynomial_index);
 
    std::string message = "Where did I come from, and what am I supposed to be doing...";
-               message = message + std::string(data_length - message.length(),0x0);
+
+   /* Pad message with nulls up until to code-word length */
+   message.resize(code_length,0x00);
 
    std::cout << "Original Message:   [" << message << "]" << std::endl;
 
@@ -111,13 +116,13 @@ int main()
 
    std::cout << "Corrected Message:  [" << message << "]" << std::endl;
 
-   std::cout << "Encoder Parameters [" << schifra::reed_solomon::encoder<code_length,fec_length>::trait::code_length << ","
-                                       << schifra::reed_solomon::encoder<code_length,fec_length>::trait::data_length << ","
-                                       << schifra::reed_solomon::encoder<code_length,fec_length>::trait::fec_length  << "]" << std::endl;
+   std::cout << "Encoder Parameters [" << encoder_t::trait::code_length << ","
+                                       << encoder_t::trait::data_length << ","
+                                       << encoder_t::trait::fec_length  << "]" << std::endl;
 
-   std::cout << "Decoder Parameters [" << schifra::reed_solomon::decoder<code_length,fec_length>::trait::code_length << ","
-                                       << schifra::reed_solomon::decoder<code_length,fec_length>::trait::data_length << ","
-                                       << schifra::reed_solomon::decoder<code_length,fec_length>::trait::fec_length  << "]" << std::endl;
+   std::cout << "Decoder Parameters [" << decoder_t::trait::code_length << ","
+                                       << decoder_t::trait::data_length << ","
+                                       << decoder_t::trait::fec_length  << "]" << std::endl;
 
    return 0;
 }

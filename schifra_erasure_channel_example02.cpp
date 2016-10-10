@@ -109,6 +109,7 @@ int main()
       /* Add Erasures - Simulate network packet loss (e.g: UDP) */
       schifra::reed_solomon::erasure_locations_t missing_row_index;
       missing_row_index.clear();
+
       for (std::size_t i = 0; i < fec_length; ++i)
       {
          std::size_t missing_index = (iteration + (i * 4)) % stack_size;
@@ -129,6 +130,7 @@ int main()
          {
             std::cout << std::endl << std::endl;
             std::cout << "Error: Final block stack comparison failed! stack: " << i << std::endl;
+
             return 1;
          }
       }

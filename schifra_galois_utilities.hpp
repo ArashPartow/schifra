@@ -85,9 +85,9 @@ namespace schifra
 
       inline void polynomial_alpha_form(std::ostream& os, const field_polynomial& polynomial)
       {
-         for (std::size_t i = 0; i < (polynomial.deg() + 1); ++i)
+         for (int i = 0; i < (polynomial.deg() + 1); ++i)
          {
-            field_symbol alpha_power = polynomial.galois_field()->index(polynomial[i].poly());
+            field_symbol alpha_power = polynomial.galois_field().index(polynomial[i].poly());
 
             if (alpha_power != 0)
                os << static_cast<unsigned char>(224) << "^" << convert_to_string(alpha_power,2);
