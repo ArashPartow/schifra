@@ -81,7 +81,7 @@ int main()
 
    std::string message = "Where did I come from, and what am I supposed to be doing...";
 
-   /* Pad message with nulls up until to code-word length */
+   /* Pad message with nulls up until the code-word length */
    message.resize(code_length,0x00);
 
    std::cout << "Original Message:   [" << message << "]" << std::endl;

@@ -81,7 +81,7 @@ int main()
    std::string message = "A professional is a person who knows more and more about less "
                          "and less until they know everything about nothing";
 
-   /* Pad message with nulls up until to code-word length */
+   /* Pad message with nulls up until the code-word length */
    message.resize(code_length,0x00);
 
    std::cout << "Original Message:   [" << message << "]" << std::endl;
