@@ -54,8 +54,8 @@ information. The Reed-Solomon code's properties are as follows:
 + Codeword length: 255
 + Number of data symbols: 223
 + Number of FEC symbols: 32
-+ Finite Field: GF(28)
-+ Finite Field polynomial: 1x8 + 1x7 + 0x6 + 0x5 + 0x4 + 0x3 + 1x2 + 1x1 + 1x0
++ Finite Field: GF(2<sup>8</sup>)
++ Finite Field polynomial: 1x<sup>8</sup> + 1x<sup>7</sup> + 0x<sup>6</sup> + 0x<sup>5</sup> + 0x<sup>4</sup> + 0x<sup>3</sup> + 1x<sup>2</sup> + 1x<sup>1</sup> + 1x<sup>0</sup>
 + Generator polynomial roots: 32
 + Generator polynomial field index: 120th element (32 consecutive roots)
 
