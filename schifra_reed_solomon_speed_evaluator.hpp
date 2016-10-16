@@ -201,12 +201,12 @@ namespace schifra
                }
             }
 
+            const std::size_t max_iterations = 100;
+            std::size_t blocks_decoded       = 0;
+            std::size_t block_failures       = 0;
+
             schifra::utils::timer timer;
             timer.start();
-
-            std::size_t blocks_decoded = 0;
-            std::size_t block_failures = 0;
-            const std::size_t max_iterations = 100;
 
             for (std::size_t j = 0; j < max_iterations; ++j)
             {
@@ -228,10 +228,12 @@ namespace schifra
             }
 
             timer.stop();
+
             double time = timer.time();
             double mbps = ((max_iterations * rs_block.size() * data_length) * 8.0) / (1048576.0 * time);
 
             print_codec_properties();
+
             if (block_failures == 0)
                printf("Blocks decoded: %8d  Time:%8.3fsec  Rate:%8.3fMbps\n",
                       static_cast<int>(blocks_decoded),
@@ -296,11 +298,13 @@ namespace schifra
                      block<code_length,fec_length> block = original_block[block_index];
                      erasure_locations_t erasures;
                      corrupt_message_all_erasures(block,erasures,erasure_count,start_position,1);
+
                      if (erasure_count != erasures.size())
                      {
                         std::cout << "all_erasures_decoder_speed_test() - Failed to properly generate erasures list.  Details:";
                         std::cout << "(" << block_index << "," << erasure_count << "," << start_position << ")" << std::endl;
                      }
+
                      rs_block.push_back(block);
                      erasure_list.push_back(erasures);
                      block_index_list.push_back(block_index);
@@ -308,12 +312,12 @@ namespace schifra
                }
             }
 
+            const std::size_t max_iterations = 100;
+            std::size_t blocks_decoded       =   0;
+            std::size_t block_failures       =   0;
+
             schifra::utils::timer timer;
             timer.start();
-
-            std::size_t blocks_decoded = 0;
-            std::size_t block_failures = 0;
-            const std::size_t max_iterations = 100;
 
             for (std::size_t j = 0; j < max_iterations; ++j)
             {
@@ -335,10 +339,12 @@ namespace schifra
             }
 
             timer.stop();
+
             double time = timer.time();
-            double mbps = ((max_iterations * rs_block.size() * data_length) * 8.0)/(1048576.0 * time);
+            double mbps = ((max_iterations * rs_block.size() * data_length) * 8.0) / (1048576.0 * time);
 
             print_codec_properties();
+
             if (block_failures == 0)
                printf("Blocks decoded: %8d  Time:%8.3fsec  Rate:%8.3fMbps\n",
                       static_cast<int>(blocks_decoded),

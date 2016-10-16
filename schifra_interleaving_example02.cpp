@@ -56,7 +56,7 @@ int main()
 
    timer.stop();
 
-   double mbps = ((max_iterations * stack_size * block_length) * 8.0)/(1048576.0 * timer.time());
+   double mbps = ((max_iterations * stack_size * block_length) * 8.0) / (1048576.0 * timer.time());
 
    std::cout << "Interleave Rate: " << mbps << "Mbps" << std::endl;
 
