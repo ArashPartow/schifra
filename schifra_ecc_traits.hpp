@@ -91,7 +91,7 @@ namespace schifra
       };
 
       template <std::size_t code_length_, std::size_t fec_length_, std::size_t data_length_ = code_length_ - fec_length_>
-      class reed_solomon_triat
+      class reed_solomon_trait
       {
       public:
 

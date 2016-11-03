@@ -43,7 +43,7 @@ namespace schifra
       public:
 
          typedef galois::field_symbol symbol_type;
-         typedef traits::reed_solomon_triat<code_length,fec_length,data_length> trait;
+         typedef traits::reed_solomon_trait<code_length,fec_length,data_length> trait;
          typedef traits::symbol<code_length> symbol;
 
          block()
