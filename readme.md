@@ -145,3 +145,39 @@ int main()
    return 0;
 }
 ```
+
+----
+
+#### Performance
+The following table is a listing of results obtained from running the
+schifra_reed_solomon_speed_evaluation benchmark. The benchmark measures
+the decoding rate of codewords in two modalities: "All Errors" and
+"All Erasures".
+
+|  Reed Solomon Codec  |  All Errors Decoding Rate (Mbps)   |  All Erasures Decoding Rate (Mbps)  |
+| :--------------------| :--------------------------------: | :---------------------------------: |
+| RS(255,253,002)      | 1331.626                           | 1318.450                            |
+| RS(255,251,004)      | 850.482                            | 797.795                             |
+| RS(255,249,006)      | 610.214                            | 590.574                             |
+| RS(255,247,008)      | 474.945                            | 461.839                             |
+| RS(255,245,010)      | 391.551                            | 387.158                             |
+| RS(255,243,012)      | 331.286                            | 326.335                             |
+| RS(255,241,014)      | 285.537                            | 280.971                             |
+| RS(255,239,016)      | 255.691                            | 250.495                             |
+| RS(255,237,018)      | 228.880                            | 227.874                             |
+| RS(255,235,020)      | 204.712                            | 203.396                             |
+| RS(255,223,032)      | 123.940                            | 123.830                             |
+| RS(255,207,048)      | 77.322                             | 76.953                              |
+| RS(255,191,064)      | 54.040                             | 53.167                              |
+| RS(255,175,080)      | 39.644                             | 38.670                              |
+| RS(255,159,096)      | 29.875                             | 29.505                              |
+| RS(255,127,128)      | 17.805                             | 17.729                              |
+
+**Note:** The above results were obtained by compiling the benchmark with
+GCC 6.1 with O3, LTO, PGO and native architecture target compiler settings,
+and executed upon an Intel Xeon E5-2687W 3GHz CPU, 64GB RAM, Ubuntu 14.04
+with kernel 3.13 system.
+
+##### Benchmark Binaries
+ + [Linux]  (http://www.schifra.com/downloads/schifra_reed_solomon_speed_evaluation_linux.zip)
+ + [Windows](http://www.schifra.com/downloads/schifra_reed_solomon_speed_evaluation_win32.zip)
