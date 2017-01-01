@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -24,9 +24,9 @@
 #define INCLUDE_SCHIFRA_GALOIS_FIELD_POLYNOMIAL_HPP
 
 
+#include <cassert>
 #include <iostream>
 #include <vector>
-#include <assert.h>
 
 #include "schifra_galois_field.hpp"
 #include "schifra_galois_field_element.hpp"
@@ -44,7 +44,7 @@ namespace schifra
 
          field_polynomial(const field& gfield);
          field_polynomial(const field& gfield, const unsigned int& degree);
-         field_polynomial(const field& gfield, const unsigned int& degree, field_element element[]);
+         field_polynomial(const field& gfield, const unsigned int& degree, const field_element element[]);
          field_polynomial(const field_polynomial& polynomial);
          field_polynomial(const field_element& gfe);
         ~field_polynomial() {}
@@ -55,29 +55,29 @@ namespace schifra
          void set_degree(const unsigned int& x);
          void simplify();
 
-         field_polynomial& operator = (const field_polynomial& polynomial);
-         field_polynomial& operator = (const field_element&       element);
-         field_polynomial& operator+= (const field_polynomial&    element);
-         field_polynomial& operator+= (const field_element&       element);
-         field_polynomial& operator-= (const field_polynomial&    element);
-         field_polynomial& operator-= (const field_element&       element);
-         field_polynomial& operator*= (const field_polynomial& polynomial);
-         field_polynomial& operator*= (const field_element&       element);
-         field_polynomial& operator/= (const field_polynomial&    divisor);
-         field_polynomial& operator/= (const field_element&       element);
-         field_polynomial& operator%= (const field_polynomial&    divisor);
-         field_polynomial& operator%= (const unsigned int&          power);
-         field_polynomial& operator^= (const unsigned int&              n);
-         field_polynomial& operator<<=(const unsigned int&              n);
-         field_polynomial& operator>>=(const unsigned int&              n);
+         field_polynomial& operator  =  (const field_polynomial& polynomial);
+         field_polynomial& operator  =  (const field_element&       element);
+         field_polynomial& operator +=  (const field_polynomial&    element);
+         field_polynomial& operator +=  (const field_element&       element);
+         field_polynomial& operator -=  (const field_polynomial&    element);
+         field_polynomial& operator -=  (const field_element&       element);
+         field_polynomial& operator *=  (const field_polynomial& polynomial);
+         field_polynomial& operator *=  (const field_element&       element);
+         field_polynomial& operator /=  (const field_polynomial&    divisor);
+         field_polynomial& operator /=  (const field_element&       element);
+         field_polynomial& operator %=  (const field_polynomial&    divisor);
+         field_polynomial& operator %=  (const unsigned int&          power);
+         field_polynomial& operator ^=  (const unsigned int&              n);
+         field_polynomial& operator <<= (const unsigned int&              n);
+         field_polynomial& operator >>= (const unsigned int&              n);
 
          field_element&    operator[] (const std::size_t&            term);
          field_element     operator() (const field_element&         value);
          field_element     operator() (field_symbol                 value);
 
-         const field_element&  operator[](const std::size_t&    term) const;
-         const field_element   operator()(const field_element& value) const;
-         const field_element   operator()(field_symbol         value) const;
+         const field_element& operator[](const std::size_t&    term) const;
+         const field_element  operator()(const field_element& value) const;
+         const field_element  operator()(field_symbol         value) const;
 
          bool operator==(const field_polynomial& polynomial) const;
          bool operator!=(const field_polynomial& polynomial) const;
@@ -135,10 +135,11 @@ namespace schifra
          poly_.resize(degree + 1,field_element(field_,0));
       }
 
-      inline field_polynomial::field_polynomial(const field& gfield, const unsigned int& degree, field_element element[])
+      inline field_polynomial::field_polynomial(const field& gfield, const unsigned int& degree, const field_element element[])
       : field_(const_cast<field&>(gfield))
       {
          poly_.reserve(256);
+
          if (element != NULL)
          {
             /*
@@ -151,12 +152,12 @@ namespace schifra
             }
          }
          else
-            poly_.resize(degree + 1,field_element(field_,0));
+            poly_.resize(degree + 1, field_element(field_, 0));
       }
 
       inline field_polynomial::field_polynomial(const field_polynomial& polynomial)
       : field_(const_cast<field&>(polynomial.field_)),
-        poly_(polynomial.poly_)
+        poly_ (polynomial.poly_)
       {}
 
       inline field_polynomial::field_polynomial(const field_element& element)
@@ -185,25 +186,29 @@ namespace schifra
          poly_.resize(x - 1,field_element(field_,0));
       }
 
-      inline field_polynomial& field_polynomial::operator=(const field_polynomial& polynomial)
+      inline field_polynomial& field_polynomial::operator = (const field_polynomial& polynomial)
       {
-         if (this == &polynomial)
-           return *this;
-         field_ = polynomial.field_;
-         poly_  = polynomial.poly_;
+         if ((this != &polynomial) && (&field_ == &(polynomial.field_)))
+         {
+            poly_ = polynomial.poly_;
+         }
+
          return *this;
       }
 
-      inline field_polynomial& field_polynomial::operator=(const field_element& element)
+      inline field_polynomial& field_polynomial::operator = (const field_element& element)
       {
-         field_ = element.galois_field();
-         poly_.resize(1,element);
+         if (&field_ == &(element.galois_field()))
+         {
+            poly_.resize(1,element);
+         }
+
          return *this;
       }
 
-      inline field_polynomial& field_polynomial::operator+=(const field_polynomial& polynomial)
+      inline field_polynomial& field_polynomial::operator += (const field_polynomial& polynomial)
       {
-         if (field_ == polynomial.field_)
+         if (&field_ == &(polynomial.field_))
          {
             if (poly_.size() < polynomial.poly_.size())
             {
@@ -236,26 +241,26 @@ namespace schifra
          return *this;
       }
 
-      inline field_polynomial& field_polynomial::operator+=(const field_element& element)
+      inline field_polynomial& field_polynomial::operator += (const field_element& element)
       {
          poly_[0] += element;
          return *this;
       }
 
-      inline field_polynomial& field_polynomial::operator-=(const field_polynomial& element)
+      inline field_polynomial& field_polynomial::operator -= (const field_polynomial& element)
       {
          return (*this += element);
       }
 
-      inline field_polynomial& field_polynomial::operator-=(const field_element& element)
+      inline field_polynomial& field_polynomial::operator -= (const field_element& element)
       {
          poly_[0] -= element;
          return *this;
       }
 
-      inline field_polynomial& field_polynomial::operator*=(const field_polynomial& polynomial)
+      inline field_polynomial& field_polynomial::operator *= (const field_polynomial& polynomial)
       {
-         if (field_ == polynomial.field_)
+         if (&field_ == &(polynomial.field_))
          {
             field_polynomial product(field_,deg() + polynomial.deg() + 1);
 
@@ -281,7 +286,7 @@ namespace schifra
          return *this;
       }
 
-      inline field_polynomial& field_polynomial::operator*=(const field_element& element)
+      inline field_polynomial& field_polynomial::operator *= (const field_element& element)
       {
          if (field_ == element.galois_field())
          {
@@ -294,15 +299,15 @@ namespace schifra
          return *this;
       }
 
-      inline field_polynomial& field_polynomial::operator/=(const field_polynomial& divisor)
+      inline field_polynomial& field_polynomial::operator /= (const field_polynomial& divisor)
       {
          if (
-             (field_        == divisor.field_) &&
-             (deg()         >= divisor.deg())  &&
-             (divisor.deg() >=             0)
+             (&field_       == &divisor.field_) &&
+             (deg()         >=   divisor.deg()) &&
+             (divisor.deg() >=               0)
             )
          {
-            field_polynomial quotient(field_, deg() - divisor.deg() + 1);
+            field_polynomial quotient (field_, deg() - divisor.deg() + 1);
             field_polynomial remainder(field_, divisor.deg() - 1);
 
             for (int i = static_cast<int>(deg()); i >= 0; i--)
@@ -336,7 +341,7 @@ namespace schifra
          return *this;
       }
 
-      inline field_polynomial& field_polynomial::operator/=(const field_element& element)
+      inline field_polynomial& field_polynomial::operator /= (const field_element& element)
       {
          if (field_ == element.galois_field())
          {
@@ -349,7 +354,7 @@ namespace schifra
          return *this;
       }
 
-      inline field_polynomial& field_polynomial::operator%=(const field_polynomial& divisor)
+      inline field_polynomial& field_polynomial::operator %= (const field_polynomial& divisor)
       {
          if (
               (field_        == divisor.field_) &&
@@ -390,7 +395,7 @@ namespace schifra
          return *this;
       }
 
-      inline field_polynomial& field_polynomial::operator%=(const unsigned int& power)
+      inline field_polynomial& field_polynomial::operator %= (const unsigned int& power)
       {
          if (poly_.size() >= power)
          {
@@ -401,7 +406,7 @@ namespace schifra
          return *this;
       }
 
-      inline field_polynomial& field_polynomial::operator^=(const unsigned int& n)
+      inline field_polynomial& field_polynomial::operator ^= (const unsigned int& n)
       {
          field_polynomial result = *this;
 
@@ -415,7 +420,7 @@ namespace schifra
          return *this;
       }
 
-      inline field_polynomial& field_polynomial::operator<<=(const unsigned int& n)
+      inline field_polynomial& field_polynomial::operator <<= (const unsigned int& n)
       {
          if (poly_.size() > 0)
          {
@@ -437,7 +442,7 @@ namespace schifra
          return *this;
       }
 
-      inline field_polynomial& field_polynomial::operator>>=(const unsigned int& n)
+      inline field_polynomial& field_polynomial::operator >>= (const unsigned int& n)
       {
          if (n <= poly_.size())
          {
@@ -456,19 +461,19 @@ namespace schifra
          return *this;
       }
 
-      inline const field_element& field_polynomial::operator[](const std::size_t& term) const
+      inline const field_element& field_polynomial::operator [] (const std::size_t& term) const
       {
          assert(term < poly_.size());
          return poly_[term];
       }
 
-      inline field_element& field_polynomial::operator[](const std::size_t& term)
+      inline field_element& field_polynomial::operator [] (const std::size_t& term)
       {
          assert(term < poly_.size());
          return poly_[term];
       }
 
-      inline field_element field_polynomial::operator()(const field_element& value)
+      inline field_element field_polynomial::operator () (const field_element& value)
       {
          field_element result(field_,0);
 
@@ -480,7 +485,7 @@ namespace schifra
 
             for (poly_iter it = poly_.begin(); it != poly_.end(); ++it, ++i)
             {
-               total_sum ^= field_.mul(field_.exp(value_poly_form,i),(*it).poly());
+               total_sum ^= field_.mul(field_.exp(value_poly_form,i), (*it).poly());
             }
 
             result = total_sum;
@@ -489,7 +494,7 @@ namespace schifra
          return result;
       }
 
-      inline const field_element field_polynomial::operator()(const field_element& value) const
+      inline const field_element field_polynomial::operator () (const field_element& value) const
       {
          if (!poly_.empty())
          {
@@ -499,7 +504,7 @@ namespace schifra
 
             for (const_poly_iter it = poly_.begin(); it != poly_.end(); ++it, ++i)
             {
-               total_sum ^= field_.mul(field_.exp(value_poly_form,i),(*it).poly());
+               total_sum ^= field_.mul(field_.exp(value_poly_form,i), (*it).poly());
             }
 
             return field_element(field_,total_sum);
@@ -508,7 +513,7 @@ namespace schifra
          return field_element(field_,0);
       }
 
-      inline field_element field_polynomial::operator()(field_symbol value)
+      inline field_element field_polynomial::operator () (field_symbol value)
       {
          if (!poly_.empty())
          {
@@ -517,7 +522,7 @@ namespace schifra
 
             for (const_poly_iter it = poly_.begin(); it != poly_.end(); ++it, ++i)
             {
-               total_sum ^= field_.mul(field_.exp(value,i),(*it).poly());
+               total_sum ^= field_.mul(field_.exp(value,i), (*it).poly());
             }
 
             return field_element(field_,total_sum);
@@ -526,7 +531,7 @@ namespace schifra
          return field_element(field_,0);
       }
 
-      inline const field_element field_polynomial::operator()(field_symbol value) const
+      inline const field_element field_polynomial::operator () (field_symbol value) const
       {
          if (!poly_.empty())
          {
@@ -535,7 +540,7 @@ namespace schifra
 
             for (const_poly_iter it = poly_.begin(); it != poly_.end(); ++it, ++i)
             {
-               total_sum ^= field_.mul(field_.exp(value,i),(*it).poly());
+               total_sum ^= field_.mul(field_.exp(value, i), (*it).poly());
             }
 
             return field_element(field_,total_sum);
@@ -544,7 +549,7 @@ namespace schifra
          return field_element(field_,0);
       }
 
-      inline bool field_polynomial::operator==(const field_polynomial& polynomial) const
+      inline bool field_polynomial::operator == (const field_polynomial& polynomial) const
       {
          if (field_ == polynomial.field_)
          {
@@ -567,7 +572,7 @@ namespace schifra
            return false;
       }
 
-      inline bool field_polynomial::operator!=(const field_polynomial& polynomial) const
+      inline bool field_polynomial::operator != (const field_polynomial& polynomial) const
       {
          return !(*this == polynomial);
       }
@@ -578,12 +583,11 @@ namespace schifra
          {
             field_polynomial deriv(field_,deg());
 
-            for (unsigned int i = 0; i < poly_.size() - 1; ++i)
+            const std::size_t upper_bound = poly_.size() - 1;
+
+            for (std::size_t i = 0; i < upper_bound; i += 2)
             {
-               if ((i & 1) == 0)
-                 deriv.poly_[i] = poly_[i + 1];
-               else
-                 deriv.poly_[i] = 0;
+               deriv.poly_[i] = poly_[i + 1];
             }
 
             simplify(deriv);
@@ -609,16 +613,14 @@ namespace schifra
 
          if ((poly_size > 0) && (polynomial.poly_.back() == 0))
          {
+            poly_iter it    = polynomial.poly_.end  ();
+            poly_iter begin = polynomial.poly_.begin();
+
             std::size_t count = 0;
 
-            poly_iter it = polynomial.poly_.end();
-
-            while (polynomial.poly_.begin() != it)
+            while ((begin != it) && (*(--it) == 0))
             {
-               if ((*(--it)) == 0)
-                  ++count;
-               else
-                  break;
+               ++count;
             }
 
             if (0 != count)
@@ -732,10 +734,10 @@ namespace schifra
          return result;
       }
 
-      inline field_polynomial operator % (const field_polynomial& a, const unsigned int& power)
+      inline field_polynomial operator % (const field_polynomial& a, const unsigned int& n)
       {
          field_polynomial result = a;
-         result %= power;
+         result %= n;
          return result;
       }
 
@@ -746,14 +748,14 @@ namespace schifra
          return result;
       }
 
-      inline field_polynomial operator<<(const field_polynomial& a, const unsigned int& n)
+      inline field_polynomial operator << (const field_polynomial& a, const unsigned int& n)
       {
          field_polynomial result = a;
          result <<= n;
          return result;
       }
 
-      inline field_polynomial operator>>(const field_polynomial& a, const unsigned int& n)
+      inline field_polynomial operator >> (const field_polynomial& a, const unsigned int& n)
       {
          field_polynomial result = a;
          result >>= n;
@@ -762,7 +764,7 @@ namespace schifra
 
       inline field_polynomial gcd(const field_polynomial& a, const field_polynomial& b)
       {
-         if ((a.galois_field()) == (b.galois_field()))
+         if (&a.galois_field() == &b.galois_field())
          {
             if ((!a.valid()) && (!b.valid()))
             {
@@ -793,12 +795,13 @@ namespace schifra
 
       inline field_polynomial generate_X(const field& gfield)
       {
-         field_element xgfe[2] = {
-                                   galois::field_element(gfield, 0),
-                                   galois::field_element(gfield, 1)
-                                 };
+         const field_element xgfe[2] = {
+                                         galois::field_element(gfield, 0),
+                                         galois::field_element(gfield, 1)
+                                       };
 
          field_polynomial X_(gfield,1,xgfe);
+
          return X_;
       }
 

@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -40,7 +40,7 @@ namespace schifra
    {
 
       template <std::size_t code_length, std::size_t fec_length>
-      void* create_encoder(galois::field& field,
+      void* create_encoder(const galois::field& field,
                            const std::size_t& gen_poly_index)
       {
          const std::size_t data_length = code_length - fec_length;
@@ -61,7 +61,7 @@ namespace schifra
       }
 
       template <std::size_t code_length, std::size_t fec_length>
-      void* create_decoder(galois::field& field,
+      void* create_decoder(const galois::field& field,
                            const std::size_t& gen_poly_index)
       {
          const std::size_t data_length = code_length - fec_length;
@@ -74,7 +74,7 @@ namespace schifra
       {
       public:
 
-         general_codec(galois::field& field,
+         general_codec(const galois::field& field,
                        const std::size_t& gen_poly_index)
          {
             for (std::size_t i = 0; i < max_fec_length; ++i)
@@ -83,47 +83,47 @@ namespace schifra
                decoder_[i] = 0;
             }
 
-            encoder_[  2] = create_encoder<code_length,  2>(field,gen_poly_index);
-            encoder_[  4] = create_encoder<code_length,  4>(field,gen_poly_index);
-            encoder_[  6] = create_encoder<code_length,  6>(field,gen_poly_index);
-            encoder_[  8] = create_encoder<code_length,  8>(field,gen_poly_index);
-            encoder_[ 10] = create_encoder<code_length, 10>(field,gen_poly_index);
-            encoder_[ 12] = create_encoder<code_length, 12>(field,gen_poly_index);
-            encoder_[ 14] = create_encoder<code_length, 14>(field,gen_poly_index);
-            encoder_[ 16] = create_encoder<code_length, 16>(field,gen_poly_index);
-            encoder_[ 18] = create_encoder<code_length, 18>(field,gen_poly_index);
-            encoder_[ 20] = create_encoder<code_length, 20>(field,gen_poly_index);
-            encoder_[ 22] = create_encoder<code_length, 22>(field,gen_poly_index);
-            encoder_[ 24] = create_encoder<code_length, 24>(field,gen_poly_index);
-            encoder_[ 26] = create_encoder<code_length, 26>(field,gen_poly_index);
-            encoder_[ 28] = create_encoder<code_length, 28>(field,gen_poly_index);
-            encoder_[ 30] = create_encoder<code_length, 30>(field,gen_poly_index);
-            encoder_[ 32] = create_encoder<code_length, 32>(field,gen_poly_index);
-            encoder_[ 64] = create_encoder<code_length, 64>(field,gen_poly_index);
-            encoder_[ 80] = create_encoder<code_length, 80>(field,gen_poly_index);
-            encoder_[ 96] = create_encoder<code_length, 96>(field,gen_poly_index);
-            encoder_[128] = create_encoder<code_length,128>(field,gen_poly_index);
+            encoder_[  2] = create_encoder<code_length,  2>(field, gen_poly_index);
+            encoder_[  4] = create_encoder<code_length,  4>(field, gen_poly_index);
+            encoder_[  6] = create_encoder<code_length,  6>(field, gen_poly_index);
+            encoder_[  8] = create_encoder<code_length,  8>(field, gen_poly_index);
+            encoder_[ 10] = create_encoder<code_length, 10>(field, gen_poly_index);
+            encoder_[ 12] = create_encoder<code_length, 12>(field, gen_poly_index);
+            encoder_[ 14] = create_encoder<code_length, 14>(field, gen_poly_index);
+            encoder_[ 16] = create_encoder<code_length, 16>(field, gen_poly_index);
+            encoder_[ 18] = create_encoder<code_length, 18>(field, gen_poly_index);
+            encoder_[ 20] = create_encoder<code_length, 20>(field, gen_poly_index);
+            encoder_[ 22] = create_encoder<code_length, 22>(field, gen_poly_index);
+            encoder_[ 24] = create_encoder<code_length, 24>(field, gen_poly_index);
+            encoder_[ 26] = create_encoder<code_length, 26>(field, gen_poly_index);
+            encoder_[ 28] = create_encoder<code_length, 28>(field, gen_poly_index);
+            encoder_[ 30] = create_encoder<code_length, 30>(field, gen_poly_index);
+            encoder_[ 32] = create_encoder<code_length, 32>(field, gen_poly_index);
+            encoder_[ 64] = create_encoder<code_length, 64>(field, gen_poly_index);
+            encoder_[ 80] = create_encoder<code_length, 80>(field, gen_poly_index);
+            encoder_[ 96] = create_encoder<code_length, 96>(field, gen_poly_index);
+            encoder_[128] = create_encoder<code_length,128>(field, gen_poly_index);
 
-            decoder_[  2] = create_decoder<code_length,  2>(field,gen_poly_index);
-            decoder_[  4] = create_decoder<code_length,  4>(field,gen_poly_index);
-            decoder_[  6] = create_decoder<code_length,  6>(field,gen_poly_index);
-            decoder_[  8] = create_decoder<code_length,  8>(field,gen_poly_index);
-            decoder_[ 10] = create_decoder<code_length, 10>(field,gen_poly_index);
-            decoder_[ 12] = create_decoder<code_length, 12>(field,gen_poly_index);
-            decoder_[ 14] = create_decoder<code_length, 14>(field,gen_poly_index);
-            decoder_[ 16] = create_decoder<code_length, 16>(field,gen_poly_index);
-            decoder_[ 18] = create_decoder<code_length, 18>(field,gen_poly_index);
-            decoder_[ 20] = create_decoder<code_length, 20>(field,gen_poly_index);
-            decoder_[ 22] = create_decoder<code_length, 22>(field,gen_poly_index);
-            decoder_[ 24] = create_decoder<code_length, 24>(field,gen_poly_index);
-            decoder_[ 26] = create_decoder<code_length, 26>(field,gen_poly_index);
-            decoder_[ 28] = create_decoder<code_length, 28>(field,gen_poly_index);
-            decoder_[ 30] = create_decoder<code_length, 30>(field,gen_poly_index);
-            decoder_[ 32] = create_decoder<code_length, 32>(field,gen_poly_index);
-            decoder_[ 64] = create_decoder<code_length, 64>(field,gen_poly_index);
-            decoder_[ 80] = create_decoder<code_length, 80>(field,gen_poly_index);
-            decoder_[ 96] = create_decoder<code_length, 96>(field,gen_poly_index);
-            decoder_[128] = create_decoder<code_length,128>(field,gen_poly_index);
+            decoder_[  2] = create_decoder<code_length,  2>(field, gen_poly_index);
+            decoder_[  4] = create_decoder<code_length,  4>(field, gen_poly_index);
+            decoder_[  6] = create_decoder<code_length,  6>(field, gen_poly_index);
+            decoder_[  8] = create_decoder<code_length,  8>(field, gen_poly_index);
+            decoder_[ 10] = create_decoder<code_length, 10>(field, gen_poly_index);
+            decoder_[ 12] = create_decoder<code_length, 12>(field, gen_poly_index);
+            decoder_[ 14] = create_decoder<code_length, 14>(field, gen_poly_index);
+            decoder_[ 16] = create_decoder<code_length, 16>(field, gen_poly_index);
+            decoder_[ 18] = create_decoder<code_length, 18>(field, gen_poly_index);
+            decoder_[ 20] = create_decoder<code_length, 20>(field, gen_poly_index);
+            decoder_[ 22] = create_decoder<code_length, 22>(field, gen_poly_index);
+            decoder_[ 24] = create_decoder<code_length, 24>(field, gen_poly_index);
+            decoder_[ 26] = create_decoder<code_length, 26>(field, gen_poly_index);
+            decoder_[ 28] = create_decoder<code_length, 28>(field, gen_poly_index);
+            decoder_[ 30] = create_decoder<code_length, 30>(field, gen_poly_index);
+            decoder_[ 32] = create_decoder<code_length, 32>(field, gen_poly_index);
+            decoder_[ 64] = create_decoder<code_length, 64>(field, gen_poly_index);
+            decoder_[ 80] = create_decoder<code_length, 80>(field, gen_poly_index);
+            decoder_[ 96] = create_decoder<code_length, 96>(field, gen_poly_index);
+            decoder_[128] = create_decoder<code_length,128>(field, gen_poly_index);
          }
 
         ~general_codec()

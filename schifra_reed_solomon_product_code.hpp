@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -65,7 +65,7 @@ namespace schifra
 
             for (std::size_t row = 0; row < data_length; ++row, curr_data_ptr += data_length)
             {
-               copy(curr_data_ptr,data_length,block_stack_[row]);
+               copy(curr_data_ptr, data_length, block_stack_[row]);
 
                if (!encoder_.encode(block_stack_[row]))
                {

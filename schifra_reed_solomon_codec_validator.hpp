@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -61,6 +61,8 @@ namespace schifra
                          const std::string& msg)
          : field_(gf),
            generator_polynomial_(galois::field_polynomial(field_)),
+           rs_encoder_(reinterpret_cast<encoder_type*>(0)),
+           rs_decoder_(reinterpret_cast<decoder_type*>(0)),
            message(msg),
            genpoly_initial_index_(gpii),
            blocks_processed_(0),
@@ -104,7 +106,7 @@ namespace schifra
                           stage9() &&
                          stage10() &&
                          stage11() &&
-                         stage12();
+                         stage12() ;
 
             timer.stop();
 
@@ -142,17 +144,21 @@ namespace schifra
          {
             /* Burst Error Only Combinations */
 
-            std::size_t initial_failure_count = block_failures_;
+            const std::size_t initial_failure_count = block_failures_;
 
             for (std::size_t error_count = 1; error_count <= (fec_length >> 1); ++error_count)
             {
                for (std::size_t start_position = 0; start_position < code_length; ++start_position)
                {
                   block_type rs_block = rs_block_original;
-                  corrupt_message_all_errors(rs_block,
-                                             error_count,
-                                             start_position,
-                                             1);
+
+                  corrupt_message_all_errors
+                  (
+                    rs_block,
+                    error_count,
+                    start_position,
+                    1
+                  );
 
                   if (!rs_decoder_->decode(rs_block))
                   {
@@ -196,19 +202,24 @@ namespace schifra
          {
             /* Burst Erasure Only Combinations */
 
+            const std::size_t initial_failure_count = block_failures_;
+
             erasure_locations_t erasure_list;
-            std::size_t initial_failure_count = block_failures_;
 
             for (std::size_t erasure_count = 1; erasure_count <= fec_length; ++erasure_count)
             {
                for (std::size_t start_position = 0; start_position < code_length; ++start_position)
                {
                   block_type rs_block = rs_block_original;
-                  corrupt_message_all_erasures(rs_block,
-                                               erasure_list,
-                                               erasure_count,
-                                               start_position,
-                                               1);
+
+                  corrupt_message_all_erasures
+                  (
+                    rs_block,
+                    erasure_list,
+                    erasure_count,
+                    start_position,
+                    1
+                  );
 
                   if (!rs_decoder_->decode(rs_block,erasure_list))
                   {
@@ -252,15 +263,24 @@ namespace schifra
          {
             /* Consecutive Burst Erasure and Error Combinations */
 
+            const std::size_t initial_failure_count = block_failures_;
+
             erasure_locations_t erasure_list;
-            std::size_t initial_failure_count = block_failures_;
 
             for (std::size_t erasure_count = 1; erasure_count <= fec_length; ++erasure_count)
             {
                for (std::size_t start_position = 0; start_position < code_length; ++start_position)
                {
                   block_type rs_block = rs_block_original;
-                  corrupt_message_errors_erasures(rs_block,error_mode::erasures_errors,start_position,erasure_count,erasure_list);
+
+                  corrupt_message_errors_erasures
+                  (
+                    rs_block,
+                    error_mode::erasures_errors,
+                    start_position,erasure_count,
+                    erasure_list
+                  );
+
                   if (!rs_decoder_->decode(rs_block,erasure_list))
                   {
                      print_codec_properties();
@@ -279,6 +299,7 @@ namespace schifra
                      std::cout << "stage3() - Discrepancy between the number of errors detected and corrected. [" << rs_block.errors_detected << "," << rs_block.errors_corrected << "]" << std::endl;
                      ++block_failures_;
                   }
+
                   ++blocks_processed_;
                   erasure_list.clear();
                }
@@ -291,19 +312,24 @@ namespace schifra
          {
             /* Consecutive Burst Error and Erasure Combinations */
 
+            const std::size_t initial_failure_count = block_failures_;
+
             erasure_locations_t erasure_list;
-            std::size_t initial_failure_count = block_failures_;
 
             for (std::size_t erasure_count = 1; erasure_count <= fec_length; ++erasure_count)
             {
                for (std::size_t start_position = 0; start_position < code_length; ++start_position)
                {
                   block_type rs_block = rs_block_original;
-                  corrupt_message_errors_erasures(rs_block,
-                                                  error_mode::errors_erasures,
-                                                  start_position,
-                                                  erasure_count,
-                                                  erasure_list);
+
+                  corrupt_message_errors_erasures
+                  (
+                    rs_block,
+                    error_mode::errors_erasures,
+                    start_position,
+                    erasure_count,
+                    erasure_list
+                  );
 
                   if (!rs_decoder_->decode(rs_block,erasure_list))
                   {
@@ -323,6 +349,7 @@ namespace schifra
                      std::cout << "stage4() - Discrepancy between the number of errors detected and corrected. [" << rs_block.errors_detected << "," << rs_block.errors_corrected << "]" << std::endl;
                      ++block_failures_;
                   }
+
                   ++blocks_processed_;
                   erasure_list.clear();
                }
@@ -335,8 +362,9 @@ namespace schifra
          {
             /* Distanced Burst Erasure and Error Combinations */
 
+            const std::size_t initial_failure_count = block_failures_;
+
             erasure_locations_t erasure_list;
-            std::size_t initial_failure_count = block_failures_;
 
             for (std::size_t between_distance = 1; between_distance <= 10; ++between_distance)
             {
@@ -345,12 +373,16 @@ namespace schifra
                   for (std::size_t start_position = 0; start_position < code_length; ++start_position)
                   {
                      block_type rs_block = rs_block_original;
-                     corrupt_message_errors_erasures(rs_block,
-                                                     error_mode::erasures_errors,
-                                                     start_position,
-                                                     erasure_count,
-                                                     erasure_list,
-                                                     between_distance);
+
+                     corrupt_message_errors_erasures
+                     (
+                       rs_block,
+                       error_mode::erasures_errors,
+                       start_position,
+                       erasure_count,
+                       erasure_list,
+                       between_distance
+                     );
 
                      if (!rs_decoder_->decode(rs_block,erasure_list))
                      {
@@ -370,6 +402,7 @@ namespace schifra
                         std::cout << "stage5() - Discrepancy between the number of errors detected and corrected. [" << rs_block.errors_detected << "," << rs_block.errors_corrected << "]" << std::endl;
                         ++block_failures_;
                      }
+
                      ++blocks_processed_;
                      erasure_list.clear();
                   }
@@ -383,8 +416,9 @@ namespace schifra
          {
             /* Distanced Burst Error and Erasure Combinations */
 
+            const std::size_t initial_failure_count = block_failures_;
+
             erasure_locations_t erasure_list;
-            std::size_t initial_failure_count = block_failures_;
 
             for (std::size_t between_distance = 1; between_distance <= 10; ++between_distance)
             {
@@ -393,11 +427,15 @@ namespace schifra
                   for (std::size_t start_position = 0; start_position < code_length; ++start_position)
                   {
                      block_type rs_block = rs_block_original;
-                     corrupt_message_errors_erasures(rs_block,
-                                                     error_mode::errors_erasures,
-                                                     start_position,
-                                                     erasure_count,
-                                                     erasure_list,between_distance);
+
+                     corrupt_message_errors_erasures
+                     (
+                       rs_block,
+                       error_mode::errors_erasures,
+                       start_position,
+                       erasure_count,
+                       erasure_list,between_distance
+                     );
 
                      if (!rs_decoder_->decode(rs_block,erasure_list))
                      {
@@ -417,6 +455,7 @@ namespace schifra
                         std::cout << "stage6() - Discrepancy between the number of errors detected and corrected. [" << rs_block.errors_detected << "," << rs_block.errors_corrected << "]" << std::endl;
                         ++block_failures_;
                      }
+
                      ++blocks_processed_;
                      erasure_list.clear();
                   }
@@ -429,7 +468,8 @@ namespace schifra
          bool stage7()
          {
             /*  Intermittent Error Combinations */
-            std::size_t initial_failure_count = block_failures_;
+
+            const std::size_t initial_failure_count = block_failures_;
 
             for (std::size_t error_count = 1; error_count < (fec_length >> 1); ++error_count)
             {
@@ -438,10 +478,14 @@ namespace schifra
                   for (std::size_t scale = 1; scale < 5; ++scale)
                   {
                      block_type rs_block = rs_block_original;
-                     corrupt_message_all_errors(rs_block,
-                                                error_count,
-                                                start_position,
-                                                scale);
+
+                     corrupt_message_all_errors
+                     (
+                       rs_block,
+                       error_count,
+                       start_position,
+                       scale
+                     );
 
                      if (!rs_decoder_->decode(rs_block))
                      {
@@ -473,6 +517,7 @@ namespace schifra
                         std::cout << "stage7() - Error In The Number Of Corrected Errors! Errors Corrected: " << rs_block.errors_corrected << std::endl;
                         ++block_failures_;
                      }
+
                      ++blocks_processed_;
                   }
                }
@@ -485,8 +530,9 @@ namespace schifra
          {
             /* Intermittent Erasure Combinations */
 
+            const std::size_t initial_failure_count = block_failures_;
+
             erasure_locations_t erasure_list;
-            std::size_t initial_failure_count = block_failures_;
 
             for (std::size_t erasure_count = 1; erasure_count <= fec_length; ++erasure_count)
             {
@@ -495,10 +541,15 @@ namespace schifra
                   for (std::size_t scale = 4; scale < 5; ++scale)
                   {
                      block_type rs_block = rs_block_original;
-                     corrupt_message_all_erasures(rs_block,
-                                                  erasure_list,
-                                                  erasure_count,
-                                                  start_position,scale);
+
+                     corrupt_message_all_erasures
+                     (
+                       rs_block,
+                       erasure_list,
+                       erasure_count,
+                       start_position,
+                       scale
+                     );
 
                      if (!rs_decoder_->decode(rs_block,erasure_list))
                      {
@@ -543,18 +594,23 @@ namespace schifra
          {
             /* Burst Interleaved Error and Erasure Combinations */
 
+            const std::size_t initial_failure_count = block_failures_;
+
             erasure_locations_t erasure_list;
-            std::size_t initial_failure_count = block_failures_;
 
             for (std::size_t erasure_count = 1; erasure_count <= fec_length; ++erasure_count)
             {
                for (std::size_t start_position = 0; start_position < code_length; ++start_position)
                {
                   block_type rs_block = rs_block_original;
-                  corrupt_message_interleaved_errors_erasures(rs_block,
-                                                              start_position,
-                                                              erasure_count,
-                                                              erasure_list);
+
+                  corrupt_message_interleaved_errors_erasures
+                  (
+                    rs_block,
+                    start_position,
+                    erasure_count,
+                    erasure_list
+                  );
 
                   if (!rs_decoder_->decode(rs_block,erasure_list))
                   {
@@ -586,16 +642,20 @@ namespace schifra
          {
             /* Segmented Burst Errors */
 
-            std::size_t initial_failure_count = block_failures_;
+            const std::size_t initial_failure_count = block_failures_;
 
             for (std::size_t start_position = 0; start_position < code_length; ++start_position)
             {
                for (std::size_t distance_between_blocks = 0; distance_between_blocks < 5; ++distance_between_blocks)
                {
                   block_type rs_block = rs_block_original;
-                  corrupt_message_all_errors_segmented(rs_block,
-                                                       start_position,
-                                                       distance_between_blocks);
+
+                  corrupt_message_all_errors_segmented
+                  (
+                    rs_block,
+                    start_position,
+                    distance_between_blocks
+                  );
 
                   if (!rs_decoder_->decode(rs_block))
                   {
@@ -615,6 +675,7 @@ namespace schifra
                      std::cout << "stage10() - Discrepancy between the number of errors detected and corrected. [" << rs_block.errors_detected << "," << rs_block.errors_corrected << "]" << std::endl;
                      ++block_failures_;
                   }
+
                   ++blocks_processed_;
                }
             }
@@ -626,7 +687,7 @@ namespace schifra
          {
             /* No Errors */
 
-            std::size_t initial_failure_count = block_failures_;
+            const std::size_t initial_failure_count = block_failures_;
 
             block_type rs_block = rs_block_original;
 
@@ -670,7 +731,7 @@ namespace schifra
          {
             /* Random Errors Only */
 
-            std::size_t initial_failure_count = block_failures_;
+            const std::size_t initial_failure_count = block_failures_;
 
             std::vector<std::size_t> random_error_index;
             generate_error_index((fec_length >> 1),random_error_index,0xA5A5A5A5);
@@ -680,10 +741,14 @@ namespace schifra
                for (std::size_t error_index = 0; error_index < error_index_size; ++error_index)
                {
                   block_type rs_block = rs_block_original;
-                  corrupt_message_all_errors_at_index(rs_block,
-                                                      error_count,
-                                                      error_index,
-                                                      random_error_index);
+
+                  corrupt_message_all_errors_at_index
+                  (
+                    rs_block,
+                    error_count,
+                    error_index,
+                    random_error_index
+                  );
 
                   if (!rs_decoder_->decode(rs_block))
                   {
@@ -754,7 +819,7 @@ namespace schifra
          {
             for (std::size_t i = 0; i < 256; ++i)
             {
-               message_list.push_back(std::string(data_length,static_cast<unsigned char>(i)));
+               message_list.push_back(std::string(data_length, static_cast<unsigned char>(i)));
             }
          }
          else
@@ -780,30 +845,64 @@ namespace schifra
 
          std::string tmp_str = std::string(data_length,static_cast<unsigned char>(0x00));
 
-         for (std::size_t i = 0; i < data_length; ++i) tmp_str[i] = static_cast<unsigned char>(i);
+         for (std::size_t i = 0; i < data_length; ++i)
+         {
+            tmp_str[i] = static_cast<unsigned char>(i);
+         }
+
          message_list.push_back(tmp_str);
 
-         for (int i = data_length - 1; i >= 0; --i) tmp_str[i] = static_cast<unsigned char>(i);
+         for (int i = data_length - 1; i >= 0; --i)
+         {
+            tmp_str[i] = static_cast<unsigned char>(i);
+         }
+
          message_list.push_back(tmp_str);
 
-         for (std::size_t i = 0; i < data_length; ++i) tmp_str[i] = (((i & 0x01) == 1) ? static_cast<unsigned char>(i) : 0x00);
+         for (std::size_t i = 0; i < data_length; ++i)
+         {
+            tmp_str[i] = (((i & 0x01) == 1) ? static_cast<unsigned char>(i) : 0x00);
+         }
+
          message_list.push_back(tmp_str);
 
-         for (std::size_t i = 0; i < data_length; ++i) tmp_str[i] = (((i & 0x01) == 0) ? static_cast<unsigned char>(i) : 0x00);
+         for (std::size_t i = 0; i < data_length; ++i)
+         {
+            tmp_str[i] = (((i & 0x01) == 0) ? static_cast<unsigned char>(i) : 0x00);
+         }
+
          message_list.push_back(tmp_str);
 
-         for (int i = data_length - 1; i >= 0; --i) tmp_str[i] = (((i & 0x01) == 1) ? static_cast<unsigned char>(i) : 0x00);
+         for (int i = data_length - 1; i >= 0; --i)
+         {
+            tmp_str[i] = (((i & 0x01) == 1) ? static_cast<unsigned char>(i) : 0x00);
+         }
+
          message_list.push_back(tmp_str);
 
-         for (int i = data_length - 1; i >= 0; --i) tmp_str[i] = (((i & 0x01) == 0) ? static_cast<unsigned char>(i) : 0x00);
+         for (int i = data_length - 1; i >= 0; --i)
+         {
+            tmp_str[i] = (((i & 0x01) == 0) ? static_cast<unsigned char>(i) : 0x00);
+         }
+
          message_list.push_back(tmp_str);
 
          tmp_str = std::string(data_length,static_cast<unsigned char>(0x00));
-         for (std::size_t i = 0; i < (data_length >> 1); ++i) tmp_str[i] = static_cast<unsigned char>(0xFF);
+
+         for (std::size_t i = 0; i < (data_length >> 1); ++i)
+         {
+               tmp_str[i] = static_cast<unsigned char>(0xFF);
+         }
+
          message_list.push_back(tmp_str);
 
-         tmp_str = std::string(data_length,static_cast<unsigned char>(0xFF)) ;
-         for (std::size_t i = 0; i < (data_length >> 1); ++i) tmp_str[i] = static_cast<unsigned char>(0x00);
+         tmp_str = std::string(data_length,static_cast<unsigned char>(0xFF));
+
+         for (std::size_t i = 0; i < (data_length >> 1); ++i)
+         {
+            tmp_str[i] = static_cast<unsigned char>(0x00);
+         }
+
          message_list.push_back(tmp_str);
       }
 
@@ -818,7 +917,9 @@ namespace schifra
 
          for (std::size_t i = 0; i < message_list.size(); ++i)
          {
-            codec_validator<code_length,fec_length> validator(field,gen_poly_index,message_list[i]);
+            codec_validator<code_length,fec_length>
+               validator(field, gen_poly_index, message_list[i]);
+
             if (!validator.execute())
             {
                return false;
@@ -845,7 +946,8 @@ namespace schifra
 
          for (std::size_t i = 0; i < message_list.size(); ++i)
          {
-            codec_validator<code_length,fec_length,encoder_type,decoder_type> validator(field,gen_poly_index,message_list[i]);
+            codec_validator<code_length,fec_length,encoder_type,decoder_type>
+               validator(field,gen_poly_index,message_list[i]);
 
             if (!validator.execute())
             {
@@ -874,7 +976,7 @@ namespace schifra
                 codec_validation_test<8,120,255, 64>(galois::primitive_polynomial_size06,galois::primitive_polynomial06) &&
                 codec_validation_test<8,120,255, 80>(galois::primitive_polynomial_size06,galois::primitive_polynomial06) &&
                 codec_validation_test<8,120,255, 96>(galois::primitive_polynomial_size06,galois::primitive_polynomial06) &&
-                codec_validation_test<8,120,255,128>(galois::primitive_polynomial_size06,galois::primitive_polynomial06);
+                codec_validation_test<8,120,255,128>(galois::primitive_polynomial_size06,galois::primitive_polynomial06) ;
       }
 
       inline bool codec_validation_test01()
@@ -886,7 +988,7 @@ namespace schifra
                 shortened_codec_validation_test<8,  1,204,16>(galois::primitive_polynomial_size05,galois::primitive_polynomial05) && /* DBV/MPEG-2 TSP RS Code */
                 shortened_codec_validation_test<8,  1,104,27>(galois::primitive_polynomial_size05,galois::primitive_polynomial05) && /* Magnetic Storage Outer RS Code */
                 shortened_codec_validation_test<8,  1,204,12>(galois::primitive_polynomial_size05,galois::primitive_polynomial05) && /* Magnetic Storage Inner RS Code */
-                shortened_codec_validation_test<8,120, 72,10>(galois::primitive_polynomial_size06,galois::primitive_polynomial06);   /* VDL Mode 3 RS Code */
+                shortened_codec_validation_test<8,120, 72,10>(galois::primitive_polynomial_size06,galois::primitive_polynomial06) ;  /* VDL Mode 3 RS Code */
       }
 
    } // namespace reed_solomon

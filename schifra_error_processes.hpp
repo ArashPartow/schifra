@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -25,6 +25,7 @@
 
 
 #include <cstddef>
+#include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include <deque>
@@ -347,42 +348,64 @@ namespace schifra
    template <std::size_t code_length, std::size_t fec_length>
    inline bool is_block_equivelent(const reed_solomon::block<code_length,fec_length>& rsblock,
                                    const std::string& data,
-                                   const bool display = false)
+                                   const bool display    = false,
+                                   const bool all_errors = false)
    {
       std::string::const_iterator it = data.begin();
+
+      bool error_found = false;
 
       for (std::size_t i = 0; i < code_length - fec_length; ++i, ++it)
       {
          if (static_cast<char>(rsblock.data[i] & 0xFF) != (*it))
          {
+            error_found = true;
+
             if (display)
             {
-               std::cout << "is_block_equivelent() - Error at loc : " << i << " " <<
-                            "d1: " << rsblock.data[i] << "\t" <<
-                            "d2: " << static_cast<unsigned char>(*it) << std::endl;
+               printf("is_block_equivelent() - Error at loc : %02d\td1: %02X\td2: %02X\n",
+                      static_cast<unsigned int>(i),
+                      rsblock.data[i],
+                      static_cast<unsigned char>(*it));
             }
 
-            return false;
+            if (!all_errors)
+               return false;
          }
       }
 
-      return true;
+      return !error_found;
    }
 
    template <std::size_t code_length, std::size_t fec_length>
    inline bool are_blocks_equivelent(const reed_solomon::block<code_length,fec_length>& block1,
                                      const reed_solomon::block<code_length,fec_length>& block2,
-                                     const std::size_t span = code_length)
+                                     const std::size_t span = code_length,
+                                     const bool display     = false,
+                                     const bool all_errors  = false)
    {
+      bool error_found = false;
+
       for (std::size_t i = 0; i < span; ++i)
       {
          if (block1[i] != block2[i])
          {
-            return false;
+            error_found = true;
+
+            if (display)
+            {
+               printf("are_blocks_equivelent() - Error at loc : %02d\td1: %04X\td2: %04X\n",
+                      static_cast<unsigned int>(i),
+                      block1[i],
+                      block2[i]);
+            }
+
+            if (!all_errors)
+               return false;
          }
       }
 
-      return true;
+      return !error_found;
    }
 
    template <std::size_t code_length, std::size_t fec_length, std::size_t stack_size>
@@ -434,23 +457,34 @@ namespace schifra
          return;
       }
 
-      char* data = new char[burst_length];
+      std::vector<char> data(burst_length);
 
       std::ifstream ifile(file_name.c_str(), std::ios::in | std::ios::binary);
-      if (!ifile) { delete[] data; return; }
+
+      if (!ifile)
+      {
+         return;
+      }
+
       ifile.seekg(start_position,std::ios_base::beg);
       ifile.read(&data[0],burst_length);
       ifile.close();
 
-      for (long i = 0; i < burst_length; ++i) data[i] = ~data[i];
+      for (long i = 0; i < burst_length; ++i)
+      {
+         data[i] = ~data[i];
+      }
 
       std::ofstream ofile(file_name.c_str(), std::ios::in | std::ios::out | std::ios::binary);
-      if (!ofile) { delete[] data; return; }
+
+      if (!ofile)
+      {
+         return;
+      }
+
       ofile.seekp(start_position,std::ios_base::beg);
       ofile.write(&data[0],burst_length);
       ofile.close();
-
-      delete[] data;
    }
 
    static const std::size_t global_random_error_index[] =

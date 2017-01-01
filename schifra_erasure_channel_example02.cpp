@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -60,9 +60,9 @@ int main()
    const std::size_t generator_polynomial_root_count = fec_length;
 
    /* Instantiate Finite Field and Generator Polynomials */
-   schifra::galois::field field(field_descriptor,
-                                schifra::galois::primitive_polynomial_size06,
-                                schifra::galois::primitive_polynomial06);
+   const schifra::galois::field field(field_descriptor,
+                                      schifra::galois::primitive_polynomial_size06,
+                                      schifra::galois::primitive_polynomial06);
 
    schifra::galois::field_polynomial generator_polynomial(field);
 

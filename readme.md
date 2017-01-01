@@ -40,6 +40,7 @@ http://www.schifra.com
 + Clang/LLVM (1.1+)
 + PGI C++ (10.x+)
 + Microsoft Visual Studio C++ Compiler (7.1+)
++ IBM XL C/C++ (9.x+)
 
 ----
 
@@ -58,6 +59,8 @@ information. The Reed-Solomon code's properties are as follows:
 + Finite Field polynomial: 1x<sup>8</sup> + 1x<sup>7</sup> + 0x<sup>6</sup> + 0x<sup>5</sup> + 0x<sup>4</sup> + 0x<sup>3</sup> + 1x<sup>2</sup> + 1x<sup>1</sup> + 1x<sup>0</sup>
 + Generator polynomial roots: 32
 + Generator polynomial field index: 120th element (32 consecutive roots)
+
+![ScreenShot](http://schifra.com/images/schifra_channel_diagram.png?raw=true "Schifra Reed Solomon Error Correcting Code Channel Model - By Arash Partow")
 
 ```c++
 #include <cstddef>
@@ -85,9 +88,9 @@ int main()
    const std::size_t data_length = code_length - fec_length;
 
    /* Instantiate Finite Field and Generator Polynomials */
-   schifra::galois::field field(field_descriptor,
-                                schifra::galois::primitive_polynomial_size06,
-                                schifra::galois::primitive_polynomial06);
+   const schifra::galois::field field(field_descriptor,
+                                      schifra::galois::primitive_polynomial_size06,
+                                      schifra::galois::primitive_polynomial06);
 
    schifra::galois::field_polynomial generator_polynomial(field);
 
@@ -107,11 +110,11 @@ int main()
    typedef schifra::reed_solomon::encoder<code_length,fec_length,data_length> encoder_t;
    typedef schifra::reed_solomon::decoder<code_length,fec_length,data_length> decoder_t;
 
-   encoder_t encoder(field,generator_polynomial);
-   decoder_t decoder(field,generator_polynomial_index);
+   const encoder_t encoder(field,generator_polynomial);
+   const decoder_t decoder(field,generator_polynomial_index);
 
-   std::string message = "A professional is a person who knows more and more about less"
-                         "and less until they know everything about nothing";
+   std::string message = "An expert is someone who knows more and more about less and "
+                         "less until they know absolutely everything about nothing";
 
    /* Pad message with nulls up until the code-word length */
    message.resize(code_length,0x00);
@@ -122,12 +125,13 @@ int main()
    /* Transform message into Reed-Solomon encoded codeword */
    if (!encoder.encode(message,block))
    {
-      std::cout << "Error - Critical encoding failure!" << std::endl;
+      std::cout << "Error - Critical decoding failure! "
+                << "Msg: " << block.error_as_string()  << std::endl;
       return 1;
    }
 
    /* Add errors at every 3rd location starting at position zero */
-   schifra::corrupt_message_all_errors00(block,0,3);
+   schifra::corrupt_message_all_errors00(block, 0, 3);
 
    if (!decoder.decode(block))
    {
@@ -179,5 +183,5 @@ and executed upon an Intel Xeon E5-2687W 3GHz CPU, 64GB RAM, Ubuntu 14.04
 with kernel 3.13 system.
 
 ##### Benchmark Binaries
- + [Linux]  (http://www.schifra.com/downloads/schifra_reed_solomon_speed_evaluation_linux.zip)
+ + [Linux](http://www.schifra.com/downloads/schifra_reed_solomon_speed_evaluation_linux.zip)
  + [Windows](http://www.schifra.com/downloads/schifra_reed_solomon_speed_evaluation_win32.zip)

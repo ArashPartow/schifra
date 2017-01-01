@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -97,6 +97,7 @@ namespace schifra
                x -= static_cast<field_symbol>(field_size_);
                x  = (x >> power_) + (x & field_size_);
             }
+
             return x;
          }
 
@@ -108,9 +109,7 @@ namespace schifra
                if ((a == 0) || (b == 0))
                   return 0;
                else
-               {
                   return alpha_to_[normalize(index_of_[a] + index_of_[b])];
-               }
             #endif
          }
 
@@ -126,31 +125,29 @@ namespace schifra
             #endif
          }
 
-         inline field_symbol exp(const field_symbol& a, const int& n) const
+         inline field_symbol exp(const field_symbol& a, int n) const
          {
             #if !defined(NO_GFLUT)
-               if (n < 0)
-               {
-                  int b = n;
-                  while (b < 0) b += field_size_;// b could be negative
-
-                  return ((b == 0) ? 1 : exp_table_[a][b]);
-               }
-               else
+               if (n >= 0)
                   return exp_table_[a][n & field_size_];
+               else
+               {
+                  while (n < 0) n += field_size_;
+
+                  return (n ? exp_table_[a][n] : 1);
+               }
             #else
                if (a != 0)
                {
                   if (n < 0)
                   {
-                     int b = n;
-                     while (b < 0) b += field_size_; // b could be negative
-                     return ((b == 0) ? 1 : alpha_to_[normalize(index_of_[a] * b)]);
+                     while (n < 0) n += field_size_;
+                     return (n ? alpha_to_[normalize(index_of_[a] * n)] : 1);
                   }
-                  else if (n == 0)
-                     return 1;
-                  else
+                  else if (n)
                      return alpha_to_[normalize(index_of_[a] * static_cast<field_symbol>(n))];
+                  else
+                     return 1;
                }
                else
                   return 0;
@@ -192,6 +189,7 @@ namespace schifra
 
          field();
          field(const field& gfield);
+         field& operator=(const field& gfield);
 
          void         generate_field(const unsigned int* prim_poly_);
          field_symbol gen_mul       (const field_symbol& a, const field_symbol& b) const;
@@ -233,23 +231,25 @@ namespace schifra
 
          #if !defined(NO_GFLUT)
 
-           #ifdef LINEAR_EXP_LUT
-              static const std::size_t buffer_size = ((6 * (field_size_ + 1) * (field_size_ + 1)) + ((field_size_ + 1) * 2)) * sizeof(field_symbol);
-           #else
-              static const std::size_t buffer_size = ((4 * (field_size_ + 1) * (field_size_ + 1)) + ((field_size_ + 1) * 2)) * sizeof(field_symbol);
-           #endif
+         #ifdef LINEAR_EXP_LUT
+         static const std::size_t buffer_size = ((6 * (field_size_ + 1) * (field_size_ + 1)) + ((field_size_ + 1) * 2)) * sizeof(field_symbol);
+         #else
+         static const std::size_t buffer_size = ((4 * (field_size_ + 1) * (field_size_ + 1)) + ((field_size_ + 1) * 2)) * sizeof(field_symbol);
+         #endif
 
-           buffer_ = new char[buffer_size];
-           std::size_t offset = 0;
-           offset = create_2d_array(buffer_,(field_size_ + 1),(field_size_ + 1),offset,&mul_table_);
-           offset = create_2d_array(buffer_,(field_size_ + 1),(field_size_ + 1),offset,&div_table_);
-           offset = create_2d_array(buffer_,(field_size_ + 1),(field_size_ + 1),offset,&exp_table_);
-           #ifdef LINEAR_EXP_LUT
-              offset = create_2d_array(buffer_,(field_size_ + 1),(field_size_ + 1) * 2,offset,&linear_exp_table_);
-           #else
-              linear_exp_table_ = 0;
-           #endif
-           offset = create_array(buffer_,(field_size_ + 1) * 2,offset,&mul_inverse_);
+         buffer_ = new char[buffer_size];
+         std::size_t offset = 0;
+         offset = create_2d_array(buffer_,(field_size_ + 1),(field_size_ + 1),offset,&mul_table_);
+         offset = create_2d_array(buffer_,(field_size_ + 1),(field_size_ + 1),offset,&div_table_);
+         offset = create_2d_array(buffer_,(field_size_ + 1),(field_size_ + 1),offset,&exp_table_);
+
+         #ifdef LINEAR_EXP_LUT
+         offset = create_2d_array(buffer_,(field_size_ + 1),(field_size_ + 1) * 2,offset,&linear_exp_table_);
+         #else
+         linear_exp_table_ = 0;
+         #endif
+
+         offset = create_array(buffer_,(field_size_ + 1) * 2,offset,&mul_inverse_);
 
          #else
 
@@ -257,12 +257,13 @@ namespace schifra
            mul_table_   = 0;
            div_table_   = 0;
            exp_table_   = 0;
-           linear_exp_table_ = 0;
            mul_inverse_ = 0;
+           linear_exp_table_ = 0;
 
          #endif
 
          prim_poly_ = new unsigned int [prim_poly_deg_ + 1];
+
          for (unsigned int i = 0; i < (prim_poly_deg_ + 1); ++i)
          {
             prim_poly_[i] = primitive_poly[i];
@@ -287,23 +288,25 @@ namespace schifra
 
          #if !defined(NO_GFLUT)
 
-           if (0 != mul_table_) { delete [] mul_table_; mul_table_ = 0; }
-           if (0 != div_table_) { delete [] div_table_; div_table_ = 0; }
-           if (0 != exp_table_) { delete [] exp_table_; exp_table_ = 0; }
+         if (0 != mul_table_) { delete [] mul_table_; mul_table_ = 0; }
+         if (0 != div_table_) { delete [] div_table_; div_table_ = 0; }
+         if (0 != exp_table_) { delete [] exp_table_; exp_table_ = 0; }
 
-           #ifdef LINEAR_EXP_LUT
-           if (0 != linear_exp_table_) { delete [] linear_exp_table_; linear_exp_table_ = 0; }
-           #endif
+         #ifdef LINEAR_EXP_LUT
+         if (0 != linear_exp_table_) { delete [] linear_exp_table_; linear_exp_table_ = 0; }
+         #endif
 
-           if (0 != buffer_) { delete [] buffer_; buffer_ = 0; }
+         if (0 != buffer_) { delete [] buffer_; buffer_ = 0; }
 
          #endif
       }
 
       inline bool field::operator==(const field& gf) const
       {
-         return ((this->power_ == gf.power_) &&
-                 (this->prim_poly_hash_ == gf.prim_poly_hash_));
+         return (
+                  (this->power_ == gf.power_) &&
+                  (this->prim_poly_hash_ == gf.prim_poly_hash_)
+                );
       }
 
       inline bool field::operator!=(const field& gf) const

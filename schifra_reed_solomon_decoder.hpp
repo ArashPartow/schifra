@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -44,20 +44,23 @@ namespace schifra
          typedef traits::reed_solomon_triat<code_length,fec_length,data_length> trait;
          typedef block<code_length,fec_length> block_type;
 
-         decoder(const galois::field& gfield, const unsigned int& gen_initial_index)
-         : decoder_valid_(false),
-           field_(gfield),
+         decoder(const galois::field& field, const unsigned int& gen_initial_index = 0)
+         : decoder_valid_(field.size() == code_length),
+           field_(field),
            X_(galois::generate_X(field_)),
-           gen_initial_index_(0)
+           gen_initial_index_(gen_initial_index)
          {
-            if (field_.size() == code_length)
+            if (decoder_valid_)
             {
                //Note: code_length and field size can be used interchangeably
-               gen_initial_index_ = gen_initial_index;
                create_lookup_tables();
-               decoder_valid_ = true;
             }
          };
+
+         const galois::field& field() const
+         {
+            return field_;
+         }
 
          bool decode(block_type& rsblock) const
          {
@@ -73,6 +76,7 @@ namespace schifra
                rsblock.errors_corrected = 0;
                rsblock.zero_numerators  = 0;
                rsblock.unrecoverable    = true;
+               rsblock.error            = block_type::e_decoder_error0;
 
                return false;
             }
@@ -92,21 +96,25 @@ namespace schifra
                return true;
             }
 
+            galois::field_polynomial lambda(galois::field_element(field_,1));
+
             erasure_locations_t erasure_locations;
-            prepare_erasure_list(erasure_locations,erasure_list);
 
-            galois::field_polynomial lambda(field_);
+            if (!erasure_list.empty())
+            {
+               prepare_erasure_list(erasure_locations, erasure_list);
 
-            compute_gamma(lambda,erasure_locations);
+               compute_gamma(lambda, erasure_locations);
+            }
 
             if (erasure_list.size() < fec_length)
             {
-               modified_berlekamp_massey_algorithm(lambda,syndrome,erasure_list.size());
+               modified_berlekamp_massey_algorithm(lambda, syndrome, erasure_list.size());
             }
 
             std::vector<int> error_locations;
 
-            find_roots(lambda,error_locations);
+            find_roots(lambda, error_locations);
 
             if (0 == error_locations.size())
             {
@@ -122,6 +130,7 @@ namespace schifra
                rsblock.errors_corrected = 0;
                rsblock.zero_numerators  = 0;
                rsblock.unrecoverable    = true;
+               rsblock.error            = block_type::e_decoder_error1;
 
                return false;
             }
@@ -145,13 +154,14 @@ namespace schifra
                rsblock.errors_corrected = 0;
                rsblock.zero_numerators  = 0;
                rsblock.unrecoverable    = true;
+               rsblock.error            = block_type::e_decoder_error2;
 
                return false;
             }
             else
                rsblock.errors_detected  = error_locations.size();
 
-            return forney_algorithm(error_locations,lambda,syndrome,rsblock);
+            return forney_algorithm(error_locations, lambda, syndrome, rsblock);
          }
 
       private:
@@ -231,8 +241,6 @@ namespace schifra
 
          void compute_gamma(galois::field_polynomial& gamma, const erasure_locations_t& erasure_locations) const
          {
-            gamma = galois::field_element(field_,1);
-
             for (std::size_t i = 0; i < erasure_locations.size(); ++i)
             {
                gamma *= gamma_table_[erasure_locations[i]];
@@ -250,17 +258,15 @@ namespace schifra
             root_list.reserve(fec_length << 1);
             root_list.resize(0);
 
-            std::size_t polynomial_degree = poly.deg();
-            std::size_t root_list_size = 0;
+            const std::size_t polynomial_degree = poly.deg();
 
             for (int i = 1; i <= static_cast<int>(code_length); ++i)
             {
                if (0 == poly(field_.alpha(i)).poly())
                {
                   root_list.push_back(i);
-                  root_list_size++;
 
-                  if (root_list_size == polynomial_degree)
+                  if (polynomial_degree == root_list.size())
                   {
                      break;
                   }
@@ -278,10 +284,11 @@ namespace schifra
                Compute the lambda discrepancy at the current round of BMA
             */
 
-            int upper_bound = std::min(static_cast<int>(l),lambda.deg());
+            const std::size_t upper_bound = std::min(static_cast<int>(l), lambda.deg());
+
             discrepancy = 0;
 
-            for (int i = 0; i <= upper_bound; ++i)
+            for (std::size_t i = 0; i <= upper_bound; ++i)
             {
                discrepancy += lambda[i] * syndrome[round - i];
             }
@@ -305,15 +312,15 @@ namespace schifra
 
             for (std::size_t round = erasure_count; round < fec_length; ++round)
             {
-               compute_discrepancy(discrepancy,lambda,syndrome,l,round);
+               compute_discrepancy(discrepancy, lambda, syndrome, l, round);
 
                if (discrepancy != 0)
                {
-                  galois::field_polynomial tau = lambda - discrepancy * previous_lambda;
+                  galois::field_polynomial tau = lambda - (discrepancy * previous_lambda);
 
                   if (static_cast<int>(l) < (static_cast<int>(round) - i))
                   {
-                     std::size_t tmp = round - i;
+                     const std::size_t tmp = round - i;
                      i = static_cast<int>(round - l);
                      l = tmp;
                      previous_lambda = lambda / discrepancy;
@@ -334,32 +341,30 @@ namespace schifra
             /*
                The Forney algorithm for computing the error magnitudes
             */
-            galois::field_polynomial omega = (lambda * syndrome) % fec_length;
-            galois::field_polynomial lambda_derivative = lambda.derivative();
+            const galois::field_polynomial omega = (lambda * syndrome) % fec_length;
+            const galois::field_polynomial lambda_derivative = lambda.derivative();
 
             rsblock.errors_corrected = 0;
             rsblock.zero_numerators  = 0;
 
-            galois::field_element numerator(field_);
-            galois::field_element denominator(field_);
-
             for (std::size_t i = 0; i < error_locations.size(); ++i)
             {
-               int error_location                  = error_locations[i];
-               galois::field_symbol  alpha_inverse = field_.alpha(error_location);
-               numerator                           = (omega(alpha_inverse) * root_exponent_table_[error_location]);
-               denominator                         = lambda_derivative(alpha_inverse);
+               const unsigned int         error_location = error_locations[i];
+               const galois::field_symbol alpha_inverse  = field_.alpha(error_location);
+               const galois::field_symbol numerator      = (omega(alpha_inverse) * root_exponent_table_[error_location]).poly();
+               const galois::field_symbol denominator    = lambda_derivative(alpha_inverse).poly();
 
-               if (numerator != 0)
+               if (0 != numerator)
                {
-                  if (denominator != 0)
+                  if (0 != denominator)
                   {
-                     rsblock[error_location - 1] ^= field_.div(numerator.poly(),denominator.poly());
+                     rsblock[error_location - 1] ^= field_.div(numerator, denominator);
                      rsblock.errors_corrected++;
                   }
                   else
                   {
                      rsblock.unrecoverable = true;
+                     rsblock.error         = block_type::e_decoder_error3;
                      return false;
                   }
                }
@@ -367,7 +372,14 @@ namespace schifra
                   ++rsblock.zero_numerators;
             }
 
-            return true;
+            if (lambda.deg() == static_cast<int>(rsblock.errors_detected))
+               return true;
+            else
+            {
+               rsblock.unrecoverable = true;
+               rsblock.error         = block_type::e_decoder_error4;
+               return false;
+            }
          }
 
       protected:
@@ -377,15 +389,15 @@ namespace schifra
          std::vector<galois::field_symbol>     root_exponent_table_;
          std::vector<galois::field_symbol>     syndrome_exponent_table_;
          std::vector<galois::field_polynomial> gamma_table_;
-         galois::field_polynomial              X_;
-         unsigned int                          gen_initial_index_;
+         const galois::field_polynomial        X_;
+         const unsigned int                    gen_initial_index_;
       };
 
       template <std::size_t code_length,
                 std::size_t fec_length,
                 std::size_t data_length    = code_length - fec_length,
                 std::size_t natural_length = 255,  // Needs to be in-sync with field size
-                std::size_t padding_length = natural_length - data_length - fec_length >
+                std::size_t padding_length = natural_length - data_length - fec_length>
       class shortened_decoder
       {
       public:
@@ -393,20 +405,19 @@ namespace schifra
          typedef traits::reed_solomon_triat<code_length,fec_length,data_length> trait;
          typedef block<code_length,fec_length> block_type;
 
-         shortened_decoder(const galois::field& field, const unsigned int gen_initial_index)
-         : decoder_(field,gen_initial_index)
-         {
-            for (std::size_t i = 0; i < natural_length; ++i)
-            {
-               block_[i] = 0;
-            }
-         }
+         shortened_decoder(const galois::field& field, const unsigned int gen_initial_index = 0)
+         : decoder_(field, gen_initial_index)
+         {}
 
-         inline bool decode(block_type& rsblock, const erasure_locations_t& erasure_list)
+         inline bool decode(block_type& rsblock, const erasure_locations_t& erasure_list) const
          {
+            typename natural_decoder_type::block_type block;
+
+            std::fill_n(&block[0], padding_length, typename block_type::symbol_type(0));
+
             for (std::size_t i = 0; i < code_length; ++i)
             {
-               block_.data[padding_length + i] = rsblock.data[i];
+               block.data[padding_length + i] = rsblock.data[i];
             }
 
             erasure_locations_t shifted_position_erasure_list(erasure_list.size(),0);
@@ -416,59 +427,47 @@ namespace schifra
                shifted_position_erasure_list[i] = erasure_list[i] + padding_length;
             }
 
-            if (decoder_.decode(block_,shifted_position_erasure_list))
+            if (decoder_.decode(block, shifted_position_erasure_list))
             {
                for (std::size_t i = 0; i < code_length; ++i)
                {
-                  rsblock.data[i] = block_.data[padding_length + i];
+                  rsblock.data[i] = block.data[padding_length + i];
                }
 
-               rsblock.errors_detected  = block_.errors_detected;
-               rsblock.errors_corrected = block_.errors_corrected;
-               rsblock.zero_numerators  = block_.zero_numerators;
-               rsblock.unrecoverable    = block_.unrecoverable;
-
+               rsblock.copy_state(block);
                return true;
             }
             else
             {
-               rsblock.errors_detected  = block_.errors_detected;
-               rsblock.errors_corrected = block_.errors_corrected;
-               rsblock.zero_numerators  = block_.zero_numerators;
-               rsblock.unrecoverable    = block_.unrecoverable;
-
+               rsblock.copy_state(block);
                return false;
             }
          }
 
-         inline bool decode(block_type& rsblock)
+         inline bool decode(block_type& rsblock) const
          {
+            typename natural_decoder_type::block_type block;
+
+            std::fill_n(&block[0], padding_length, typename block_type::symbol_type(0));
+
             for (std::size_t i = 0; i < code_length; ++i)
             {
-               block_.data[padding_length + i] = rsblock.data[i];
+               block.data[padding_length + i] = rsblock.data[i];
             }
 
-            if (decoder_.decode(block_))
+            if (decoder_.decode(block))
             {
                for (std::size_t i = 0; i < code_length; ++i)
                {
-                  rsblock.data[i] = block_.data[padding_length + i];
+                  rsblock.data[i] = block.data[padding_length + i];
                }
 
-               rsblock.errors_detected  = block_.errors_detected;
-               rsblock.errors_corrected = block_.errors_corrected;
-               rsblock.zero_numerators  = block_.zero_numerators;
-               rsblock.unrecoverable    = block_.unrecoverable;
-
+               rsblock.copy_state(block);
                return true;
             }
             else
             {
-               rsblock.errors_detected  = block_.errors_detected;
-               rsblock.errors_corrected = block_.errors_corrected;
-               rsblock.zero_numerators  = block_.zero_numerators;
-               rsblock.unrecoverable    = block_.unrecoverable;
-
+               rsblock.copy_state(block);
                return false;
             }
          }
@@ -476,8 +475,7 @@ namespace schifra
       private:
 
          typedef decoder<natural_length,fec_length> natural_decoder_type;
-         natural_decoder_type decoder_;
-         typename natural_decoder_type::block_type block_;
+         const natural_decoder_type decoder_;
       };
 
    } // namespace reed_solomon

@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -58,110 +58,112 @@ namespace schifra
         ~field_element()
          {}
 
-         inline field_element& operator=(const field_element& gfe)
+         inline field_element& operator = (const field_element& gfe)
          {
-            if (this == &gfe) return *this;
-            const_cast<field&>(field_) = gfe.field_;
-            poly_value_  = gfe.poly_value_;
+            if ((this != &gfe) && (&field_ == &gfe.field_))
+            {
+               poly_value_ = gfe.poly_value_;
+            }
+
             return *this;
          }
 
-         inline field_element& operator=(const field_symbol& v)
+         inline field_element& operator = (const field_symbol& v)
          {
-            poly_value_  = v & field_.size();
+            poly_value_ = v & field_.size();
             return *this;
          }
 
-         inline field_element& operator+=(const field_element& gfe)
+         inline field_element& operator += (const field_element& gfe)
          {
             poly_value_ ^= gfe.poly_value_;
             return *this;
          }
 
-         inline field_element& operator+=(const field_symbol& v)
+         inline field_element& operator += (const field_symbol& v)
          {
             poly_value_ ^= v;
             return *this;
          }
 
-         inline field_element& operator-=(const field_element& gfe)
+         inline field_element& operator -= (const field_element& gfe)
          {
             *this += gfe;
             return *this;
          }
 
-         inline field_element& operator-=(const field_symbol& v)
+         inline field_element& operator -= (const field_symbol& v)
          {
             *this += v;
             return *this;
          }
 
-         inline field_element& operator*=(const field_element& gfe)
+         inline field_element& operator *= (const field_element& gfe)
          {
-            poly_value_ = field_.mul(poly_value_,gfe.poly_value_);
+            poly_value_ = field_.mul(poly_value_, gfe.poly_value_);
             return *this;
          }
 
-         inline field_element& operator*=(const field_symbol& v)
+         inline field_element& operator *= (const field_symbol& v)
          {
-            poly_value_ = field_.mul(poly_value_,v);
+            poly_value_ = field_.mul(poly_value_, v);
             return *this;
          }
 
-         inline field_element& operator/=(const field_element& gfe)
+         inline field_element& operator /= (const field_element& gfe)
          {
-            poly_value_ = field_.div(poly_value_,gfe.poly_value_);
+            poly_value_ = field_.div(poly_value_, gfe.poly_value_);
             return *this;
          }
 
-         inline field_element& operator/=(const field_symbol& v)
+         inline field_element& operator /= (const field_symbol& v)
          {
-            poly_value_ = field_.div(poly_value_,v);
+            poly_value_ = field_.div(poly_value_, v);
             return *this;
          }
 
-         inline field_element& operator^=(const int& n)
+         inline field_element& operator ^= (const int& n)
          {
             poly_value_ = field_.exp(poly_value_,n);
             return *this;
          }
 
-         inline bool operator==(const field_element& gfe) const
+         inline bool operator == (const field_element& gfe) const
          {
             return ((field_  == gfe.field_) && (poly_value_ == gfe.poly_value_));
          }
 
-         inline bool operator==(const field_symbol& v) const
+         inline bool operator == (const field_symbol& v) const
          {
             return (poly_value_ == v);
          }
 
-         inline bool operator!=(const field_element& gfe) const
+         inline bool operator != (const field_element& gfe) const
          {
             return ((field_ != gfe.field_) || (poly_value_ != gfe.poly_value_));
          }
 
-         inline bool operator!=(const field_symbol& v) const
+         inline bool operator != (const field_symbol& v) const
          {
             return (poly_value_ != v);
          }
 
-         inline bool operator<(const field_element& gfe)
+         inline bool operator < (const field_element& gfe)
          {
             return (poly_value_ < gfe.poly_value_);
          }
 
-         inline bool operator<(const field_symbol& v)
+         inline bool operator < (const field_symbol& v)
          {
             return (poly_value_ < v);
          }
 
-         inline bool operator>(const field_element& gfe)
+         inline bool operator > (const field_element& gfe)
          {
             return (poly_value_ > gfe.poly_value_);
          }
 
-         inline bool operator>(const field_symbol& v)
+         inline bool operator > (const field_symbol& v)
          {
             return (poly_value_ > v);
          }
@@ -172,6 +174,11 @@ namespace schifra
          }
 
          inline field_symbol poly() const
+         {
+            return poly_value_;
+         }
+
+         inline field_symbol& poly()
          {
             return poly_value_;
          }

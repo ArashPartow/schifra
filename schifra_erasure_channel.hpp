@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -87,11 +87,11 @@ namespace schifra
 
          erasure_code_decoder(const galois::field& gfield,
                               const unsigned int& gen_initial_index)
-         : decoder<code_length,fec_length,data_length>(gfield,gen_initial_index)
+         : decoder<code_length,fec_length,data_length>(gfield, gen_initial_index)
          {
             for (std::size_t i = 0; i < code_length; ++i)
             {
-               received_.push_back(galois::field_polynomial(decoder_type::field_,code_length - 1));
+               received_.push_back(galois::field_polynomial(decoder_type::field_, code_length - 1));
                syndrome_.push_back(galois::field_polynomial(decoder_type::field_));
             }
          };
@@ -108,14 +108,14 @@ namespace schifra
 
             for (std::size_t i = 0; i < code_length; ++i)
             {
-               decoder_type::load_message(received_[i],rsblock[i]);
-               decoder_type::compute_syndrome(received_[i],syndrome_[i]);
+               decoder_type::load_message    (received_[i], rsblock  [i]);
+               decoder_type::compute_syndrome(received_[i], syndrome_[i]);
             }
 
             erasure_locations_t erasure_locations;
             decoder_type::prepare_erasure_list(erasure_locations,erasure_list);
 
-            galois::field_polynomial gamma(decoder_type::field_);
+            galois::field_polynomial gamma(galois::field_element(decoder_type::field_, 1));
 
             decoder_type::compute_gamma(gamma,erasure_locations);
 

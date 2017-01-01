@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -54,9 +54,9 @@ int main()
    const std::size_t data_length = code_length - fec_length;
 
    /* Instantiate Finite Field and Generator Polynomials */
-   schifra::galois::field field(field_descriptor,
-                                schifra::galois::primitive_polynomial_size06,
-                                schifra::galois::primitive_polynomial06);
+   const schifra::galois::field field(field_descriptor,
+                                      schifra::galois::primitive_polynomial_size06,
+                                      schifra::galois::primitive_polynomial06);
 
    schifra::galois::field_polynomial generator_polynomial(field);
 
@@ -75,40 +75,42 @@ int main()
    typedef schifra::reed_solomon::encoder<code_length,fec_length,data_length> encoder_t;
    typedef schifra::reed_solomon::decoder<code_length,fec_length,data_length> decoder_t;
 
-   encoder_t encoder(field,generator_polynomial);
-   decoder_t decoder(field,generator_polynomial_index);
+   const encoder_t encoder(field, generator_polynomial);
+   const decoder_t decoder(field, generator_polynomial_index);
 
-   std::string message = "A professional is a person who knows more and more about less "
-                         "and less until they know everything about nothing";
+   std::string message = "An expert is someone who knows more and more about less and "
+                         "less until they know absolutely everything about nothing";
 
    /* Pad message with nulls up until the code-word length */
-   message.resize(code_length,0x00);
+   message.resize(code_length, 0x00);
 
-   std::cout << "Original Message:   [" << message << "]" << std::endl;
+   std::cout << "Original Message:  [" << message << "]" << std::endl;
 
    /* Instantiate RS Block For Codec */
    schifra::reed_solomon::block<code_length,fec_length> block;
 
    /* Transform message into Reed-Solomon encoded codeword */
-   if (!encoder.encode(message,block))
+   if (!encoder.encode(message, block))
    {
-      std::cout << "Error - Critical encoding failure!" << std::endl;
+      std::cout << "Error - Critical encoding failure! "
+                << "Msg: " << block.error_as_string()  << std::endl;
       return 1;
    }
 
    schifra::reed_solomon::erasure_locations_t erasure_location_list;
 
    /* Add erasures at every 2nd location starting at position zero */
-   schifra::corrupt_message_all_erasures00(block,erasure_location_list,0,2);
+   schifra::corrupt_message_all_erasures00(block, erasure_location_list, 0, 2);
 
    std::cout << "Corrupted Codeword: [" << block << "]" << std::endl;
 
-   if (!decoder.decode(block,erasure_location_list))
+   if (!decoder.decode(block, erasure_location_list))
    {
-      std::cout << "Error - Critical decoding failure!" << std::endl;
+      std::cout << "Error - Critical decoding failure! "
+                << "Msg: " << block.error_as_string()  << std::endl;
       return 1;
    }
-   else if (!schifra::is_block_equivelent(block,message))
+   else if (!schifra::is_block_equivelent(block, message))
    {
       std::cout << "Error - Error correction failed!" << std::endl;
       return 1;
@@ -116,7 +118,7 @@ int main()
 
    block.data_to_string(message);
 
-   std::cout << "Corrected Message:  [" << message << "]" << std::endl;
+   std::cout << "Corrected Message: [" << message << "]" << std::endl;
 
    std::cout << "Encoder Parameters [" << encoder_t::trait::code_length << ","
                                        << encoder_t::trait::data_length << ","

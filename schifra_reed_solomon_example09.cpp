@@ -21,10 +21,12 @@
 
 
 /*
-   Description: This example will demonstrate how to instantiate a Reed-Solomon
-                encoder and decoder, add the full amount of possible errors,
-                correct the errors, and output the various pieces of relevant
-                information.
+   Description: This example will demonstrate how to instantiate a 16-bit per
+                symbol Reed-Solomon encoder and decoder, add the full amount
+                of possible errors, correct the errors, and output the various
+                pieces of relevant information. Furthermore this example will
+                demonstrate the use of the Reed-Solomon codec without the use
+                of LUTs for the finite field computations.
 */
 
 
@@ -32,7 +34,9 @@
 #include <iostream>
 #include <string>
 
+#define NO_GFLUT
 #include "schifra_galois_field.hpp"
+#undef NO_GFLUT
 #include "schifra_galois_field_polynomial.hpp"
 #include "schifra_sequential_root_generator_polynomial_creator.hpp"
 #include "schifra_reed_solomon_encoder.hpp"
@@ -44,19 +48,19 @@
 int main()
 {
    /* Finite Field Parameters */
-   const std::size_t field_descriptor                =   8;
-   const std::size_t generator_polynomial_index      = 120;
-   const std::size_t generator_polynomial_root_count =  32;
+   const std::size_t field_descriptor                =   16;
+   const std::size_t generator_polynomial_index      =    0;
+   const std::size_t generator_polynomial_root_count = 1000;
 
    /* Reed Solomon Code Parameters */
-   const std::size_t code_length = 255;
-   const std::size_t fec_length  =  32;
+   const std::size_t code_length = 65535;
+   const std::size_t fec_length  =  1000;
    const std::size_t data_length = code_length - fec_length;
 
    /* Instantiate Finite Field and Generator Polynomials */
    const schifra::galois::field field(field_descriptor,
-                                      schifra::galois::primitive_polynomial_size06,
-                                      schifra::galois::primitive_polynomial06);
+                                      schifra::galois::primitive_polynomial_size14,
+                                      schifra::galois::primitive_polynomial14);
 
    schifra::galois::field_polynomial generator_polynomial(field);
 
@@ -78,19 +82,18 @@ int main()
    const encoder_t encoder(field, generator_polynomial);
    const decoder_t decoder(field, generator_polynomial_index);
 
-   std::string message = "An expert is someone who knows more and more about less and "
-                         "less until they know absolutely everything about nothing";
-
-   /* Pad message with nulls up until the code-word length */
-   message.resize(code_length,0x00);
-
-   std::cout << "Original Message:  [" << message << "]" << std::endl;
+   std::vector<unsigned int> data(code_length, 0x0000 & field.mask());
 
    /* Instantiate RS Block For Codec */
    schifra::reed_solomon::block<code_length,fec_length> block;
+   schifra::reed_solomon::block<code_length,fec_length> original_block;
+
+   schifra::reed_solomon::copy(&data[0], data.size(), block);
+
+   original_block = block;
 
    /* Transform message into Reed-Solomon encoded codeword */
-   if (!encoder.encode(message, block))
+   if (!encoder.encode(block))
    {
       std::cout << "Error - Critical encoding failure! "
                 << "Msg: " << block.error_as_string()  << std::endl;
@@ -98,9 +101,7 @@ int main()
    }
 
    /* Add errors at every 3rd location starting at position zero */
-   schifra::corrupt_message_all_errors00(block, 0, 3);
-
-   std::cout << "Corrupted Codeword: [" << block << "]" << std::endl;
+   schifra::corrupt_message_all_errors_wth_mask(block, 0, field.mask(), 3);
 
    if (!decoder.decode(block))
    {
@@ -108,15 +109,11 @@ int main()
                 << "Msg: " << block.error_as_string()  << std::endl;
       return 1;
    }
-   else if (!schifra::is_block_equivelent(block, message))
+   else if (!schifra::are_blocks_equivelent(block, original_block, true, true))
    {
       std::cout << "Error - Error correction failed!" << std::endl;
       return 1;
    }
-
-   block.data_to_string(message);
-
-   std::cout << "Corrected Message: [" << message << "]" << std::endl;
 
    std::cout << "Encoder Parameters [" << encoder_t::trait::code_length << ","
                                        << encoder_t::trait::data_length << ","

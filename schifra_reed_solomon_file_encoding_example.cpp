@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -42,9 +42,9 @@ int main()
    typedef schifra::reed_solomon::encoder<code_length,fec_length> encoder_t;
    typedef schifra::reed_solomon::file_encoder<code_length,fec_length> file_encoder_t;
 
-   schifra::galois::field field(field_descriptor,
-                                schifra::galois::primitive_polynomial_size06,
-                                schifra::galois::primitive_polynomial06);
+   const schifra::galois::field field(field_descriptor,
+                                      schifra::galois::primitive_polynomial_size06,
+                                      schifra::galois::primitive_polynomial06);
 
    schifra::galois::field_polynomial generator_polynomial(field);
 
@@ -59,9 +59,9 @@ int main()
       return 1;
    }
 
-   encoder_t rs_encoder(field,generator_polynomial);
+   const encoder_t rs_encoder(field,generator_polynomial);
 
-   file_encoder_t(rs_encoder,input_file_name,output_file_name);
+   file_encoder_t(rs_encoder, input_file_name, output_file_name);
 
    return 0;
 }

@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -78,15 +78,15 @@ int main()
    const std::size_t gen_poly_index   = 120;
 
    /* Instantiate Finite Field and Generator Polynomials */
-   schifra::galois::field field(field_descriptor,
-                                schifra::galois::primitive_polynomial_size06,
-                                schifra::galois::primitive_polynomial06);
+   const schifra::galois::field field(field_descriptor,
+                                      schifra::galois::primitive_polynomial_size06,
+                                      schifra::galois::primitive_polynomial06);
 
    /* Reed Solomon Code Parameters */
    const std::size_t code_length = 255;
 
    /* Reed Solomon Code Parameters */
-   schifra::reed_solomon::general_codec<code_length> codec(field,gen_poly_index);
+   schifra::reed_solomon::general_codec<code_length> codec(field, gen_poly_index);
 
    schifra::reed_solomon::block<code_length,  2>  block_fec02;
    schifra::reed_solomon::block<code_length,  4>  block_fec04;

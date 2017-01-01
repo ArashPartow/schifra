@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -57,9 +57,9 @@ int main()
    const std::size_t output_data_length = code_length * code_length;
 
    /* Instantiate Finite Field and Generator Polynomials */
-   schifra::galois::field field(field_descriptor,
-                                schifra::galois::primitive_polynomial_size06,
-                                schifra::galois::primitive_polynomial06);
+   const schifra::galois::field field(field_descriptor,
+                                      schifra::galois::primitive_polynomial_size06,
+                                      schifra::galois::primitive_polynomial06);
 
    schifra::galois::field_polynomial generator_polynomial(field);
 
@@ -78,8 +78,8 @@ int main()
    typedef schifra::reed_solomon::encoder<code_length,fec_length> encoder_t;
    typedef schifra::reed_solomon::decoder<code_length,fec_length> decoder_t;
 
-   encoder_t encoder(field,generator_polynomial);
-   decoder_t decoder(field,generator_polynomial_index);
+   const encoder_t encoder(field, generator_polynomial);
+   const decoder_t decoder(field, generator_polynomial_index);
 
    schifra::reed_solomon::square_product_code_encoder<code_length,fec_length> spc_encoder(encoder);
    schifra::reed_solomon::square_product_code_decoder<code_length,fec_length> spc_decoder(decoder);

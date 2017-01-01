@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -45,12 +45,26 @@ namespace schifra
          typedef galois::field_symbol symbol_type;
          typedef traits::reed_solomon_triat<code_length,fec_length,data_length> trait;
          typedef traits::symbol<code_length> symbol;
+         typedef block<code_length,fec_length,data_length> block_t;
+
+         enum error_t
+         {
+            e_no_error       = 0,
+            e_encoder_error0 = 1,
+            e_encoder_error1 = 2,
+            e_decoder_error0 = 3,
+            e_decoder_error1 = 4,
+            e_decoder_error2 = 5,
+            e_decoder_error3 = 6,
+            e_decoder_error4 = 7
+         };
 
          block()
          : errors_detected (0),
            errors_corrected(0),
            zero_numerators (0),
-           unrecoverable(false)
+           unrecoverable(false),
+           error(e_no_error)
          {
             traits::validate_reed_solomon_block_parameters<code_length,fec_length,data_length>();
          }
@@ -59,7 +73,8 @@ namespace schifra
          : errors_detected (0),
            errors_corrected(0),
            zero_numerators (0),
-           unrecoverable(false)
+           unrecoverable(false),
+           error(e_no_error)
          {
             traits::validate_reed_solomon_block_parameters<code_length,fec_length,data_length>();
 
@@ -94,7 +109,7 @@ namespace schifra
             return data[data_length + index];
          }
 
-         bool data_to_string(std::string& data_str)
+         bool data_to_string(std::string& data_str) const
          {
             if (data_str.length() != data_length)
             {
@@ -109,7 +124,7 @@ namespace schifra
             return true;
          }
 
-         bool fec_to_string(std::string& fec_str)
+         bool fec_to_string(std::string& fec_str) const
          {
             if (fec_str.length() != fec_length)
             {
@@ -124,6 +139,13 @@ namespace schifra
             return true;
          }
 
+         std::string fec_to_string() const
+         {
+            std::string fec_str(fec_length,0x00);
+            fec_to_string(fec_str);
+            return fec_str;
+         }
+
          void clear(galois::field_symbol value = 0)
          {
             for (std::size_t i = 0; i < code_length; ++i)
@@ -132,12 +154,64 @@ namespace schifra
             }
          }
 
-         std::size_t errors_detected;
-         std::size_t errors_corrected;
-         std::size_t zero_numerators;
-         bool        unrecoverable;
-         galois::field_symbol data[code_length];
+         void clear_data(galois::field_symbol value = 0)
+         {
+            for (std::size_t i = 0; i < data_length; ++i)
+            {
+               data[i] = value;
+            }
+         }
 
+         void clear_fec(galois::field_symbol value = 0)
+         {
+            for (std::size_t i = 0; i < fec_length; ++i)
+            {
+               data[data_length + i] = value;
+            }
+         }
+
+         void reset(galois::field_symbol value = 0)
+         {
+            clear(value);
+            errors_detected  = 0;
+            errors_corrected = 0;
+            zero_numerators  = 0;
+            unrecoverable    = false;
+            error            = e_no_error;
+         }
+
+         template <typename BlockType>
+         void copy_state(const BlockType& b)
+         {
+            errors_detected  = b.errors_detected;
+            errors_corrected = b.errors_corrected;
+            zero_numerators  = b.zero_numerators;
+            unrecoverable    = b.unrecoverable;
+            error            = static_cast<error_t>(b.error);
+         }
+
+         inline std::string error_as_string() const
+         {
+            switch (error)
+            {
+               case e_no_error       : return "No Error";
+               case e_encoder_error0 : return "Invalid Encoder";
+               case e_encoder_error1 : return "Incompatible Generator Polynomial";
+               case e_decoder_error0 : return "Invalid Decoder";
+               case e_decoder_error1 : return "Decoder Failure - Non-zero Syndrome";
+               case e_decoder_error2 : return "Decoder Failure - Too Many Errors/Erasures";
+               case e_decoder_error3 : return "Decoder Failure - Invalid Symbol Correction";
+               case e_decoder_error4 : return "Decoder Failure - Invalid Codeword Correction";
+               default               : return "Invalid Error Code";
+            }
+         }
+
+         std::size_t  errors_detected;
+         std::size_t errors_corrected;
+         std::size_t  zero_numerators;
+         bool           unrecoverable;
+         error_t                error;
+         galois::field_symbol data[code_length];
       };
 
       template <std::size_t code_length, std::size_t fec_length>
@@ -175,7 +249,7 @@ namespace schifra
       {
          for (std::size_t row = 0; row < stack_size; ++row)
          {
-            copy(src_block_stack[row],dest_block_stack[row]);
+            copy(src_block_stack[row], dest_block_stack[row]);
          }
       }
 
@@ -191,16 +265,16 @@ namespace schifra
             return false;
          }
 
-         std::size_t row_count =  src_length / data_length;
+         const std::size_t row_count =  src_length / data_length;
 
          for (std::size_t row = 0; row < row_count; ++row, src_data += data_length)
          {
-            copy(src_data,dest_block_stack[row]);
+            copy(src_data, dest_block_stack[row]);
          }
 
          if ((src_length % data_length) != 0)
          {
-            copy(src_data,src_length % data_length,dest_block_stack[row_count]);
+            copy(src_data, src_length % data_length, dest_block_stack[row_count]);
          }
 
          return true;
@@ -286,7 +360,7 @@ namespace schifra
       {
          for (std::size_t row = 0; row < stack_size; ++row)
          {
-            copy(src_block_stack[row],dest_block_stack[row]);
+            copy(src_block_stack[row], dest_block_stack[row]);
          }
       }
 

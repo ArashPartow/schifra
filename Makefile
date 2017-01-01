@@ -6,7 +6,7 @@
 # *                                                                        *
 # * Release Version 0.0.1                                                  *
 # * http://www.schifra.com                                                 *
-# * Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *
+# * Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *
 # *                                                                        *
 # * The Schifra Reed-Solomon error correcting code library and all its     *
 # * components are supplied under the terms of the General Schifra License *
@@ -51,6 +51,7 @@ BUILD_LIST+=schifra_reed_solomon_example05
 BUILD_LIST+=schifra_reed_solomon_example06
 BUILD_LIST+=schifra_reed_solomon_example07
 BUILD_LIST+=schifra_reed_solomon_example08
+BUILD_LIST+=schifra_reed_solomon_example09
 BUILD_LIST+=schifra_interleaving_example01
 BUILD_LIST+=schifra_interleaving_example02
 BUILD_LIST+=schifra_interleaving_example03
@@ -75,10 +76,10 @@ run_tests : clean all
 	./schifra_reed_solomon_speed_evaluation
 
 schifra_reed_solomon_threads_example01: schifra_reed_solomon_threads_example01.cpp $(HPP_SRC)
-	$(COMPILER) $(OPTIONS) -o schifra_reed_solomon_threads_example01 schifra_reed_solomon_threads_example01.cpp -pthread -lboost_thread -lboost_system
+	$(COMPILER) $(OPTIONS) -o schifra_reed_solomon_threads_example01 schifra_reed_solomon_threads_example01.cpp $(LINKER_OPTS) -pthread -lboost_thread -lboost_system
 
 schifra_reed_solomon_threads_example02: schifra_reed_solomon_threads_example02.cpp $(HPP_SRC)
-	$(COMPILER) $(OPTIONS) -o schifra_reed_solomon_threads_example02 schifra_reed_solomon_threads_example02.cpp -pthread -lboost_thread -lboost_system
+	$(COMPILER) $(OPTIONS) -o schifra_reed_solomon_threads_example02 schifra_reed_solomon_threads_example02.cpp $(LINKER_OPTS) -pthread -lboost_thread -lboost_system
 
 strip_bin :
 	@for f in $(BUILD_LIST); do if [ -f $$f ]; then strip -s $$f; echo $$f; fi done;

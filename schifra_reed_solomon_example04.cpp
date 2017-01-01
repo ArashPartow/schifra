@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -63,9 +63,9 @@ int main(void)
    */
 
    /* Instantiate Finite Field and Generator Polynomials */
-   schifra::galois::field field(field_descriptor,
-                                schifra::galois::primitive_polynomial_size01,
-                                schifra::galois::primitive_polynomial01);
+   const schifra::galois::field field(field_descriptor,
+                                      schifra::galois::primitive_polynomial_size01,
+                                      schifra::galois::primitive_polynomial01);
 
    schifra::galois::field_polynomial generator_polynomial(field);
 
@@ -84,8 +84,8 @@ int main(void)
    typedef schifra::reed_solomon::encoder<code_length,fec_length> encoder_t;
    typedef schifra::reed_solomon::decoder<code_length,fec_length> decoder_t;
 
-   encoder_t encoder(field,generator_polynomial);
-   decoder_t decoder(field,generator_polynomial_index);
+   const encoder_t encoder(field,generator_polynomial);
+   const decoder_t decoder(field,generator_polynomial_index);
 
    /*
      Note: The data length represents the number of code symbols that will be used.
@@ -103,25 +103,27 @@ int main(void)
    schifra::reed_solomon::block<code_length,fec_length> original_block;
 
    /* Copy data from 1 Byte per element message block into 5-bit RS Block */
-   schifra::reed_solomon::bitio::convert_data_to_symbol<field_descriptor>(message.c_str(),message.size(),block.data);
-   schifra::reed_solomon::bitio::convert_data_to_symbol<field_descriptor>(message.c_str(),message.size(),original_block.data);
+   schifra::reed_solomon::bitio::convert_data_to_symbol<field_descriptor>(message.c_str(), message.size(), block.data);
+   schifra::reed_solomon::bitio::convert_data_to_symbol<field_descriptor>(message.c_str(), message.size(), original_block.data);
 
    /* Transform message into Reed-Solomon encoded codeword */
    if (!encoder.encode(block))
    {
-      std::cout << "Error - Critical encoding failure!" << std::endl;
+      std::cout << "Error - Critical encoding failure! "
+                << "Msg: " << block.error_as_string()  << std::endl;
       return 1;
    }
 
    /* Add errors at every 3rd location starting at position zero */
-   schifra::corrupt_message_all_errors_wth_mask(block,0,mask,3);
+   schifra::corrupt_message_all_errors_wth_mask(block, 0, mask, 3);
 
    if (!decoder.decode(block))
    {
-      std::cout << "Error - Critical decoding failure!" << std::endl;
+      std::cout << "Error - Critical decoding failure! "
+                << "Msg: " << block.error_as_string()  << std::endl;
       return 1;
    }
-   else if (!schifra::are_blocks_equivelent(block,original_block,data_length))
+   else if (!schifra::are_blocks_equivelent(block,original_block, data_length))
    {
       std::cout << "Error - Error correction failed!" << std::endl;
       return 1;

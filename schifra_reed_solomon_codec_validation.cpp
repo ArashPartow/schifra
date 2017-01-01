@@ -6,7 +6,7 @@
 (*                                                                        *)
 (* Release Version 0.0.1                                                  *)
 (* http://www.schifra.com                                                 *)
-(* Copyright (c) 2000-2016 Arash Partow, All Rights Reserved.             *)
+(* Copyright (c) 2000-2017 Arash Partow, All Rights Reserved.             *)
 (*                                                                        *)
 (* The Schifra Reed-Solomon error correcting code library and all its     *)
 (* components are supplied under the terms of the General Schifra License *)
@@ -28,7 +28,7 @@
 int main()
 {
    bool codec_validation_result = schifra::reed_solomon::codec_validation_test00() &&
-                                  schifra::reed_solomon::codec_validation_test01();
+                                  schifra::reed_solomon::codec_validation_test01() ;
 
    if (codec_validation_result)
    {
