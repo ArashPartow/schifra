@@ -40,6 +40,7 @@ http://www.schifra.com
 + Clang/LLVM (1.1+)
 + PGI C++ (10.x+)
 + Microsoft Visual Studio C++ Compiler (7.1+)
++ IBM XL C/C++ (9.x+)
 
 ----
 
