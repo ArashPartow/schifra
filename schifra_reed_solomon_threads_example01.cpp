@@ -113,6 +113,7 @@ public:
             }
          }
       }
+
       timer.stop();
       total_time_ = timer.time();
    }

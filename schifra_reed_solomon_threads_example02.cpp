@@ -58,12 +58,13 @@ class erasure_process
 public:
 
    erasure_process(const unsigned int& process_id,
-                   const Encoder& encoder,
-                   const Decoder& decoder)
+                   schifra::galois::field& field,
+                   schifra::galois::field_polynomial& generator_polynomial,
+                   const std::size_t& generator_polynomial_index)
    : process_id_(process_id),
      total_time_(0.0),
-     encoder_(encoder),
-     decoder_(decoder)
+     encoder_(field,generator_polynomial),
+     decoder_(field,generator_polynomial_index)
    {}
 
    erasure_process& operator=(const erasure_process& ep)
@@ -111,6 +112,7 @@ public:
          /* Add Erasures - Simulate network packet loss (e.g: UDP) */
          schifra::reed_solomon::erasure_locations_t missing_row_index;
          missing_row_index.clear();
+
          for (std::size_t i = 0; i < fec_length; ++i)
          {
             std::size_t missing_index = (k + (i * 4)) % stack_size;
@@ -140,8 +142,8 @@ private:
 
    unsigned int process_id_;
    double total_time_;
-   const Encoder& encoder_;
-   const Decoder& decoder_;
+   Encoder encoder_;
+   Decoder decoder_;
 };
 
 int main()
@@ -180,10 +182,6 @@ int main()
    typedef erasure_process<encoder_type,decoder_type> erasure_process_type;
    typedef boost::shared_ptr<erasure_process_type>    erasure_process_ptr_type;
 
-   /* Instantiate Encoder and Decoder (Codec) */
-   encoder_type encoder(field,generator_polynomial);
-   decoder_type decoder(field,generator_polynomial_index);
-
    const unsigned int max_thread_count = 4; // number of functional cores.
 
    std::vector<erasure_process_ptr_type> erasure_process_list;
@@ -192,7 +190,15 @@ int main()
 
    for (unsigned int i = 0; i < max_thread_count; ++i)
    {
-      erasure_process_list.push_back(erasure_process_ptr_type(new erasure_process_type(i,encoder,decoder)));
+      erasure_process_list.push_back(erasure_process_ptr_type(new
+                                     erasure_process_type
+                                     (
+                                       i,
+                                       field,
+                                       generator_polynomial,
+                                       generator_polynomial_index
+                                     )));
+
       threads.create_thread(boost::bind(&erasure_process_type::execute,erasure_process_list[i]));
    }
 
@@ -212,3 +218,4 @@ int main()
 
    return 0;
 }
+
