@@ -367,7 +367,13 @@ namespace schifra
                   ++rsblock.zero_numerators;
             }
 
-            return true;
+            if (lambda.deg() == static_cast<int>(rsblock.errors_detected))
+               return true;
+            else
+            {
+               rsblock.unrecoverable = true;
+               return false;
+            }
          }
 
       protected:
