@@ -180,5 +180,5 @@ and executed upon an Intel Xeon E5-2687W 3GHz CPU, 64GB RAM, Ubuntu 14.04
 with kernel 3.13 system.
 
 ##### Benchmark Binaries
- + [Linux]  (http://www.schifra.com/downloads/schifra_reed_solomon_speed_evaluation_linux.zip)
+ + [Linux](http://www.schifra.com/downloads/schifra_reed_solomon_speed_evaluation_linux.zip)
  + [Windows](http://www.schifra.com/downloads/schifra_reed_solomon_speed_evaluation_win32.zip)
