@@ -48,7 +48,7 @@ namespace schifra
 
          typedef encoder<code_length,fec_length> encoder_type;
          typedef block<code_length,fec_length> block_type;
-         typedef traits::reed_solomon_triat<code_length,fec_length,data_length> trait;
+         typedef traits::reed_solomon_trait<code_length,fec_length,data_length> trait;
          typedef unsigned char data_type;
          typedef data_type* data_ptr_type;
 
@@ -140,7 +140,7 @@ namespace schifra
 
          typedef decoder<code_length,fec_length> decoder_type;
          typedef block<code_length,fec_length> block_type;
-         typedef traits::reed_solomon_triat<code_length,fec_length,data_length> trait;
+         typedef traits::reed_solomon_trait<code_length,fec_length,data_length> trait;
          typedef unsigned char data_type;
          typedef data_type* data_ptr_type;
 

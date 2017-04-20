@@ -109,11 +109,14 @@ namespace schifra
             timer.stop();
 
             double time = timer.time();
+            double rate = ((blocks_processed_ * data_length) * 8.0) / (1048576.0 * time);
 
             print_codec_properties();
-            std::cout << "Blocks decoded: "       << blocks_processed_ <<
-                         "\tDecoding Failures: "  << block_failures_   <<
-                         "\tRate: "               << ((blocks_processed_ * data_length) * 8.0) / (1048576.0 * time) << "Mbps" << std::endl;
+            std::cout << "\tDecoding:"
+                      << "\tBlocks: " << blocks_processed_
+                      << "\tFailures: " << block_failures_
+                      << "\tRate: " << rate << " Mbps"
+                      << std::endl;
             /*
               Note: The throughput rate is not only the throughput of reed solomon
                     encoding and decoding, but also that of the steps needed to add
