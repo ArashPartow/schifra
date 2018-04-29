@@ -160,27 +160,28 @@ the decoding rate of codewords in two modalities: "All Errors" and
 
 |  Reed Solomon Codec  |  All Errors Decoding Rate (Mbps)   |  All Erasures Decoding Rate (Mbps)  |
 | :--------------------| :--------------------------------: | :---------------------------------: |
-| RS(255,253,002)      | 1331.626                           | 1318.450                            |
-| RS(255,251,004)      | 850.482                            | 797.795                             |
-| RS(255,249,006)      | 610.214                            | 590.574                             |
-| RS(255,247,008)      | 474.945                            | 461.839                             |
-| RS(255,245,010)      | 391.551                            | 387.158                             |
-| RS(255,243,012)      | 331.286                            | 326.335                             |
-| RS(255,241,014)      | 285.537                            | 280.971                             |
-| RS(255,239,016)      | 255.691                            | 250.495                             |
-| RS(255,237,018)      | 228.880                            | 227.874                             |
-| RS(255,235,020)      | 204.712                            | 203.396                             |
-| RS(255,223,032)      | 123.940                            | 123.830                             |
-| RS(255,207,048)      | 77.322                             | 76.953                              |
-| RS(255,191,064)      | 54.040                             | 53.167                              |
-| RS(255,175,080)      | 39.644                             | 38.670                              |
-| RS(255,159,096)      | 29.875                             | 29.505                              |
-| RS(255,127,128)      | 17.805                             | 17.729                              |
+| RS(255,253,002)      | 1669.275                           | 1542.483                            |
+| RS(255,251,004)      | 1103.620                           | 1019.695                            |
+| RS(255,249,006)      | 843.524                            | 781.815                             |
+| RS(255,247,008)      | 670.612                            | 612.418                             |
+| RS(255,245,010)      | 552.918                            | 513.101                             |
+| RS(255,243,012)      | 461.485                            | 430.707                             |
+| RS(255,241,014)      | 399.025                            | 378.728                             |
+| RS(255,239,016)      | 355.399                            | 338.250                             |
+| RS(255,237,018)      | 315.294                            | 304.094                             |
+| RS(255,235,020)      | 282.269                            | 273.023                             |
+| RS(255,223,032)      | 173.067                            | 162.276                             |
+| RS(255,207,048)      | 106.055                            | 102.039                             |
+| RS(255,191,064)      | 75.213                             | 72.671                              |
+| RS(255,175,080)      | 56.374                             | 53.210                              |
+| RS(255,159,096)      | 41.354                             | 41.009                              |
+| RS(255,127,128)      | 25.445                             | 24.823                              |
 
 **Note:** The above results were obtained by compiling the benchmark with
-GCC 6.1 with O3, LTO, PGO and native architecture target compiler settings,
-and executed upon an Intel Xeon E5-2687W 3GHz CPU, 64GB RAM, Ubuntu 14.04
-with kernel 3.13 system.
+GCC 7.2 with O3, LTO, PGO and native architecture target compiler settings,
+and executed upon an Intel Xeon E5-2687W 3GHz CPU, 64GB RAM, Ubuntu 16.10
+with kernel 4.13 system.
+
 
 ##### Benchmark Binaries
  + [Linux](http://www.schifra.com/downloads/schifra_reed_solomon_speed_evaluation_linux.zip)
